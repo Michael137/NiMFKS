@@ -1,7 +1,7 @@
 %Diagonal appears if V=W under large number of iterations without
 %cost-break
 
-function [H, cost] = nnmfFn(V, W, L, repititionRestricted)
+function [H, cost] = nnmfFn_Eucl_TEST(V, W, L, diagonal)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
@@ -17,8 +17,6 @@ M=targetDim(2);
 %Range: [0, 1)
 H=random('unif',0, 1, K, M);
 
-r=3; %For repitition restricted activations
-
 for l=1:L-1
     num=W'*V;
     den=W'*W*H;
@@ -30,25 +28,16 @@ for l=1:L-1
             if(isnan(H(k,m)))
                 H(k,m)=0;
             end
-            
-            if(repititionRestricted)
-                if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
-                    R(k,m)=H(k,m);
-                else
-                    R(k,m)=H(k,m)*(1-(l+1)/L);
-                end
-            end
         end
     end  
     
+    
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
-    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/cost(l))<=1e-6)) %TODO: Reconsider exit condition
-        break;
+    if(strcmp(diagonal, 'no_diag'))
+        if(l>5 && (cost(l) >= cost(l-1) || abs((abs((cost(l)-cost(l-1))))/max(cost))<=0.05)) %TODO: Reconsider exit condition
+            break;
+        end
     end
-end
-
-if(repititionRestricted)
-    H=R;
 end
 
 %Optional attribute for potential later use
