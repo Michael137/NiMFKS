@@ -70,6 +70,8 @@ clc
 % mat2=mat1; %For diagonality check
 
 sizes = [10, 25, 50, 75, 100, 150, 200];
+% sizes = [10, 25, 50, 75, 100, 150, 200, 400, 1000, 2000];
+% sizes = [10, 25, 50, 75, 100, 150, 200, 400, 600];
 
 j = 1;
 % parfor i = sizes
@@ -84,6 +86,7 @@ for i = sizes
     
     TSTART_DIV_ND = tic;
     [factor cost]=nnmfFn_Div_TEST_v2(mat1, mat2, iterations, 'no_diag');
+%     [factor cost]=BobsDivNNMF(mat1, mat2, iterations);
     TEND_DIV_ND(j) = toc(TSTART_DIV_ND);
     j = j+1;
 end
@@ -104,6 +107,7 @@ clc
 % mat2=mat1; %For diagonality check
 
 sizes = [10, 25, 50, 75, 100, 150, 200];
+% sizes = [10, 25, 50, 75, 100, 150, 200, 400, 600];
 
 j = 1;
 % parfor i = sizes
@@ -138,6 +142,7 @@ clc
 % mat2=mat1; %For diagonality check
 
 sizes = [10, 25, 50, 75, 100, 150, 200, 400, 1000, 2000];
+% sizes = [10, 25, 50, 75, 100, 150, 200, 400, 600];
 
 j = 1;
 % parfor i = sizes
