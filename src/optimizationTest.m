@@ -91,6 +91,40 @@ end
 plot(sizes, TEND_DIV_ND);
 xlabel('Squared Matrix Size')
 ylabel('Time (s)')
+%% Non-Optimized Divergence (No Diagonals) Algorithm Scaling
+clear all
+clc
+
+% rows = 100;
+% columns = 100;
+% iterations = 50;
+% 
+% mat1=random('unif',0, 100, rows, columns);
+% % mat2=random('unif',0, 100, rows, columns);
+% mat2=mat1; %For diagonality check
+
+sizes = [10, 25, 50, 75, 100, 150, 200];
+
+j = 1;
+% parfor i = sizes
+for i = sizes
+    rows = i;
+    columns = i;
+    iterations = 50;
+
+    mat1=random('unif',0, 100, rows, columns);
+    mat2=random('unif',0, 100, rows, columns);
+%     mat2=mat1; %For diagonality check
+    
+    TSTART_DIV_ND = tic;
+    [factor cost]=nnmfFn_Div_TEST(mat1, mat2, iterations, 'no_diag');
+    TEND_DIV_ND(j) = toc(TSTART_DIV_ND);
+    j = j+1;
+end
+
+plot(sizes, TEND_DIV_ND);
+xlabel('Squared Matrix Size')
+ylabel('Time (s)')
 %% Divergence (No Diagonals) Algorithm Scaling
 clear all
 clc

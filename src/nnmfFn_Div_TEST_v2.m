@@ -42,7 +42,7 @@ for l=1:L-1
 %     disp(l)
 end
 
-recon=W*H;
+% recon=W*H;
 disp(strcat('Iterations:', num2str(l)))
 % plot(cost)
 % disp(recon)
