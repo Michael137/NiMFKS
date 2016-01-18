@@ -69,8 +69,10 @@ classdef Synthesis < handle
         function obj = resynthesize(obj, identifier)
             if(strcmp(identifier, 'ISTFT'))
                 obj.Resynthesis = istft(obj.NNMFSynthesis.Reconstruction, obj.Overlap,2048*8,obj.Fs,hann(2048*8, 'periodic'));
+                audiowrite('resynthesis.wav', obj.Resynthesis, obj.Fs);
             elseif(strcmp(identifier, 'Template Addition'))
                 obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
+                audiowrite('resynthesis.wav', obj.Resynthesis, obj.Fs);
             end
         end
         

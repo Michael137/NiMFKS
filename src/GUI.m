@@ -102,6 +102,10 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 
 % SynthesisCtr('verifyParams', handles);
 SynthesisCtr('run', handles);
+% enableReplay handles;
+set([handles.pushbutton18 handles.text8 handles.text26],'Visible','on')
+SynthesisCtr('openResynthesis', handles);
+
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
@@ -223,7 +227,7 @@ function pushbutton18_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+SynthesisCtr('playResynthesis', handles);
 
 
 function edit8_Callback(hObject, eventdata, handles)

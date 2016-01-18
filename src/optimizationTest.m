@@ -1,3 +1,5 @@
+% TODO: Add test folder; clean out script files; add assets folder for
+% non-code files
 %%General Optimization Comparions
 clear all
 clc

@@ -12,11 +12,17 @@ switch action
         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text7, 'String', sourcepathname);
+    case 'openResynthesis'
+        pathname = 'resynthesis.wav';
+        set(handles.text8, 'String', pathname);
     case 'playTarget'
         [y, Fs] = audioread(get(handles.text5, 'String'));
         soundsc(y, Fs);
     case 'playSource'
         [y, Fs] = audioread(get(handles.text7, 'String'));
+        soundsc(y, Fs);
+    case 'playResynthesis'
+        [y, Fs] = audioread(get(handles.text8, 'String'));
         soundsc(y, Fs);
     case 'run'
 %         verifyParameters(handles)
@@ -44,7 +50,7 @@ switch action
             
             costMetricSelected=get(handles.popupmenu3, 'Value');
             costMetrics=get(handles.popupmenu3, 'String');
-            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Valu'));
+            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Value'));
             
             if(get(handles.checkbox1, 'Value'))
                 figure()
@@ -55,6 +61,15 @@ switch action
                 figure()
                 synth.NNMFSynthesis.showActivations(synth);
             end
+        end
+        
+        resynthMethodSelected=get(handles.popupmenu4, 'Value');
+        resynthMethods=get(handles.popupmenu4, 'String');
+        synth.resynthesize(resynthMethods(resynthMethodSelected));
+        
+        if(get(handles.checkbox5, 'Value'))
+            figure()
+            synth.showResynthesis;
         end
 end
 
