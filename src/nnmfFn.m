@@ -42,7 +42,7 @@ for l=1:L-1
     end  
     
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
-    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/cost(l))<=1e-6)) %TODO: Reconsider exit condition
+    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<0.002)) %TODO: Reconsider exit condition
         break;
     end
 end

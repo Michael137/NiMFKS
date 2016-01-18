@@ -104,6 +104,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 SynthesisCtr('run', handles);
 % enableReplay handles;
 set([handles.pushbutton18 handles.text8 handles.text26],'Visible','on')
+SynthesisCtr('configPlotlist', handles);
 SynthesisCtr('openResynthesis', handles);
 
 
@@ -128,7 +129,7 @@ function listbox1_Callback(hObject, eventdata, handles)
 % hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+SynthesisCtr('switchPlot', handles);
 % Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listbox1
 

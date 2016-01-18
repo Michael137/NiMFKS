@@ -24,6 +24,25 @@ switch action
     case 'playResynthesis'
         [y, Fs] = audioread(get(handles.text8, 'String'));
         soundsc(y, Fs);
+    case 'configPlotlist'
+%         plotMap = containers.Map({'Cost', 'Resynthesis', 'Activations'}, [get(handles.checkbox1, 'Value'), get(handles.checkbox4, 'Value'), get(handles.checkbox5, 'Value')]);
+        plotList = {};
+        if(get(handles.checkbox1, 'Value'))
+            plotList = [plotList; 'Cost'];
+        end
+        
+        if(get(handles.checkbox4, 'Value'))
+            plotList = [plotList; 'Resynthesis'];
+        end
+        
+        if(get(handles.checkbox5, 'Value'))
+            plotList = [plotList; 'Activations'];
+        end
+        
+        listboxContent = cellstr(get(handles.listbox1, 'String'));
+        set(handles.listbox1, 'String', [listboxContent; plotList]);
+    case 'switchPlot'
+        
     case 'run'
 %         verifyParameters(handles)
 %         performCalculations(handles)
@@ -53,12 +72,12 @@ switch action
             synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Value'));
             
             if(get(handles.checkbox1, 'Value'))
-                figure()
+%                 figure()
                 synth.NNMFSynthesis.showCost;
             end
             
             if(get(handles.checkbox4, 'Value'))
-                figure()
+%                 figure()
                 synth.NNMFSynthesis.showActivations(synth);
             end
         end
@@ -68,7 +87,7 @@ switch action
         synth.resynthesize(resynthMethods(resynthMethodSelected));
         
         if(get(handles.checkbox5, 'Value'))
-            figure()
+%             figure()
             synth.showResynthesis;
         end
 end
