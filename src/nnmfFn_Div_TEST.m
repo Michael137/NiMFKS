@@ -12,12 +12,13 @@ H=random('unif',0, 1, K, M);
 % H=rand(K, M);
 num = 0;
 den = 0;
+n = 1 : size(W, 1);
 
 for l=1:L-1    
     for k = 1:size(H, 1)
         for m = 1:size(H, 2)
             recon = W*H;
-            n = 1 : size(W, 1);
+%             recon = full(sparse(W)*sparse(H));
             tmp = W(n, k).*V(n, m)./(recon(n, m));
             num = sum(tmp);
             den = sum(W(:, k));

@@ -164,3 +164,21 @@ end
 plot(sizes, TEND_EUCL_ND);
 xlabel('Squared Matrix Size')
 ylabel('Time (s)')
+%% Sparse Matrix Multiplication Test
+clear all
+clc
+
+rows = 10;
+columns = 10;
+iterations = 50;
+
+mat1=random('unif',0, 100, rows, columns);
+% mat2=random('unif',0, 100, rows, columns);
+mat2=mat1; %For diagonality check
+
+TSTART_DIV = tic;
+[factor1 cost]=nnmfFn_Div_TEST(mat1, mat2, iterations, 'diag');
+TEND_DIV = toc(TSTART_DIV);
+
+disp(TEND_DIV);
+imagesc(factor1);
