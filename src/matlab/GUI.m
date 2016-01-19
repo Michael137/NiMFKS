@@ -53,7 +53,7 @@ function GUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to GUI (see VARARGIN)
 
 %Place "playback" symbol onto buttons
-[a,map]=imread('playButton.jpg');
+[a,map]=imread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\playButton.jpg');
 [r,c,d]=size(a); 
 x=ceil(r/30); 
 y=ceil(c/30); 

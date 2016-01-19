@@ -13,7 +13,7 @@ switch action
         sourcepathname= strcat(pathname, filename);
         set(handles.text7, 'String', sourcepathname);
     case 'openResynthesis'
-        pathname = 'resynthesis.wav';
+        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
         set(handles.text8, 'String', pathname);
     case 'playTarget'
         [y, Fs] = audioread(get(handles.text5, 'String'));
