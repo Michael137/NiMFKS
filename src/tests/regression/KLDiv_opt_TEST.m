@@ -1,4 +1,4 @@
-function [H, cost] = KLDiv_opt_TEST(V, W, L)
+function [H, cost] = KLDiv_opt_TEST(V, W, L, diagonal)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
@@ -21,10 +21,11 @@ for l=1:L-1
     end
     
     cost(l)=KLDivCost(V, W*H);
-%     if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
-%         break;
-%     end
-%     disp(l)
+    if(strcmp(diagonal, 'no_diag'))
+        if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
+            break;
+        end
+    end
 end
 
 disp(strcat('Iterations:', num2str(l)))
