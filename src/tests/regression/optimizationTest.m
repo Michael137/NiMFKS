@@ -10,7 +10,7 @@ clc
 K = 100; %Kept constant (Rows of source and target); 8193 in real application
 M = 80; %Variable (Columns of target)
 N = 80; %Variable (Columns of source)
-iterations = 10;
+iterations = 50;
 
 mat1=random('unif',0, 100, K, M);
 mat2=random('unif',0, 100, K, N);
