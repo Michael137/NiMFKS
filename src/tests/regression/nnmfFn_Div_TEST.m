@@ -1,17 +1,15 @@
-function [H, cost] = nnmfFn_Div_TEST(V, W, L, diagonal)
+function [H, cost] = KLDiv_unopt_TEST(V, W, L, diagonal)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
 cost=0;
-
 K=size(W, 2);
 M=size(V, 2);
+
 %Randomly initialized Matrix H: K x M
 %Range: [0, 1)
 H=random('unif',0, 1, K, M);
-% H=rand(K, M);
-num = 0;
-den = 0;
+
 n = 1 : size(W, 1);
 
 for l=1:L-1    
@@ -26,21 +24,15 @@ for l=1:L-1
         end
     end
     
-%     cost(l)=norm(V-W*H, 'fro');
     cost(l)=KLDivCost(V, W*H);
     if(strcmp(diagonal, 'no_diag'))
         if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
             break;
         end
     end
-%     disp(l)
 end
 
-% recon=W*H;
 disp(strcat('Iterations:', num2str(l)))
-% plot(cost)
-% disp(recon)
-% disp(V)
 end
 
 % function [H, cost] = nnmfFn_Div(V, W, L)

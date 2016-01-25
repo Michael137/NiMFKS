@@ -5,13 +5,9 @@ function [H, cost] = nnmfFn_Eucl_TEST(V, W, L, diagonal)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
-
 cost=0;
-
-targetDim=size(V);
-sourceDim=size(W);
-K=sourceDim(2);
-M=targetDim(2);
+K=size(W, 2);
+M=size(V, 2);
 
 %Randomly initialized Matrix H: K x M
 %Range: [0, 1)
@@ -40,7 +36,6 @@ for l=1:L-1
     end
 end
 
-%Optional attribute for potential later use
 iterations = l;
 disp(strcat('Iterations:', num2str(iterations)))
 end

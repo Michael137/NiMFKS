@@ -1,42 +1,33 @@
-function [H, cost] = BobsDivNNMF(V, W, L)
+function [H, cost] = KLDiv_opt_TEST(V, W, L)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
 cost=0;
-
 K=size(W, 2);
 M=size(V, 2);
+
 %Randomly initialized Matrix H: K x M
 %Range: [0, 1)
 H=random('unif',0, 1, K, M);
-% H=rand(K, M);
-num = 0;
-den = 0;
+den = sum(W);
+
 for l=1:L-1    
     for k = 1:size(H, 1)
-        recon = W*H;
         for m = 1:size(H, 2)
-            recon(:,m) = W*H(:,m);
-            tmp = W(:, k).*V(:, m)./(recon(:, m));
-            num = sum(tmp);
-            den = sum(W(:, k));
-            H(k, m) = H(k, m) * num / den;
+            recon = W*H(:,m);
+            num = W(:, k)'*(V(:, m)./(recon));
+            H(k, m) = H(k, m) * num / den(k);
         end
     end
     
-%     cost(l)=norm(V-W*H, 'fro');
     cost(l)=KLDivCost(V, W*H);
-    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
-        break;
-    end
+%     if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
+%         break;
+%     end
 %     disp(l)
 end
 
-recon=W*H;
 disp(strcat('Iterations:', num2str(l)))
-% plot(cost)
-% disp(recon)
-% disp(V)
 end
 
 % function [H, cost] = nnmfFn_Div(V, W, L)
