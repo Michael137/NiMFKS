@@ -1,0 +1,5 @@
+#[Y, Fs] = audioread('glock2.wav');
+[Y2, Fs2] = audioread('sawtoothbirthday.wav');
+Y=Y(1:min(portionLength*Fs, length(Y)));
+Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+synth = Synthesis(Y, Y2);
