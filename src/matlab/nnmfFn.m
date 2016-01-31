@@ -1,7 +1,7 @@
 %Diagonal appears if V=W under large number of iterations without
 %cost-break
 
-function [H, cost] = nnmfFn(V, W, L, repititionRestricted)
+function [H, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
@@ -18,6 +18,7 @@ M=targetDim(2);
 H=random('unif',0, 1, K, M);
 
 r=3; %For repitition restricted activations
+c=2; %For continuity enhancing activation matrix
 
 for l=1:L-1
     num=W'*V;
@@ -38,6 +39,18 @@ for l=1:L-1
                     R(k,m)=H(k,m)*(1-(l+1)/L);
                 end
             end
+            
+            if(continuityEnhanced)
+                if(k > c && m > c && k < K-c && m < M-c)
+                    kernelSum = 0;
+                    for z = -c:1:c;
+                        kernelSum = kernelSum + H(k+z, m+z);
+                    end
+                    C(k, m) = kernelSum;
+                else
+                    C(k, m) = H(k, m);
+                end
+            end
         end
     end  
     
@@ -49,6 +62,10 @@ end
 
 if(repititionRestricted)
     H=R;
+end
+
+if(continuityEnhanced)
+    H=C;
 end
 
 %Optional attribute for potential later use
