@@ -13,7 +13,7 @@ Y2=Y2(1:min(portionLength*Fs, length(Y2)));
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
-synth.synthesize('NNMF', 'Euclidean', 20, true, false);
+synth.synthesize('NNMF', 'Euclidean', 20, true, false, false);
 synth.NNMFSynthesis.showActivations(synth);
 figure()
 synth.NNMFSynthesis.showCost;
@@ -30,7 +30,7 @@ Y2=Y2(1:min(portionLength*Fs, length(Y2)));
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
-synth.synthesize('NNMF', 'Euclidean', 100, false, true);
+synth.synthesize('NNMF', 'Euclidean', 100, false, true, false);
 synth.NNMFSynthesis.showActivations(synth);
 figure()
 synth.resynthesize('ISTFT');
@@ -103,7 +103,7 @@ caxis(c)
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.SourceSpectrogram.S = MD;
 synth.TargetSpectrogram.S = MD;
-synth.synthesize('NNMF', 'Euclidean', 100, false, false);
+synth.synthesize('NNMF', 'Euclidean', 100, false, false, false);
 
 synth.SourceSpectrogram.T = T;
 synth.TargetSpectrogram.T = T;
