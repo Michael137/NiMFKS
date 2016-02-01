@@ -23,7 +23,7 @@ clc
 portionLength = 5;
 windowLength=100;
 overlap=50;
-[Y, Fs] = audioread('sawtoothbirthday.wav');
+[Y, Fs] = audioread('glock2.wav');
 [Y2, Fs2] = audioread('sawtoothbirthday.wav');
 Y=Y(1:min(portionLength*Fs, length(Y)));
 Y2=Y2(1:min(portionLength*Fs, length(Y2))); 

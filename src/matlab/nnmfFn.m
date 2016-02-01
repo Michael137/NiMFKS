@@ -1,7 +1,7 @@
 %Diagonal appears if V=W under large number of iterations without
 %cost-break
 
-function [H, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced)
+function [Y, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
@@ -32,23 +32,12 @@ for l=1:L-1
                 H(k,m)=0;
             end
             
+            %TODO: consider running after main loop
             if(repititionRestricted)
                 if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
                     R(k,m)=H(k,m);
                 else
                     R(k,m)=H(k,m)*(1-(l+1)/L);
-                end
-            end
-            
-            if(continuityEnhanced)
-                if(k > c && m > c && k < K-c && m < M-c)
-                    kernelSum = 0;
-                    for z = -c:1:c;
-                        kernelSum = kernelSum + H(k+z, m+z);
-                    end
-                    C(k, m) = kernelSum;
-                else
-                    C(k, m) = H(k, m);
                 end
             end
         end
@@ -60,12 +49,27 @@ for l=1:L-1
     end
 end
 
+Y = H;
+
 if(repititionRestricted)
-    H=R;
+    Y=R;
 end
 
 if(continuityEnhanced)
-    H=C;
+    for k = 1:K
+        for m = 1:M
+            if(k > c && m > c && k < K-c && m < M-c)
+                kernelSum = 0;
+                for z = -c:1:c;
+                    kernelSum = kernelSum + R(k+z, m+z);
+                end
+                C(k, m) = kernelSum;
+            else
+                C(k, m) = R(k, m);
+            end
+        end
+    end
+    Y=C;
 end
 
 %Optional attribute for potential later use
