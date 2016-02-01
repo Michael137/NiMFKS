@@ -12,7 +12,8 @@ for k=1:size(H, 2)
             location=i*floor(length(X)/size(H, 1));
 %             disp(strcat('k:', num2str(k)))
 %             disp(strcat('i:', num2str(i)))
-            segments(k, :)=segments(k, :)'+ X(location:location+windowLength-1)*extracted(i); %TODO: Pointwise multiply X by smooth window e.g. van Hann
+            win = window(@hann,(windowLength));
+            segments(k, :)=segments(k, :)'+ win.*X(location:location+windowLength-1)*extracted(i); %TODO: Pointwise multiply X by smooth window e.g. van Hann
         end
     end
 %     m=m+overlap;

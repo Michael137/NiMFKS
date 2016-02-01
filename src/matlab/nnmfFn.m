@@ -87,6 +87,8 @@ for l=1:L-1
     end
 end
 
+Y=H;
+
 if(repititionRestricted)
     Y=R;
 end
