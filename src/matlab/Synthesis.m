@@ -72,11 +72,13 @@ classdef Synthesis < handle
                 audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis, obj.Fs);
             elseif(strcmp(identifier, 'Template Addition'))
                 obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
+%                 obj.Resynthesis(abs(obj.Resynthesis)>5)=mean(obj.Resynthesis);
                 audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis, obj.Fs);
             end
         end
         
         function showResynthesis(obj)
+%             obj.Resynthesis(abs(obj.Resynthesis)>5)=mean(obj.Resynthesis);
             plot(obj.Resynthesis);
         end
     end
