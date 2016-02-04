@@ -45,11 +45,14 @@ switch action
         contents = cellstr(get(handles.listbox1,'String'));
         switch(contents{get(handles.listbox1,'Value')})
             case 'Resynthesis'
-                set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
+%                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
+                handles.SynthesisObject.showResynthesis;
             case 'Cost'
-                set(handles.figure1, 'CurrentAxes', handles.CostPlot);
+%                 set(handles.figure1, 'CurrentAxes', handles.CostPlot);
+                handles.SynthesisObject.NNMFSynthesis.showCost
             case 'Activations'
-                set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+%                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+                handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject);
         end
     case 'run'
 %         verifyParameters(handles)
@@ -82,15 +85,15 @@ switch action
             if(get(handles.checkbox1, 'Value'))
 %                 figure()
                 synth.NNMFSynthesis.showCost;
-                handles.CostPlot = gca;
-                guidata(handles.figure1, handles);
+%                 handles.CostPlot = gca;
+%                 guidata(handles.figure1, handles);
             end
             
             if(get(handles.checkbox4, 'Value'))
 %                 figure()
                 synth.NNMFSynthesis.showActivations(synth);
-                handles.ActivationsPlot = gca;
-                guidata(handles.figure1, handles);
+%                 handles.ActivationsPlot = gca;
+%                 guidata(handles.figure1, handles);
             end
         end
         
@@ -101,9 +104,12 @@ switch action
         if(get(handles.checkbox5, 'Value'))
 %             figure()
             synth.showResynthesis;
-            handles.ResynthesisPlot = gca;
-            guidata(handles.figure1, handles);
+%             handles.ResynthesisPlot = gca;
+%             guidata(handles.figure1, handles);
         end
+        
+        handles.SynthesisObject = synth;
+        guidata(handles.figure1, handles);
 end
 
 % function performCalculations()
