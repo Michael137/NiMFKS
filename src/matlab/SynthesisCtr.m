@@ -4,12 +4,12 @@ handles = datastruct;
 
 switch action
     case 'openTarget'
-        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text5, 'String', sourcepathname);
     case 'openSource'
         handles = datastruct;
-        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text7, 'String', sourcepathname);
     case 'openResynthesis'
@@ -31,18 +31,26 @@ switch action
             plotList = [plotList; 'Cost'];
         end
         
-        if(get(handles.checkbox4, 'Value'))
+        if(get(handles.checkbox5, 'Value'))
             plotList = [plotList; 'Resynthesis'];
         end
         
-        if(get(handles.checkbox5, 'Value'))
+        if(get(handles.checkbox4, 'Value'))
             plotList = [plotList; 'Activations'];
         end
         
         listboxContent = cellstr(get(handles.listbox1, 'String'));
         set(handles.listbox1, 'String', [listboxContent; plotList]);
     case 'switchPlot'
-        
+        contents = cellstr(get(handles.listbox1,'String'));
+        switch(contents{get(handles.listbox1,'Value')})
+            case 'Resynthesis'
+                set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
+            case 'Cost'
+                set(handles.figure1, 'CurrentAxes', handles.CostPlot);
+            case 'Activations'
+                set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+        end
     case 'run'
 %         verifyParameters(handles)
 %         performCalculations(handles)
@@ -74,11 +82,15 @@ switch action
             if(get(handles.checkbox1, 'Value'))
 %                 figure()
                 synth.NNMFSynthesis.showCost;
+                handles.CostPlot = gca;
+                guidata(handles.figure1, handles);
             end
             
             if(get(handles.checkbox4, 'Value'))
 %                 figure()
                 synth.NNMFSynthesis.showActivations(synth);
+                handles.ActivationsPlot = gca;
+                guidata(handles.figure1, handles);
             end
         end
         
@@ -89,6 +101,8 @@ switch action
         if(get(handles.checkbox5, 'Value'))
 %             figure()
             synth.showResynthesis;
+            handles.ResynthesisPlot = gca;
+            guidata(handles.figure1, handles);
         end
 end
 

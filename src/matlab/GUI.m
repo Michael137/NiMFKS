@@ -100,8 +100,13 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+InterfaceObj=findobj(handles.figure1,'Enable','on');
+set(InterfaceObj,'Enable','off');
 % SynthesisCtr('verifyParams', handles);
 SynthesisCtr('run', handles);
+set(InterfaceObj,'Enable','on');
+% guidata(gcf, handles);
+
 % enableReplay handles;
 set([handles.pushbutton18 handles.text8 handles.text26],'Visible','on')
 SynthesisCtr('configPlotlist', handles);
