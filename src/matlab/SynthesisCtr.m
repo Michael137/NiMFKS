@@ -32,11 +32,15 @@ switch action
         end
         
         if(get(handles.checkbox5, 'Value'))
-            plotList = [plotList; 'Resynthesis'];
+            plotList = [plotList; 'Resynthesis'; 'Synthesis Spectrogram'];
         end
         
         if(get(handles.checkbox4, 'Value'))
             plotList = [plotList; 'Activations'];
+        end
+        
+        if(get(handles.checkbox2, 'Value'))
+            plotList = [plotList; 'Source Spectrogram'; 'Target Spectrogram'];
         end
         
         listboxContent = cellstr(get(handles.listbox1, 'String'));
@@ -53,6 +57,15 @@ switch action
             case 'Activations'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject);
+            case 'Source Spectrogram'
+%                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+                handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
+            case 'Target Spectrogram'
+                handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
+            case 'Synthesis Spectrogram'
+                resynthSpectrogram = Spectrogram(handles.SynthesisObject.NNMFSynthesis.Reconstruction, ...
+                                        handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
+                resynthSpectrogram.showSpectrogram(80);
         end
     case 'run'
 %         verifyParameters(handles)
@@ -68,9 +81,9 @@ switch action
         synth.computeSpectrogram('Source');
         synth.computeSpectrogram('Target');
         if(get(handles.checkbox2, 'Value'))
-            figure()
+%             figure()
             synth.SourceSpectrogram.showSpectrogram(80);
-            figure()
+%             figure()
             synth.TargetSpectrogram.showSpectrogram(80);
         end
         
