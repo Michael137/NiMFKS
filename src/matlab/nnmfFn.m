@@ -1,7 +1,7 @@
 %Diagonal appears if V=W under large number of iterations without
 %cost-break
 
-function [Y, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced, polyphonyRestricted)
+function [Y, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
@@ -20,6 +20,7 @@ H=random('unif',0, 1, K, M);
 r=3; %For repitition restricted activations
 c=2; %For continuity enhancing activation matrix
 p=2; %For polyphony restriction
+disp(convergenceCriteria)
 
 for l=1:L-1
     num=W'*V;
@@ -82,7 +83,7 @@ for l=1:L-1
     end  
     
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
-    if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<0.0005)) %TODO: Reconsider exit condition
+    if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<convergenceCriteria)) %TODO: Reconsider exit condition
         break;
     end
 end

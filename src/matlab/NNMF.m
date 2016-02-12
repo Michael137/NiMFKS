@@ -34,7 +34,7 @@ classdef NNMF
             H = NNMFObj.Activations;
             [~,I]=max(W);
             [~,Ix] = sort(I,'ascend');
-            imagesc(T,1:size(H,1),max(-20,20*log10(H(Ix,:)./max(H(:)))));
+            imagesc(T,1:size(H,1),max(-20,20*log10(H(Ix,:)./max(H(:))))); %TODO: Reconsider dB level
             cmap = colormap('gray');
             cmap(1,:) = 0*ones(1,3);
             colormap(flipud(cmap))

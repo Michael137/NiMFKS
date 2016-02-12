@@ -41,7 +41,7 @@ classdef Synthesis < handle
             end
         end
         
-        function obj = synthesize(obj, synthMethod, costMetric, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted)
+        function obj = synthesize(obj, synthMethod, costMetric, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria)
             if(strcmp(synthMethod, 'NNMF'))
                 target=abs(obj.TargetSpectrogram.S);
                 target(target == 0) = 1e-10;
@@ -53,7 +53,7 @@ classdef Synthesis < handle
                 %recon: reconstruction of target; frequency x time
                 %cost: distance measure between target and reconstruction
                 if(strcmp(costMetric, 'Euclidean'))
-                    [H, cost]=nnmfFn(target, source, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted);
+                    [H, cost]=nnmfFn(target, source, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria);
                     recon = obj.SourceSpectrogram.S*H;
                 elseif(strcmp(costMetric, 'Divergence'))
                     [H, cost]=nnmfFn_Div(target, source, iterations);

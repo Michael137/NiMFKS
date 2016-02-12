@@ -93,7 +93,7 @@ switch action
             
             costMetricSelected=get(handles.popupmenu3, 'Value');
             costMetrics=get(handles.popupmenu3, 'String');
-            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Value'), get(handles.checkbox9, 'Value'), get(handles.checkbox8, 'Value'));
+            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Value'), get(handles.checkbox9, 'Value'), get(handles.checkbox8, 'Value'), str2double(get(handles.edit15, 'String')));
             
             if(get(handles.checkbox1, 'Value'))
 %                 figure()
