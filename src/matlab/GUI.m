@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 12-Feb-2016 15:31:33
+% Last Modified by GUIDE v2.5 14-Feb-2016 14:59:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -618,3 +618,22 @@ function checkbox12_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox12
+
+
+% --- Executes when entered data in editable cell(s) in uitable3.
+function uitable3_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to uitable3 (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function uitable3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uitable3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

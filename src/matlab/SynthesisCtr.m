@@ -51,21 +51,27 @@ switch action
             case 'Resynthesis'
 %                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
                 handles.SynthesisObject.showResynthesis;
+                set(handles.uitable3, 'Data', handles.SynthesisObject.Resynthesis');
             case 'Cost'
 %                 set(handles.figure1, 'CurrentAxes', handles.CostPlot);
-                handles.SynthesisObject.NNMFSynthesis.showCost
+                handles.SynthesisObject.NNMFSynthesis.showCost;
+                set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
             case 'Activations'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject);
+                set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
             case 'Source Spectrogram'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
+                set(handles.uitable3, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
             case 'Target Spectrogram'
                 handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
+                set(handles.uitable3, 'Data', abs(handles.SynthesisObject.TargetSpectrogram.S));
             case 'Synthesis Spectrogram'
                 resynthSpectrogram = Spectrogram(handles.SynthesisObject.NNMFSynthesis.Reconstruction, ...
                                         handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
                 resynthSpectrogram.showSpectrogram(80);
+                set(handles.uitable3, 'Data', abs(resynthSpectrogram.S));
         end
     case 'run'
 %         verifyParameters(handles)
