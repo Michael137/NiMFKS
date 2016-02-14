@@ -75,9 +75,18 @@ switch action
         overlap = str2num(get(handles.edit10, 'String'));
         [Y, Fs] = audioread(get(handles.text7, 'String'));
         [Y2, Fs2] = audioread(get(handles.text5, 'String'));
+        
+        %Convert Monophonic sound
+        if(size(Y, 2) ~= 1)
+            Y = (Y(:,1)+Y(:,2))/2;
+        elseif(size(Y2, 2) ~= 1)
+            Y2 = (Y2(:,1)+Y2(:,2))/2;
+        end
+        
         Y=Y(1:min(portionLength*Fs, length(Y)));
         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
         synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+        
         synth.computeSpectrogram('Source');
         synth.computeSpectrogram('Target');
         if(get(handles.checkbox2, 'Value'))
