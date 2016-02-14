@@ -104,6 +104,11 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 InterfaceObj=findobj(handles.figure1,'Enable','on');
 set(InterfaceObj,'Enable','off');
 % SynthesisCtr('verifyParams', handles);
+
+waitbarHandle = waitbar(0, 'Starting Synthesis...'); 
+handles.waitbarHandle = waitbarHandle;
+guidata(hObject, handles);
+
 SynthesisCtr('run', handles);
 set(InterfaceObj,'Enable','on');
 % guidata(gcf, handles);
@@ -112,6 +117,8 @@ set(InterfaceObj,'Enable','on');
 set([handles.pushbutton18 handles.text8 handles.text26],'Visible','on')
 SynthesisCtr('configPlotlist', handles);
 SynthesisCtr('openResynthesis', handles);
+
+close(waitbarHandle)
 
 
 % --- Executes on button press in pushbutton2.

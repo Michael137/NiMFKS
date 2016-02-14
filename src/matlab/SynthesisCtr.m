@@ -76,6 +76,7 @@ switch action
     case 'run'
 %         verifyParameters(handles)
 %         performCalculations(handles)
+        waitbar(0.25, handles.waitbarHandle, 'Reading audio files...')
         portionLength = str2num(get(handles.edit11, 'String'));
         windowLength = str2num(get(handles.edit9, 'String'));
         overlap = str2num(get(handles.edit10, 'String'));
@@ -91,50 +92,55 @@ switch action
         
         Y=Y(1:min(portionLength*Fs, length(Y)));
         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+        
+        waitbar(0.5, handles.waitbarHandle, 'Performing audio analysis...')
         synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
         
         synth.computeSpectrogram('Source');
         synth.computeSpectrogram('Target');
-        if(get(handles.checkbox2, 'Value'))
-%             figure()
-            synth.SourceSpectrogram.showSpectrogram(80);
-%             figure()
-            synth.TargetSpectrogram.showSpectrogram(80);
-        end
+%         if(get(handles.checkbox2, 'Value'))
+% %             figure()
+%             synth.SourceSpectrogram.showSpectrogram(80);
+% %             figure()
+%             synth.TargetSpectrogram.showSpectrogram(80);
+%         end
         
         synthMethodSelected=get(handles.popupmenu2, 'Value');
         synthMethods=get(handles.popupmenu2, 'String');
+        
+        waitbar(0.75, handles.waitbarHandle, 'Performing synthesis...')
         if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
             
             costMetricSelected=get(handles.popupmenu3, 'Value');
             costMetrics=get(handles.popupmenu3, 'String');
             synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), get(handles.checkbox7, 'Value'), get(handles.checkbox9, 'Value'), get(handles.checkbox8, 'Value'), str2double(get(handles.edit15, 'String')));
-            
-            if(get(handles.checkbox1, 'Value'))
-%                 figure()
-                synth.NNMFSynthesis.showCost;
-%                 handles.CostPlot = gca;
-%                 guidata(handles.figure1, handles);
-            end
-            
-            if(get(handles.checkbox4, 'Value'))
-%                 figure()
-                synth.NNMFSynthesis.showActivations(synth);
-%                 handles.ActivationsPlot = gca;
-%                 guidata(handles.figure1, handles);
-            end
+%             
+%             if(get(handles.checkbox1, 'Value'))
+% %                 figure()
+%                 synth.NNMFSynthesis.showCost;
+% %                 handles.CostPlot = gca;
+% %                 guidata(handles.figure1, handles);
+%             end
+%             
+%             if(get(handles.checkbox4, 'Value'))
+% %                 figure()
+%                 synth.NNMFSynthesis.showActivations(synth);
+% %                 handles.ActivationsPlot = gca;
+% %                 guidata(handles.figure1, handles);
+%             end
         end
         
+        waitbar(0.9, handles.waitbarHandle, 'Performing resynthesis...')
         resynthMethodSelected=get(handles.popupmenu4, 'Value');
         resynthMethods=get(handles.popupmenu4, 'String');
         synth.resynthesize(resynthMethods(resynthMethodSelected));
         
-        if(get(handles.checkbox5, 'Value'))
-%             figure()
-            synth.showResynthesis;
-%             handles.ResynthesisPlot = gca;
-%             guidata(handles.figure1, handles);
-        end
+%         if(get(handles.checkbox5, 'Value'))
+% %             figure()
+%             synth.showResynthesis;
+% %             handles.ResynthesisPlot = gca;
+% %             guidata(handles.figure1, handles);
+%         end
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
