@@ -96,8 +96,10 @@ switch action
         waitbar(0.5, handles.waitbarHandle, 'Performing audio analysis...')
         synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
         
-        synth.computeSpectrogram('Source');
-        synth.computeSpectrogram('Target');
+        spectTypeSelected=get(handles.popupmenu5, 'Value');
+        spectTypes=get(handles.popupmenu5, 'String');
+        synth.computeSpectrogram('Source', spectTypes(spectTypeSelected));
+        synth.computeSpectrogram('Target', spectTypes(spectTypeSelected));
 %         if(get(handles.checkbox2, 'Value'))
 % %             figure()
 %             synth.SourceSpectrogram.showSpectrogram(80);

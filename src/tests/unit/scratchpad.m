@@ -1,5 +1,6 @@
-addpath(srcPath)
-addpath(assetsPath)
+% addpath(srcPath)
+% addpath(assetsPath)
+addpath(totalPath)
 %% Regular Synthesis
 clear all
 clc
@@ -62,60 +63,42 @@ synth.showResynthesis;
 %% Constant Q Spectrograms
 clear all
 clc
-portionLength = 2;
+portionLength = 5;
 windowLength=100;
 overlap=50;
-convergence = 0.0005;
-[Y, Fs] = audioread('glock2.wav');
-[Y2, Fs2] = audioread('glock2.wav');
+convergence = 0.000005;
+[Y, Fs] = audioread('sawtoothbirthday.wav');
+[Y2, Fs2] = audioread('sawtoothbirthday.wav');
 Y=Y(1:min(portionLength*Fs, length(Y)));
 Y2=Y2(1:min(portionLength*Fs, length(Y2)));
 
-%Compute Constant Q Spectrogram
-% Start with the basic (linear-freq) spectrogram matxix
-[S, F, T] = spectrogram(Y, window(@hann,(windowLength*Fs/1000)), windowLength*Fs/2000, 2048*8, Fs);
-spec = abs(S);
-spec(spec==0)=1e-5;
-D = log(spec);
-% We're going to do the mapping in the log-magnitude domain
-% so let's shift D so that a value of zero means something.
-minD = min(min(D));
-D = D - minD;
-% subplot(311)
-% imagesc(D); axis xy
-% colormap('jet');
-% c = caxis;
-% Design the mapping matrix to lose no bins at the top but 5 at the bottom
-[M,N] = logfmap(39,95,2499.25);
-size(M)
-% Our 257 bin FFT expands to 1006 log-F bins
-% Perform the mapping:
-MD = M.*spec;
-% MD = M*D;
-% subplot(312)
-% imagesc(abs(20*log10(MD)/max(max(abs(S))))); axis xy
-% imagesc(MD); axis xy
-% caxis(c);
-% Map back to the original axis space, just to check that we can
-% NMD = N*MD;
-% subplot(313)
-% imagesc(NMD); axis xy
-% colormap('jet');
-% colorbar
-% caxis(c)
+Q = 50;
+[s_q, f_q, t_q] = iir_cqt_spectrogram(Y,2048*8,windowLength*Fs/2000,Fs,Q);
+[s_q2, f_q2, t_q2] = iir_cqt_spectrogram(Y,2048*8,windowLength*Fs/2000,Fs,Q);
+padding = zeros(1, size(s_q, 2));
+padding2 = zeros(1, size(s_q2, 2));
+s_q = [s_q; padding];
+s_q2 = [s_q2; padding2];
 
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source')
-synth.SourceSpectrogram.showSpectrogram(80)
-synth.SourceSpectrogram = Spectrogram(MD, F, T);
-synth.TargetSpectrogram = Spectrogram(MD, F, T);
-synth.synthesize('NNMF', 'Euclidean', 10, false, false, false, convergence);
-figure()
-synth.NNMFSynthesis.showActivations(synth);
-figure()
+synth.computeSpectrogram('Target')
+synth.SourceSpectrogram = Spectrogram(s_q, f_q, t_q);
+synth.TargetSpectrogram = Spectrogram(s_q2, f_q2, t_q2);
+subplot(221)
 synth.SourceSpectrogram.showSpectrogram(80);
+subplot(222)
+synth.TargetSpectrogram.showSpectrogram(80);
+synth.synthesize('NNMF', 'Euclidean', 20, true, false, false, convergence);
+subplot(223)
+synth.NNMFSynthesis.showActivations(synth);
+subplot(224)
+synth.NNMFSynthesis.showCost;
+
+synth.resynthesize('ISTFT')
 figure()
-imagesc(D)
-axis xy
-figure()
-imagesc(synth.SourceSpectrogram.S)
+synth.showResynthesis;
+soundsc(synth.Resynthesis, Fs);
+%% Input parser test
+parseResult = inputParser_TEST(100, 40, 'windowLength', 20);
+parseResult.fs

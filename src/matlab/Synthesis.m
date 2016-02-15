@@ -27,14 +27,20 @@ classdef Synthesis < handle
             end
         end
         
-        function obj = computeSpectrogram(obj, identifier)
+        function obj = computeSpectrogram(obj, identifier, varargin)
+            if(nargin <= 2)
+                type = 'Regular';
+            else
+                type = varargin{1};
+            end
+            
             if(strcmp(identifier, 'Source'))
                 Y = obj.Source;
-                [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs);
+                [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs, 'Spectrogram', type);
                 obj.SourceSpectrogram = Spectrogram(S, F, T);
             elseif(strcmp(identifier, 'Target'))
                 Y = obj.Target;
-                [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs);
+                [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs, 'Spectrogram', type);
                 obj.TargetSpectrogram = Spectrogram(S, F, T);
             else
                 error(strcat('Invalid argument "', identifier, '". Use either "Source" or "Target".'));
