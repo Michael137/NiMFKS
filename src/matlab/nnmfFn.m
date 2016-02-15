@@ -83,9 +83,9 @@ for l=1:L-1
     end  
     
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
-%     if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<convergenceCriteria)) %TODO: Reconsider exit condition
-%         break;
-%     end
+    if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<convergenceCriteria)) %TODO: Reconsider exit condition
+        break;
+    end
 end
 
 Y=H;
