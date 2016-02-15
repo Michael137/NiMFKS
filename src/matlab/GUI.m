@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 14-Feb-2016 23:49:00
+% Last Modified by GUIDE v2.5 15-Feb-2016 21:00:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -109,7 +109,14 @@ waitbarHandle = waitbar(0, 'Starting Synthesis...');
 handles.waitbarHandle = waitbarHandle;
 guidata(hObject, handles);
 
-SynthesisCtr('run', handles);
+if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
+    tic
+    SynthesisCtr('run', handles);
+    toc
+else
+    SynthesisCtr('run', handles);    
+end
+
 set(InterfaceObj,'Enable','on');
 % guidata(gcf, handles);
 
@@ -667,3 +674,36 @@ function popupmenu5_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --------------------------------------------------------------------
+function tool_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_timer_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev_timer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(get(hObject,'Checked'),'on')
+    set(hObject,'Checked','off');
+else 
+    set(hObject,'Checked','on');
+end
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_timer_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev_timer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

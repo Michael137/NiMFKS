@@ -1,8 +1,24 @@
-function [H, cost] = nnmfFn_Div(V, W, L)
+function [H, cost] = nnmfFn_Div(V, W, L, varargin)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
 cost=0;
+
+parser = inputParser;
+addRequired(parser, 'V')
+addRequired(parser, 'W')
+addRequired(parser, 'L')
+addParameter(parser, 'repititionRestricted', false)
+addParameter(parser, 'continuityEnhanced', false)
+addParameter(parser, 'polyphonyRestricted', false)
+addParameter(parser, 'convergenceCriteria', 0.05)
+
+parse(parser, V, W, L, varargin{:});
+
+r=3; %For repitition restricted activations
+c=2; %For continuity enhancing activation matrix
+p=2; %For polyphony restriction
+fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 
 K=size(W, 2);
 M=size(V, 2);
@@ -27,7 +43,7 @@ for l=1:L-1
     
 %     cost(l)=norm(V-W*H, 'fro');
     cost(l)=KLDivCost(V, W*H);
-    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=0.05)) %TODO: Reconsider exit condition
+    if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
         break;
     end
 %     disp(l)

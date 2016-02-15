@@ -62,7 +62,8 @@ classdef Synthesis < handle
                     [H, cost]=nnmfFn(target, source, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria);
                     recon = obj.SourceSpectrogram.S*H;
                 elseif(strcmp(costMetric, 'Divergence'))
-                    [H, cost]=nnmfFn_Div(target, source, iterations);
+                    [H, cost]=nnmfFn_Div(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
+                                            'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria);
                     recon = obj.SourceSpectrogram.S*H;
                 end
                 

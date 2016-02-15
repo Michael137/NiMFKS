@@ -102,3 +102,17 @@ soundsc(synth.Resynthesis, Fs);
 %% Input parser test
 parseResult = inputParser_TEST(100, 40, 'windowLength', 20);
 parseResult.fs
+%% Creating musical scale using sin waves
+
+Fs=44100;
+Ts=1/Fs;
+t=[0:Ts:1];
+
+soundMix = [];
+
+for freq = [440, 466.16, 493.88, 523.25, 554.37]
+    soundMix=[soundMix, sin(2*pi*freq*t)];
+end
+
+sound(soundMix, Fs)
+audiowrite('sinScale.wav', soundMix, Fs);

@@ -20,7 +20,7 @@ H=random('unif',0, 1, K, M);
 r=3; %For repitition restricted activations
 c=2; %For continuity enhancing activation matrix
 p=2; %For polyphony restriction
-disp(convergenceCriteria)
+fprintf('Convergence Criteria: %d%%\n', 100*convergenceCriteria)
 
 for l=1:L-1
     num=W'*V;
