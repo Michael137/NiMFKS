@@ -12,15 +12,18 @@ addParameter(parser, 'repititionRestricted', false)
 addParameter(parser, 'continuityEnhanced', false)
 addParameter(parser, 'polyphonyRestricted', false)
 addParameter(parser, 'convergenceCriteria', 0.05)
+addParameter(parser, 'r', 3) %For repitition restricted activations
+addParameter(parser, 'c', 2) %For continuity enhancing activation matrix
+addParameter(parser, 'p', 3) %For polyphony restriction
 
 parse(parser, V, W, L, varargin{:});
 repititionRestricted = parser.Results.repititionRestricted;
 polyphonyRestricted = parser.Results.polyphonyRestricted;
 continuityEnhanced = parser.Results.continuityEnhanced;
+r = parser.Results.r;
+c = parser.Results.c;
+p = parser.Results.p;
 
-r=3; %For repitition restricted activations
-c=2; %For continuity enhancing activation matrix
-p=2; %For polyphony restriction
 fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 
 K=size(W, 2);

@@ -1,10 +1,29 @@
 %Diagonal appears if V=W under large number of iterations without
 %cost-break
 
-function [Y, cost] = nnmfFn(V, W, L, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria)
+function [Y, cost] = nnmfFn(V, W, L, varargin)
 %L: Iterations
 %V: Matrix to be factorized
 %W: Source matrix
+parser = inputParser;
+addRequired(parser, 'V')
+addRequired(parser, 'W')
+addRequired(parser, 'L')
+addParameter(parser, 'repititionRestricted', false)
+addParameter(parser, 'continuityEnhanced', false)
+addParameter(parser, 'polyphonyRestricted', false)
+addParameter(parser, 'convergenceCriteria', 0.005)
+addParameter(parser, 'r', 3) %For repitition restricted activations
+addParameter(parser, 'c', 2) %For continuity enhancing activation matrix
+addParameter(parser, 'p', 3) %For polyphony restriction
+
+parse(parser, V, W, L, varargin{:});
+repititionRestricted = parser.Results.repititionRestricted;
+polyphonyRestricted = parser.Results.polyphonyRestricted;
+continuityEnhanced = parser.Results.continuityEnhanced;
+r = parser.Results.r;
+c = parser.Results.c;
+p = parser.Results.p;
 
 cost=0;
 
@@ -17,10 +36,7 @@ M=targetDim(2);
 %Range: [0, 1)
 H=random('unif',0, 1, K, M);
 
-r=3; %For repitition restricted activations
-c=2; %For continuity enhancing activation matrix
-p=2; %For polyphony restriction
-fprintf('Convergence Criteria: %d%%\n', 100*convergenceCriteria)
+fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 
 for l=1:L-1
     num=W'*V;
@@ -83,7 +99,7 @@ for l=1:L-1
     end  
     
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
-    if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<convergenceCriteria)) %TODO: Reconsider exit condition
+    if(l>5 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
         break;
     end
 end

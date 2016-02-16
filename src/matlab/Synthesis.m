@@ -47,7 +47,28 @@ classdef Synthesis < handle
             end
         end
         
-        function obj = synthesize(obj, synthMethod, costMetric, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria)
+        function obj = synthesize(obj, synthMethod, costMetric, iterations, varargin)
+            parser = inputParser;
+            addRequired(parser, 'synthMethod');
+            addRequired(parser, 'costMetric');
+            addRequired(parser, 'iterations');
+            addParameter(parser, 'repititionRestricted', false);
+            addParameter(parser, 'continuityEnhanced', false);
+            addParameter(parser, 'polyphonyRestricted', false);
+            addParameter(parser, 'convergenceCriteria', 0.0005);
+            addParameter(parser, 'r', 3);
+            addParameter(parser, 'c', 2);
+            addParameter(parser, 'p', 3);
+            parse(parser, synthMethod, costMetric, iterations, varargin{:});
+            
+            repititionRestricted = parser.Results.repititionRestricted;
+            continuityEnhanced = parser.Results.continuityEnhanced;
+            polyphonyRestricted = parser.Results.polyphonyRestricted;
+            convergenceCriteria = parser.Results.convergenceCriteria;
+            r = parser.Results.r;
+            c = parser.Results.c;
+            p = parser.Results.p;
+            
             if(strcmp(synthMethod, 'NNMF'))
                 target=abs(obj.TargetSpectrogram.S);
                 target(target == 0) = 1e-10;
@@ -59,11 +80,14 @@ classdef Synthesis < handle
                 %recon: reconstruction of target; frequency x time
                 %cost: distance measure between target and reconstruction
                 if(strcmp(costMetric, 'Euclidean'))
-                    [H, cost]=nnmfFn(target, source, iterations, repititionRestricted, continuityEnhanced, polyphonyRestricted, convergenceCriteria);
+                    [H, cost]=nnmfFn(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
+                                            'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
+                                            'r', r, 'c', c, 'p', p);
                     recon = obj.SourceSpectrogram.S*H;
                 elseif(strcmp(costMetric, 'Divergence'))
                     [H, cost]=nnmfFn_Div(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
-                                            'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria);
+                                            'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
+                                            'r', r, 'c', c, 'p', p);
                     recon = obj.SourceSpectrogram.S*H;
                 end
                 

@@ -15,7 +15,7 @@ Y2=Y2(1:min(portionLength*Fs, length(Y2)));
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
-synth.synthesize('NNMF', 'Euclidean', 20, true, false, false, convergence);
+synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', false, 'polyphonyRestricted', false, 'convergenceCriteria', convergence);
 synth.NNMFSynthesis.showActivations(synth);
 figure()
 synth.NNMFSynthesis.showCost;
@@ -33,7 +33,7 @@ Y2=Y2(1:min(portionLength*Fs, length(Y2)));
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
-synth.synthesize('NNMF', 'Euclidean', 100, false, false, false, convergence);
+synth.synthesize('NNMF', 'Euclidean', 100, 'repititionRestricted', true, 'continuityEnhanced', false, 'polyphonyRestricted', false, 'convergenceCriteria', convergence);
 synth.NNMFSynthesis.showActivations(synth);
 figure()
 synth.resynthesize('ISTFT');

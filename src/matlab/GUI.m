@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 15-Feb-2016 21:00:25
+% Last Modified by GUIDE v2.5 16-Feb-2016 19:58:02
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,8 +63,8 @@ set(handles.pushbutton11,'CData',g);
 set(handles.pushbutton15,'CData',g);  
 set(handles.pushbutton18,'CData',g);
 
-%Set resynthesis file explorer to invisible
-set([handles.pushbutton18 handles.text8 handles.text26],'Visible','off')
+%Set resynthesis file explorer and restriction parameters to invisible
+set([handles.pushbutton18 handles.text8 handles.text26 handles.edit19 handles.edit20 handles.edit21],'Visible','off')
 
 %Initialize parameters
 set(handles.edit9,'String','100'); %Window length
@@ -73,6 +73,9 @@ set(handles.edit11,'String','5'); %Length of synthesis
 set(handles.edit13,'String','20'); %NNMF Iterations
 set(handles.edit14,'String','0'); %NNMF Activations Random Seed
 set(handles.edit15,'String','0.0005'); %NNMF Convergence Criteria
+set(handles.edit19,'String','3'); %Repitition restriction parameter
+set(handles.edit20,'String','3'); %Polyphony restriction parameter
+set(handles.edit21,'String','2'); %Continuity enhancement parameter
 
 % Choose default command line output for GUI
 handles.output = hObject;
@@ -564,7 +567,11 @@ function checkbox7_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox7
-
+if(get(hObject, 'Value'))
+    set(handles.edit19,'Visible','on')
+else
+    set(handles.edit19,'Visible','off')
+end
 
 % --- Executes on button press in checkbox9.
 function checkbox8_Callback(hObject, eventdata, handles)
@@ -573,7 +580,11 @@ function checkbox8_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox9
-
+if(get(hObject, 'Value'))
+    set(handles.edit20,'Visible','on')
+else
+    set(handles.edit20,'Visible','off')
+end
 
 % --- Executes on button press in checkbox9.
 function checkbox9_Callback(hObject, eventdata, handles)
@@ -582,8 +593,11 @@ function checkbox9_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox9
-
-
+if(get(hObject, 'Value'))
+    set(handles.edit21,'Visible','on')
+else
+    set(handles.edit21,'Visible','off')
+end
 
 function edit15_Callback(hObject, eventdata, handles)
 % hObject    handle to edit15 (see GCBO)
@@ -707,3 +721,72 @@ function tool_menu_dev_timer_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to tool_menu_dev_timer (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function edit19_Callback(hObject, eventdata, handles)
+% hObject    handle to edit19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit19 as text
+%        str2double(get(hObject,'String')) returns contents of edit19 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit19_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit20_Callback(hObject, eventdata, handles)
+% hObject    handle to edit20 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit20 as text
+%        str2double(get(hObject,'String')) returns contents of edit20 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit20_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit20 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit21_Callback(hObject, eventdata, handles)
+% hObject    handle to edit21 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit21 as text
+%        str2double(get(hObject,'String')) returns contents of edit21 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit21_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit21 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
