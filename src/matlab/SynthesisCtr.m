@@ -83,7 +83,7 @@ switch action
         [Y, Fs] = audioread(get(handles.text7, 'String'));
         [Y2, Fs2] = audioread(get(handles.text5, 'String'));
         
-        %Convert Monophonic sound
+        %Convert to Monophonic sound
         if(size(Y, 2) ~= 1)
             Y = (Y(:,1)+Y(:,2))/2;
         elseif(size(Y2, 2) ~= 1)

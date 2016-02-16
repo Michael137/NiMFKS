@@ -17,7 +17,7 @@ for k=1:size(H, 2)
 %             segments(k, :)=segments(k, :)'+ X(location:location+windowLength-1)*extracted(i);
         end
     end
-%     m=m+overlap;
+%     m=m+overlap;  
 end
 
 i=1;

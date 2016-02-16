@@ -108,11 +108,23 @@ Fs=44100;
 Ts=1/Fs;
 t=[0:Ts:1];
 
-soundMix = [];
+%f_i=440*2^i/12
 
-for freq = [440, 466.16, 493.88, 523.25, 554.37]
-    soundMix=[soundMix, sin(2*pi*freq*t)];
+soundMix = [];
+win = window(@hann, length(t))';
+
+for freq = 110*2.^([5, 20, 40]/12)
+    soundMix=[soundMix, win.*sin(2*pi*(freq)*t)];
 end
 
 sound(soundMix, Fs)
 audiowrite('sinScale.wav', soundMix, Fs);
+
+%Add ADSR envelope
+%Fix template addition when used with CQT's
+%Divergence Restriction
+%Restriction GUI parameters
+%Experiments: save sound files (add save feature in GUI)
+%Conference paper outline
+%Pre-processing templates and manipulating activations based on feature comparison
+%Activation sketching
