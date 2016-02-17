@@ -15,6 +15,14 @@ switch action
     case 'openResynthesis'
         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
         set(handles.text8, 'String', pathname);
+    case 'savePlot'
+        frame = getframe(handles.axes1);
+        image = frame2im(frame);
+        [file,path] = uiputfile({'*.png'},'Save As');
+        imwrite(image, strcat(path, file));
+    case 'exportResynth'
+        [file,path] = uiputfile({'*.wav'},'Save Sound As');
+        copyfile('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', strcat(path, file));
     case 'playTarget'
         [y, Fs] = audioread(get(handles.text5, 'String'));
         soundsc(y, Fs);
@@ -149,6 +157,15 @@ switch action
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
+    case 'Resynthesize'
+        synth = handles.SynthesisObject;
+        H = synth.NNMFSynthesis.Activations;
+        C = synth.NNMFSynthesis.Cost;
+        resynthMethodSelected=get(handles.popupmenu4, 'Value');
+        resynthMethods=get(handles.popupmenu4, 'String');
+        recon = synth.SourceSpectrogram.S*H;
+        synth.NNMFSynthesis = NNMF(H, recon, C);
+        synth.resynthesize(resynthMethods(resynthMethodSelected));
 end
 
 % function performCalculations()

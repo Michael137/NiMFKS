@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 16-Feb-2016 19:58:02
+% Last Modified by GUIDE v2.5 17-Feb-2016 01:05:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -790,3 +790,114 @@ function edit21_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --------------------------------------------------------------------
+function file_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to file_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function file_menu_export_Callback(hObject, eventdata, handles)
+% hObject    handle to file_menu_export (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+SynthesisCtr('exportResynth', handles');
+
+% --------------------------------------------------------------------
+function uipushtool1_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to uipushtool1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+SynthesisCtr('savePlot', handles);
+
+
+% --------------------------------------------------------------------
+function file_menu_export_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to file_menu_export (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function draw_activations_OnCallback(hObject, eventdata, handles)
+% hObject    handle to draw_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(gcf,'WindowButtonDownFcn',{@wbdcb, 'Draw'})
+
+
+% --------------------------------------------------------------------
+function draw_activations_OffCallback(hObject, eventdata, handles)
+% hObject    handle to draw_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(gcf,'WindowButtonDownFcn','')
+
+
+% --------------------------------------------------------------------
+function delete_activations_OffCallback(hObject, eventdata, handles)
+% hObject    handle to delete_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(gcf,'WindowButtonDownFcn','')
+
+
+% --------------------------------------------------------------------
+function delete_activations_OnCallback(hObject, eventdata, handles)
+% hObject    handle to delete_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(gcf,'WindowButtonDownFcn',{@wbdcb, 'Erase'})
+
+
+% --- Executes on slider movement.
+function slider3_Callback(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function slider3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in pushbutton19.
+function pushbutton19_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+SynthesisCtr('Resynthesize', handles);
+
+% --------------------------------------------------------------------
+function draw_activations_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to draw_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% acts = handles.SynthesisObject.NNMFSynthesis.Activations;
+% set(handles.slider3, 'Value', floor(mean(acts)));
+% set(handles.slider3, 'Max', floor(max(max(acts))));
+% set(handles.slider3, 'Min', floor(min(min(acts))));
+% set(handles.slider3, 'SliderStep', floor([min(min(acts)) mean(mean(acts))]));
+% guidata(hObject, handles);
+
+acts = handles.SynthesisObject.NNMFSynthesis.Activations;
+set(handles.slider3, 'Max', max(max(acts)));
+set(handles.slider3, 'Value', mean(mean(acts)));
+set(handles.slider3, 'Min', min(min(acts)));
+set(handles.slider3, 'SliderStep', [mean(mean(acts)) mean(mean(acts))]);
+guidata(hObject, handles);

@@ -122,9 +122,16 @@ audiowrite('sinScale.wav', soundMix, Fs);
 
 %Add ADSR envelope
 %Fix template addition when used with CQT's
-%Divergence Restriction
-%Restriction GUI parameters
-%Experiments: save sound files (add save feature in GUI)
+%Divergence Restriction: DONE
+%Restriction GUI parameters: DONE
+%Experiments: save sound files
+%Add save feature in GUI: DONE
 %Conference paper outline
 %Pre-processing templates and manipulating activations based on feature comparison
 %Activation sketching
+%% Activation Sketching
+figure('WindowButtonDownFcn',@wbdcb)
+ah = axes;
+axis([1 10 1 10])
+title('Click and drag')
+
