@@ -826,7 +826,7 @@ function draw_activations_OnCallback(hObject, eventdata, handles)
 % hObject    handle to draw_activations (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set(gcf,'WindowButtonDownFcn',{@wbdcb, 'Draw'})
+set(gcf,'WindowButtonDownFcn',{@drawClickCallBack, 'Draw'})
 
 
 % --------------------------------------------------------------------
@@ -850,7 +850,7 @@ function delete_activations_OnCallback(hObject, eventdata, handles)
 % hObject    handle to delete_activations (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set(gcf,'WindowButtonDownFcn',{@wbdcb, 'Erase'})
+set(gcf,'WindowButtonDownFcn',{@drawClickCallBack, 'Erase'})
 
 
 % --- Executes on slider movement.
