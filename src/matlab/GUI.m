@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 18-Feb-2016 23:54:21
+% Last Modified by GUIDE v2.5 19-Feb-2016 21:50:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -940,3 +940,34 @@ function radiobutton5_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of radiobutton5
+
+
+% --------------------------------------------------------------------
+function template_manipulation_tool_OffCallback(hObject, eventdata, handles)
+% hObject    handle to template_manipulation_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(gcf,'WindowKeyPressFcn','')
+set(gcf,'WindowScrollWheelFcn','')
+
+% --------------------------------------------------------------------
+function template_manipulation_tool_OnCallback(hObject, eventdata, handles)
+% hObject    handle to template_manipulation_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+set(gcf,'WindowKeyPressFcn',@templateDelCb)
+set(gcf,'WindowScrollWheelFcn',{@templateScrollCb, findobj(gca,'Type','line')})
+
+
+% --------------------------------------------------------------------
+function template_manipulation_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to template_manipulation_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+templates = handles.SynthesisObject.SourceSpectrogram.S;
+[~,I]=max(templates);
+[~,Ix] = sort(I,'ascend');
+handles.templateIndices = Ix;
+guidata(hObject, handles);

@@ -39,6 +39,10 @@ switch action
             plotList = [plotList; 'Cost'];
         end
         
+        if(get(handles.checkbox3, 'Value'))
+            plotList = [plotList; 'Source Templates'];
+        end
+        
         if(get(handles.checkbox5, 'Value'))
             plotList = [plotList; 'Resynthesis'; 'Synthesis Spectrogram'];
         end
@@ -55,6 +59,8 @@ switch action
         set(handles.listbox1, 'String', [plotList; listboxContent]);
     case 'switchPlot'
         contents = cellstr(get(handles.listbox1,'String'));
+        delete(handles.axes1.Children);
+%         view(0, 90);
         switch(contents{get(handles.listbox1,'Value')})
             case 'Resynthesis'
 %                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
@@ -80,6 +86,9 @@ switch action
                                         handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
                 resynthSpectrogram.showSpectrogram(80);
                 set(handles.uitable3, 'Data', abs(resynthSpectrogram.S));
+            case 'Source Templates'
+                handles.SynthesisObject.showTemplates;
+                set(handles.uitable3, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
         end
     case 'run'
 %         verifyParameters(handles)

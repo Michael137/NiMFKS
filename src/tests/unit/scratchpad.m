@@ -134,4 +134,23 @@ figure('WindowButtonDownFcn',@wbdcb)
 ah = axes;
 axis([1 10 1 10])
 title('Click and drag')
-
+%% Template Manipulation
+clear all
+clc
+portionLength = 1;
+windowLength=100;
+overlap=50;
+convergence = 0.0005;
+[Y, Fs] = audioread('glock2.wav');
+[Y2, Fs2] = audioread('sawtoothbirthday.wav');
+Y=Y(1:min(portionLength*Fs, length(Y)));
+Y2=Y2(1:min(portionLength*Fs, length(Y2))); 
+synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+synth.computeSpectrogram('Source');
+synth.computeSpectrogram('Target');
+showTemplates(abs(synth.SourceSpectrogram.S), synth.SourceSpectrogram.F);
+% figure()
+% showTemplates(abs(synth.TargetSpectrogram.S), synth.TargetSpectrogram.F);
+h = findobj(gca,'Type','line');
+set(gcf, 'WindowScrollWheelFcn', {@wscb, h});
+set(gcf, 'WindowKeyPressFcn', @wkpcb);
