@@ -28,14 +28,20 @@ classdef NNMF
     end
     
     methods
-        function showActivations(NNMFObj, SynthObj)
+        function showActivations(NNMFObj, SynthObj, varargin)
+            if(nargin > 2)
+                maxDb = varargin{1};
+            else
+                maxDb = -45;
+            end
+            
             W = abs(SynthObj.SourceSpectrogram.S);
             T = SynthObj.TargetSpectrogram.T;
             H = NNMFObj.Activations;
 %             [~,I]=max(W);
 %             [~,Ix] = sort(I,'ascend');
 %             imagesc(T,1:size(H,1),max(-20,20*log10(H(Ix,:)./max(H(:))))); %TODO: Reconsider dB level
-            imagesc(max(-20,20*log10(H./max(max((H))))));
+            imagesc(max(maxDb,20*log10(H./max(max((H))))));
 %             imagesc(H);
             cmap = colormap('gray');
             cmap(1,:) = 0*ones(1,3);
@@ -45,6 +51,7 @@ classdef NNMF
 %             set(gca,'XTick',[0:0.5:T(end)],'XTickLabel','');
             set(gca, 'Layer', 'top');
             ylabel('Template');
+            xlabel('Time');
             grid on;
             set(gca,'FontSize',16);
         end

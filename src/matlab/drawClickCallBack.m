@@ -10,6 +10,15 @@ xUnit = xLimits/size(acts, 2);
 
 sliderHandle = handles.slider3;
 
+paintBrush = handles.uibuttongroup11.SelectedObject.String;
+paintBrushSize = 0;
+
+if(strcmp(paintBrush, 'Large Brush'))
+    paintBrushSize = 1;
+else(strcmp(paintBrush, 'Small Brush'))
+    paintBrushSize = 0;
+end
+
 if(strcmp(action, 'Draw'))
     src.Pointer = 'cross';
     fillValue = get(sliderHandle, 'Value')
@@ -21,7 +30,7 @@ end
 cp = ah.CurrentPoint;
 cx = cp(1,1)/xUnit(2)
 cy = cp(1,2)
-acts(ceil(cy), ceil(cx)) = fillValue;
+acts((ceil(cy) - paintBrushSize):(ceil(cy) + paintBrushSize), (ceil(cx) - paintBrushSize):(ceil(cx) + paintBrushSize)) = fillValue;
 handles.SynthesisObject.NNMFSynthesis.Activations = acts;
 size(acts, 1)
 guidata(src, handles);
@@ -34,7 +43,7 @@ src.WindowButtonUpFcn = @releaseCallBack;
         cx = cp(1,1)/xUnit(2);
         cy = cp(1,2);
 %         fprintf('X: %u Y: %u', ceil(cy), ceil(cx))
-        acts(ceil(cy), ceil(cx)) = fillValue;
+        acts((ceil(cy) - paintBrushSize):(ceil(cy) + paintBrushSize), (ceil(cx) - paintBrushSize):(ceil(cx) + paintBrushSize)) = fillValue;
         handles.SynthesisObject.NNMFSynthesis.Activations = acts;
         guidata(src, handles);
     end

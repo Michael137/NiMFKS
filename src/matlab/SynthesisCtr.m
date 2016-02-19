@@ -52,7 +52,7 @@ switch action
         end
         
         listboxContent = cellstr(get(handles.listbox1, 'String'));
-        set(handles.listbox1, 'String', [listboxContent; plotList]);
+        set(handles.listbox1, 'String', [plotList; listboxContent]);
     case 'switchPlot'
         contents = cellstr(get(handles.listbox1,'String'));
         switch(contents{get(handles.listbox1,'Value')})
@@ -66,7 +66,7 @@ switch action
                 set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
             case 'Activations'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
-                handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject);
+                handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.slider4, 'Value'));
                 set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
             case 'Source Spectrogram'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);

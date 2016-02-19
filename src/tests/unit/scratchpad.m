@@ -89,7 +89,7 @@ subplot(221)
 synth.SourceSpectrogram.showSpectrogram(80);
 subplot(222)
 synth.TargetSpectrogram.showSpectrogram(80);
-synth.synthesize('NNMF', 'Euclidean', 20, true, false, false, convergence);
+synth.synthesize('NNMF', 'Euclidean', 20);
 subplot(223)
 synth.NNMFSynthesis.showActivations(synth);
 subplot(224)

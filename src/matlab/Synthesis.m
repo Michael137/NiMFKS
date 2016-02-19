@@ -105,7 +105,7 @@ classdef Synthesis < handle
                 obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
 %                 obj.Resynthesis(abs(obj.Resynthesis)>5)=mean(obj.Resynthesis);
 %                 obj.Resynthesis=obj.Resynthesis/max(abs(obj.Resynthesis));
-                audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis, obj.Fs);
+                audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis/max(abs(obj.Resynthesis)), obj.Fs);
             end
         end
         
