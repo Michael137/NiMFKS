@@ -66,18 +66,22 @@ switch action
 %                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
                 handles.SynthesisObject.showResynthesis;
                 set(handles.uitable3, 'Data', handles.SynthesisObject.Resynthesis');
+%                 fig2plotly()
             case 'Cost'
 %                 set(handles.figure1, 'CurrentAxes', handles.CostPlot);
                 handles.SynthesisObject.NNMFSynthesis.showCost;
                 set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
+%                 fig2plotly()
             case 'Activations'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.slider4, 'Value'));
                 set(handles.uitable3, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
+%                 fig2plotly()
             case 'Source Spectrogram'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
                 set(handles.uitable3, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
+%                 fig2plotly()
             case 'Target Spectrogram'
                 handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
                 set(handles.uitable3, 'Data', abs(handles.SynthesisObject.TargetSpectrogram.S));
@@ -89,8 +93,9 @@ switch action
             case 'Source Templates'
                 handles.SynthesisObject.showTemplates;
                 set(handles.uitable3, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
+%                 fig2plotly()
         end
-    case 'run'
+    case 'run' %Separate into further modules; controller helper functions file
 %         verifyParameters(handles)
 %         performCalculations(handles)
         waitbar(0.25, handles.waitbarHandle, 'Reading audio files...')

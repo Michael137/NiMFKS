@@ -6,6 +6,10 @@ xAxisProps = get(ah, 'XAxis');
 xLimits = get(xAxisProps, 'Limits')
 
 acts = handles.SynthesisObject.NNMFSynthesis.Activations;
+
+yMax = size(acts, 1);
+xMax = size(acts, 2);
+
 xUnit = xLimits/size(acts, 2);
 
 sliderHandle = handles.slider3;
@@ -30,7 +34,29 @@ end
 cp = ah.CurrentPoint;
 cx = cp(1,1)/xUnit(2)
 cy = cp(1,2)
-acts((ceil(cy) - paintBrushSize):(ceil(cy) + paintBrushSize), (ceil(cx) - paintBrushSize):(ceil(cx) + paintBrushSize)) = fillValue;
+
+drawXMax = (ceil(cx) + paintBrushSize);
+drawYMax = (ceil(cy) + paintBrushSize);
+drawXMin = (ceil(cx) - paintBrushSize);
+drawYMin = (ceil(cy) - paintBrushSize);
+
+if(drawXMax >= xMax)
+	drawXMax = xMax;
+end
+    
+if(drawYMax >= yMax)
+	drawYMax = yMax;
+end
+
+if(drawXMin <=0)
+    drawXMin = 1;
+end
+
+if(drawYMin <=0)
+    drawYMin = 1;
+end
+
+acts(drawYMin:drawYMax, drawXMin:drawXMax) = fillValue;
 handles.SynthesisObject.NNMFSynthesis.Activations = acts;
 size(acts, 1)
 guidata(src, handles);
@@ -42,8 +68,30 @@ src.WindowButtonUpFcn = @releaseCallBack;
         cp = ah.CurrentPoint;
         cx = cp(1,1)/xUnit(2);
         cy = cp(1,2);
-%         fprintf('X: %u Y: %u', ceil(cy), ceil(cx))
-        acts((ceil(cy) - paintBrushSize):(ceil(cy) + paintBrushSize), (ceil(cx) - paintBrushSize):(ceil(cx) + paintBrushSize)) = fillValue;
+        
+        drawXMax = (ceil(cx) + paintBrushSize);
+        drawYMax = (ceil(cy) + paintBrushSize);
+        drawXMin = (ceil(cx) - paintBrushSize);
+        drawYMin = (ceil(cy) - paintBrushSize);
+        
+        if(drawXMax >= xMax)
+            drawXMax = xMax;
+        end
+        
+        if(drawYMax >= yMax)
+            drawYMax = yMax;
+        end
+        
+        if(drawXMin <=0)
+            drawXMin = 1;
+        end
+        
+        if(drawYMin <=0)
+            drawYMin = 1;
+        end
+        
+        %         fprintf('X: %u Y: %u', ceil(cy), ceil(cx))
+        acts(drawYMin:drawYMax, drawXMin:drawXMax) = fillValue;
         handles.SynthesisObject.NNMFSynthesis.Activations = acts;
         guidata(src, handles);
     end

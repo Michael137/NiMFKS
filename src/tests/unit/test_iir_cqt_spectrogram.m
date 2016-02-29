@@ -33,7 +33,7 @@ Q = 13;
 
 
 % Load the example excerpt
-[y,fs] = audioread('example1.wav');
+[y,fs] = audioread('glock2.wav');
 
 disp('Calculating STFT Spectrogram.')
 tic

@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 19-Feb-2016 21:50:48
+% Last Modified by GUIDE v2.5 29-Feb-2016 22:48:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -127,6 +127,11 @@ set(InterfaceObj,'Enable','on');
 set([handles.pushbutton18 handles.text8 handles.text26],'Visible','on')
 SynthesisCtr('configPlotlist', handles);
 SynthesisCtr('openResynthesis', handles);
+
+if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
+    synthObj = handles.SynthesisObject;
+    save('synth.mat','synthObj');
+end
 
 close(waitbarHandle)
 
@@ -971,3 +976,15 @@ templates = handles.SynthesisObject.SourceSpectrogram.S;
 [~,Ix] = sort(I,'ascend');
 handles.templateIndices = Ix;
 guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_exportWorkspace_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev_exportWorkspace (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(get(hObject,'Checked'),'on')
+    set(hObject,'Checked','off');
+else 
+    set(hObject,'Checked','on');
+end

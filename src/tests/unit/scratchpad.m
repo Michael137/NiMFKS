@@ -95,10 +95,14 @@ synth.NNMFSynthesis.showActivations(synth);
 subplot(224)
 synth.NNMFSynthesis.showCost;
 
+
+fig2plotly()
+
 synth.resynthesize('ISTFT')
 figure()
 synth.showResynthesis;
-soundsc(synth.Resynthesis, Fs);
+fig2plotly()
+% soundsc(synth.Resynthesis, Fs);
 %% Input parser test
 parseResult = inputParser_TEST(100, 40, 'windowLength', 20);
 parseResult.fs
@@ -113,12 +117,12 @@ t=[0:Ts:1];
 soundMix = [];
 win = window(@hann, length(t))';
 
-for freq = 110*2.^([5, 20, 40]/12)
+for freq = 110*2.^([30:60]/12)
     soundMix=[soundMix, win.*sin(2*pi*(freq)*t)];
 end
 
-sound(soundMix, Fs)
-audiowrite('sinScale.wav', soundMix, Fs);
+% sound(soundMix, Fs)
+audiowrite('highFreqSinScale.wav', soundMix, Fs);
 
 %Add ADSR envelope
 %Fix template addition when used with CQT's
@@ -154,3 +158,29 @@ showTemplates(abs(synth.SourceSpectrogram.S), synth.SourceSpectrogram.F);
 h = findobj(gca,'Type','line');
 set(gcf, 'WindowScrollWheelFcn', {@wscb, h});
 set(gcf, 'WindowKeyPressFcn', @wkpcb);
+%% Testing plot.ly API
+imagesc(magic(5))
+fig2plotly()
+%% Griffin-Lim Algorithm Test
+clear all
+clc
+portionLength = 15;
+windowLength=100;
+overlap=50;
+convergence = 0.00005;
+[Y, Fs] = audioread('glock2.wav');
+[Y2, Fs2] = audioread('glock2.wav');
+Y=Y(1:min(portionLength*Fs, length(Y)));
+Y2=Y2(1:min(portionLength*Fs, length(Y2))); 
+synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+synth.computeSpectrogram('Source');
+synth.computeSpectrogram('Target');
+synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', false, 'polyphonyRestricted', false, 'convergenceCriteria', convergence);
+
+figure()
+% synth.resynthesize('ISTFT'); % Method 1
+% synth.resynthesize('Template Addition'); % Method 2
+spect = synth.NNMFSynthesis.Reconstruction; % Method 3
+[synth.Resynthesis error] = InvertSpectrogram(spect(1:size(spect, 1)-1, :), 1000, 20);
+synth.showResynthesis;
+soundsc(synth.Resynthesis, Fs/2)
