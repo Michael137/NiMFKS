@@ -112,7 +112,7 @@ switch action
             Y2 = (Y2(:,1)+Y2(:,2))/2;
         end
         
-        Y=Y(1:min(portionLength*Fs, length(Y)));
+%         Y=Y(1:min(portionLength*Fs, length(Y)));
         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
         
         waitbar(0.5, handles.waitbarHandle, 'Performing audio analysis...')
@@ -122,12 +122,6 @@ switch action
         spectTypes=get(handles.popupmenu5, 'String');
         synth.computeSpectrogram('Source', spectTypes(spectTypeSelected));
         synth.computeSpectrogram('Target', spectTypes(spectTypeSelected));
-%         if(get(handles.checkbox2, 'Value'))
-% %             figure()
-%             synth.SourceSpectrogram.showSpectrogram(80);
-% %             figure()
-%             synth.TargetSpectrogram.showSpectrogram(80);
-%         end
         
         synthMethodSelected=get(handles.popupmenu2, 'Value');
         synthMethods=get(handles.popupmenu2, 'String');
@@ -140,34 +134,13 @@ switch action
             
             synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), 'repititionRestricted', get(handles.checkbox7, 'Value'), ...
                                 'continuityEnhanced', get(handles.checkbox9, 'Value'), 'polyphonyRestricted', get(handles.checkbox8, 'Value'), 'convergenceCriteria', str2double(get(handles.edit15, 'String')), ...
-                                    'r', str2double(get(handles.edit19, 'String')), 'c', str2double(get(handles.edit20, 'String')), 'p', str2double(get(handles.edit21, 'String')));
-%             
-%             if(get(handles.checkbox1, 'Value'))
-% %                 figure()
-%                 synth.NNMFSynthesis.showCost;
-% %                 handles.CostPlot = gca;
-% %                 guidata(handles.figure1, handles);
-%             end
-%             
-%             if(get(handles.checkbox4, 'Value'))
-% %                 figure()
-%                 synth.NNMFSynthesis.showActivations(synth);
-% %                 handles.ActivationsPlot = gca;
-% %                 guidata(handles.figure1, handles);
-%             end
+                                    'r', str2double(get(handles.edit19, 'String')), 'c', str2double(get(handles.edit21, 'String')), 'p', str2double(get(handles.edit20, 'String')));
         end
         
         waitbar(0.9, handles.waitbarHandle, 'Performing resynthesis...')
         resynthMethodSelected=get(handles.popupmenu4, 'Value');
         resynthMethods=get(handles.popupmenu4, 'String');
         synth.resynthesize(resynthMethods(resynthMethodSelected));
-        
-%         if(get(handles.checkbox5, 'Value'))
-% %             figure()
-%             synth.showResynthesis;
-% %             handles.ResynthesisPlot = gca;
-% %             guidata(handles.figure1, handles);
-%         end
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);

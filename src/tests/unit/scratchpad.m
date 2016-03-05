@@ -110,19 +110,19 @@ parseResult.fs
 
 Fs=44100;
 Ts=1/Fs;
-t=[0:Ts:1];
+t=[0:Ts:0.5];
 
 %f_i=440*2^i/12
 
 soundMix = [];
 win = window(@hann, length(t))';
 
-for freq = 110*2.^([30:60]/12)
+for freq = 110*2.^([-12:24*8]/24)
     soundMix=[soundMix, win.*sin(2*pi*(freq)*t)];
 end
 
 % sound(soundMix, Fs)
-audiowrite('highFreqSinScale.wav', soundMix, Fs);
+audiowrite('SinScale.wav', soundMix, Fs);
 
 %Add ADSR envelope
 %Fix template addition when used with CQT's
@@ -184,3 +184,157 @@ spect = synth.NNMFSynthesis.Reconstruction; % Method 3
 [synth.Resynthesis error] = InvertSpectrogram(spect(1:size(spect, 1)-1, :), 1000, 20);
 synth.showResynthesis;
 soundsc(synth.Resynthesis, Fs/2)
+%% Synthesis Experiments
+clear all
+clc
+
+figure()
+
+load('synth1')
+
+subplot(232)
+synthObj.showResynthesis;
+subplot(233)
+synthObj.SourceSpectrogram.showSpectrogram(80);
+subplot(234)
+synthObj.TargetSpectrogram.showSpectrogram(80);
+subplot(231)
+resynthSpectrogram = Spectrogram(synthObj.NNMFSynthesis.Reconstruction, ...
+                                        synthObj.TargetSpectrogram.F, synthObj.TargetSpectrogram.T);
+resynthSpectrogram.showSpectrogram(80);
+subplot(235)
+synthObj.NNMFSynthesis.showActivations(synthObj);
+
+figure()
+
+load('synth2')
+
+subplot(232)
+synthObj.showResynthesis;
+subplot(233)
+synthObj.SourceSpectrogram.showSpectrogram(80);
+subplot(234)
+synthObj.TargetSpectrogram.showSpectrogram(80);
+subplot(231)
+resynthSpectrogram = Spectrogram(synthObj.NNMFSynthesis.Reconstruction, ...
+                                        synthObj.TargetSpectrogram.F, synthObj.TargetSpectrogram.T);
+resynthSpectrogram.showSpectrogram(80);
+subplot(235)
+synthObj.NNMFSynthesis.showActivations(synthObj);
+
+figure()
+
+load('synth3')
+
+subplot(232)
+synthObj.showResynthesis;
+subplot(233)
+synthObj.SourceSpectrogram.showSpectrogram(80);
+subplot(234)
+synthObj.TargetSpectrogram.showSpectrogram(80);
+subplot(231)
+resynthSpectrogram = Spectrogram(synthObj.NNMFSynthesis.Reconstruction, ...
+                                        synthObj.TargetSpectrogram.F, synthObj.TargetSpectrogram.T);
+resynthSpectrogram.showSpectrogram(80);
+subplot(235)
+synthObj.NNMFSynthesis.showActivations(synthObj);
+
+figure()
+
+load('synth4')
+
+subplot(232)
+synthObj.showResynthesis;
+subplot(233)
+synthObj.SourceSpectrogram.showSpectrogram(80);
+subplot(234)
+synthObj.TargetSpectrogram.showSpectrogram(80);
+subplot(231)
+resynthSpectrogram = Spectrogram(synthObj.NNMFSynthesis.Reconstruction, ...
+                                        synthObj.TargetSpectrogram.F, synthObj.TargetSpectrogram.T);
+resynthSpectrogram.showSpectrogram(80);
+subplot(235)
+synthObj.NNMFSynthesis.showActivations(synthObj);
+%% Resynthesis after set of iterations
+
+%Save normalized and non-normalized activations
+%Save resynthesis
+%Save resynthesis plots
+%Save cost
+
+clear all
+clc
+portionLength = 5;
+windowLength=400;
+overlap=200;
+convergence = 0;
+iterations = 26;
+[Y, Fs] = audioread('sinScale.wav');
+[Y2, Fs2] = audioread('string_quartet_snippet.wav');
+Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+synth.computeSpectrogram('Source');
+synth.computeSpectrogram('Target');
+
+target=abs(synth.TargetSpectrogram.S);
+target(target == 0) = 1e-10;
+
+source=abs(synth.SourceSpectrogram.S);
+source(source == 0) = 1e-10;
+
+[~, cost, Hmat, Hnorm] = nnmf_TEST(target, source, iterations, 'convergenceCriteria', 0);
+
+for l = 1:iterations-1
+%     resynthesis(l, :) = templateAdditionResynth(Y, abs(Hmat{l}), 400*Fs/1000, 200*Fs/1000);
+    resynthesis(l, :) = istft(synth.SourceSpectrogram.S*Hmat{l}, overlap*Fs/1000, 2048*8, Fs, hann(2048*8, 'periodic'));
+end
+
+figure()
+
+for l = 1:iterations-1
+    subplot(ceil(sqrt(iterations)), ceil(sqrt(iterations)), l)
+    plot(resynthesis(l, :))
+end
+
+save('act_iter_test', 'resynthesis', 'Hmat', 'Hnorm', 'cost')
+%% Constant-Q Tests
+clear all
+clc
+windowLength=400;
+hop=50;
+[Y, Fs] = audioread('sinScale.wav');
+
+Q = 50; %Quality Factor
+[S, F, T] = iir_cqt_spectrogram_TEST(Y,2048*8,hop*Fs/1000,Fs,Q); %TODO: Size of F and T are slightly miscalculated
+% padding = zeros(1, size(S, 2));
+% S = [S; padding];
+fprintf('CQT F: %d\n', length(F))
+fprintf('CQT T: %d\n', length(T))
+fprintf('Y: %d\n', length(Y))
+fprintf('Frames: %d\n\n', ceil((length(Y)/(hop*Fs/1000))))
+cqt_resynth = templateAdditionResynth(Y, zeros(length(T), length(F)), Fs*windowLength/1000, Fs*hop/1000);
+disp(size(cqt_resynth))
+
+[S,F,T]=spectrogram(Y, window(@hann,(windowLength*Fs/1000)), Fs*hop/1000, 2048*8, Fs); %F: normalized frequencies; T: Time instants
+fprintf('Reg F: %d\n', length(F))
+fprintf('Reg T: %d\n', length(T))
+fprintf('Y: %d\n', length(Y))
+fprintf('Frames: %d\n\n', ceil((length(Y)/(hop*Fs/1000))))
+reg_resynth = templateAdditionResynth(Y, zeros(length(T), length(F)), Fs*windowLength/1000, Fs*hop/1000);
+disp(size(reg_resynth))
+%% Update NNMF Restrictions
+clear all
+clc
+portionLength = 5;
+windowLength=400;
+overlap=200;
+convergence = 0;
+[Y, Fs] = audioread('Bees_Buzzing.wav');
+[Y2, Fs2] = audioread('Beatles_LetItBe.wav');
+% Y=Y(1:min(portionLength*Fs, length(Y)));
+Y2=Y2(1:min(portionLength*Fs, length(Y2))); 
+synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+synth.computeSpectrogram('Source');
+synth.computeSpectrogram('Target');
+synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', true, 'polyphonyRestricted', true, 'convergenceCriteria', convergence);
+synth.NNMFSynthesis.showActivations(synth, -120);

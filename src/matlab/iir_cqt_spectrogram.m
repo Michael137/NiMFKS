@@ -30,6 +30,7 @@ ny = length(y);
 
 % number of frames (temporal index)
 nframes = ceil(ny/hop);
+% nframes = abs(floor((ny-hop)/(hop-ny/(hop*2)))) %NOTE: Michael's Custom addition
 frameindex = 1 + (0 : nframes - 1) * hop; % samples.
 
 % zero padding at the end to complete the last frame.
@@ -37,6 +38,7 @@ y = [y; zeros(nfft-mod(ny,hop),1)];
 
 % matrix to store the q-spectrum
 S = zeros(nframes,nfft/2);
+% S = zeros(nframes,floor(nfft/2)); %NOTE: Michael's Custom addition
 
 % number of points of pre and post padding used to set initial conditions
 prepad = 10;
