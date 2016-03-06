@@ -71,10 +71,10 @@ classdef Synthesis < handle
             
             if(strcmp(synthMethod, 'NNMF'))
                 target=abs(obj.TargetSpectrogram.S);
-                target(target == 0) = 1e-10;
+%                 target(target == 0) = 1e-10;
                 
                 source=abs(obj.SourceSpectrogram.S);
-                source(source == 0) = 1e-10;
+%                 source(source == 0) = 1e-10;
                 
                 %H: templates x time
                 %recon: reconstruction of target; frequency x time
@@ -83,6 +83,10 @@ classdef Synthesis < handle
                     [H, cost]=nnmfFn(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
                                             'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
                                             'r', r, 'c', c, 'p', p);
+%                         %For testing purposes
+%                         [H, cost]=nnmf_TEST(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
+%                                             'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
+%                                             'r', r, 'c', c, 'p', p);
                     recon = obj.SourceSpectrogram.S*H;
                 elseif(strcmp(costMetric, 'Divergence'))
                     [H, cost]=nnmfFn_Div(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...

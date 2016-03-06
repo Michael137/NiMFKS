@@ -44,7 +44,7 @@ for l=1:L-1
             num = W(:, k)'*(V(:, m)./(recon));
             H(k, m) = H(k, m) * num / den(k);
             
-            if(repititionRestricted)
+            if(repititionRestricted && l==L-1)
                 if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
                     R(k,m)=H(k,m);
                 else
@@ -52,7 +52,7 @@ for l=1:L-1
                 end
             end
             
-            if(polyphonyRestricted)
+            if(polyphonyRestricted && l==L-1)
                 [~, sortedIndices] = sort(R(:, m),'descend');
                 index = (length(sortedIndices) >= p) * p + ...
                     (length(sortedIndices) < p) * length(sortedIndices);
@@ -64,19 +64,23 @@ for l=1:L-1
                 end
             end
             
-            if(continuityEnhanced)
-                if(l>1 && k > c && m > c && k < K-c && m < M-c)
-                    surroundingMat = P(k-c:k+c, m-c:m+c);
-                    surroundingMat(surroundingMat < 10e-5) = 0;
-%                     diagonal = diag(flip(surroundingMat));
-                    diagonal = diag(surroundingMat);
-                    if(~all(diagonal))
-                        C(k, m) = sum(diagonal);
-                    else
-                        C(k, m) = P(k, m);
-                    end
-                else
-                    C(k, m) = P(k, m);
+            if(continuityEnhanced && l==L-1)
+%                 if(l>1 && k > c && m > c && k < K-c && m < M-c)
+%                     surroundingMat = P(k-c:k+c, m-c:m+c);
+%                     surroundingMat(surroundingMat < 10e-3) = 0;
+% %                     diagonal = diag(flip(surroundingMat));
+%                     diagonal = diag(surroundingMat);
+%                     if(~all(diagonal))
+%                         C(k, m) = sum(diagonal);
+%                     else
+%                         C(k, m) = P(k, m);
+%                     end
+%                 else
+%                     C(k, m) = P(k, m);
+%                 end
+
+                if(l > 1)
+                    C = conv2(P, eye(c), 'same');
                 end
             end
         end
@@ -92,6 +96,7 @@ for l=1:L-1
 %     if(l >= 3 && continuityEnhanced)
 %         H = C;
 %     end
+%     H = H./max(max(H)); %Normalize activations at each iteration to force matrix to be between 0 and 1
 end
 
 Y=H;
@@ -110,7 +115,7 @@ end
 
 disp(strcat('Iterations:', num2str(l)))
 
-% Y = Y./max(max(Y)); %Normalize activations
+Y = Y./max(max(Y)); %Normalize activations
 % if(converged)
 %     Y(20*log10(Y/max(max(Y)))<-25)=0;
 % end

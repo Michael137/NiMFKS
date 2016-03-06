@@ -338,3 +338,54 @@ synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
 synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', true, 'polyphonyRestricted', true, 'convergenceCriteria', convergence);
 synth.NNMFSynthesis.showActivations(synth, -120);
+%% CQT Toolbox Tests
+fs = 44100;
+fmin = 500;
+B = 48;
+gamma = 0; 
+fmax = fs;
+x = audioread('glock2.wav');
+x = x(:); xlen = length(x);
+
+Xcq = cqt(x, B, fs, fmin, fmax, 'rasterize', 'none', 'gamma', gamma);
+c = Xcq.c;
+[y gd] = icqt(Xcq);
+SNR = 20*log10(norm(x-y)/norm(x));
+disp(['reconstruction error = ' num2str(SNR) ' dB']);
+
+if iscell(c)
+   disp(['redundancy = ' num2str( (2*sum(cellfun(@numel,c)) + ...
+       length(Xcq.cDC) + length(Xcq.cNyq)) / length(x))]); 
+elseif issparse(c)
+   disp(['redundancy = ' num2str( (2*nnz(c) + length(Xcq.cDC) + ...
+       length(Xcq.cNyq)) / length(x))]);  
+else
+   disp(['redundancy = ' num2str( (2*size(c,1)*size(c,2) + ...
+       length(Xcq.cDC) + length(Xcq.cNyq)) / length(x))]); 
+end
+
+figure; plotnsgtf({Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.',Xcq.shift,fs,fmin,fmax,B,2,60);
+
+% coeffs = {Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.';
+% for i = 1:length(coeffs)
+%     lengths(i) = length(coeffs{i})
+% end
+% maxLen = max(lengths);
+% 
+% for i = 1:length(coeffs)
+%     coeffs{i} = [coeffs{i}; zeros(maxLen - length(coeffs{i}), 1)]
+% end
+% 
+% coeffMat = zeros(maxLen, length(coeffs));
+% for i = 1:length(coeffs)
+%     coeffMat(:, i) = coeffs{i}(:);
+% end
+% 
+% ma=20*log10(max(abs(cell2mat(coeffs))));
+% imagesc([0,length(Xcq.shift)-1]/fs,[0:maxLen],20*log10(abs(coeffMat')+eps),...
+%             [ma-60,ma]);
+
+% [S,F,T] = spectrogram(audioread('glock2.wav'), window(@hann, 400*44100/1000), 200*44100/1000, 2048*8, 44100);
+% spect = Spectrogram(S, F, T);
+% figure()
+% spect.showSpectrogram(80);
