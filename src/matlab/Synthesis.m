@@ -79,26 +79,26 @@ classdef Synthesis < handle
                 %H: templates x time
                 %recon: reconstruction of target; frequency x time
                 %cost: distance measure between target and reconstruction
-                if(strcmp(costMetric, 'Euclidean'))
+                if(strcmp(costMetric, 'Fast Euclidean'))
                     [H, cost]=nnmfFn(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
                                             'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
                                             'r', r, 'c', c, 'p', p);
                         
                     recon = obj.SourceSpectrogram.S*H;
-                elseif(strcmp(costMetric, 'Divergence'))
+                elseif(strcmp(costMetric, 'Fast Divergence'))
                     [H, cost]=nnmfFn_Div(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
                         'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
                         'r', r, 'c', c, 'p', p);
                     
                     recon = obj.SourceSpectrogram.S*H;
-                elseif(strcmp(costMetric, 'Article Euclidean'))
+                elseif(strcmp(costMetric, 'Euclidean'))
                     %                     For testing purposes
                     [H, cost]=nnmf_TEST(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
                         'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...
                         'r', r, 'c', c, 'p', p);
                     
                     recon = obj.SourceSpectrogram.S*H;
-                elseif(strcmp(costMetric, 'Article Divergence'))
+                elseif(strcmp(costMetric, 'Divergence'))
                     %                     For testing purposes
                     [H, cost]=nnmf_div_TEST(target, source, iterations, 'repititionRestricted', repititionRestricted, 'continuityEnhanced', continuityEnhanced, ...
                         'polyphonyRestricted', polyphonyRestricted, 'convergenceCriteria' , convergenceCriteria, ...

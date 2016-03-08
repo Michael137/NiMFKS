@@ -121,9 +121,12 @@ for freq = 110*2.^([-12:24*8]/24)
     soundMix=[soundMix, win.*sin(2*pi*(freq)*t)];
 end
 
+%Reverse sound scale
+% soundMix = fliplr(soundMix);
+
 % soundsc(soundMix, Fs)
 % spectrogram(soundMix)
-audiowrite('sinScale_snippet.wav', soundMix, Fs);
+audiowrite('sinScale_v2.wav', soundMix, Fs);
 
 %Add ADSR envelope
 %Fix template addition when used with CQT's
@@ -201,6 +204,10 @@ workspaces = {'synth3' ...
     'synth18' ...
     'synth19' ...
     'synth20' ...
+    'synth21' ...
+    'synth22' ...
+    'synth23' ...
+    'synth24' ...
     }
 
 for i = 1:length(workspaces)
@@ -221,6 +228,7 @@ for i = 1:length(workspaces)
     resynthSpectrogram = Spectrogram(synthObj.NNMFSynthesis.Reconstruction, ...
         synthObj.TargetSpectrogram.F, synthObj.TargetSpectrogram.T);
     resynthSpectrogram.showSpectrogram(80);
+    title(workspaces{i})
     subplot(235)
     synthObj.NNMFSynthesis.showActivations(synthObj, -30);
     subplot(236)
@@ -351,6 +359,8 @@ else
        length(Xcq.cDC) + length(Xcq.cNyq)) / length(x))]); 
 end
 
+%resample
+%Streamline GUI
 figure; plotnsgtf({Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.',Xcq.shift,fs,fmin,fmax,B,2,60);
 
 % coeffs = {Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.';

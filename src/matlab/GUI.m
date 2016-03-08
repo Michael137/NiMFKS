@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 29-Feb-2016 22:48:20
+% Last Modified by GUIDE v2.5 08-Mar-2016 12:26:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,7 +64,7 @@ set(handles.pushbutton15,'CData',g);
 set(handles.pushbutton18,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.pushbutton18 handles.text8 handles.text26 handles.edit19 handles.edit20 handles.edit21],'Visible','off')
+set([handles.pushbutton18 handles.text8 handles.text26 handles.edit19 handles.edit20 handles.edit21 handles.pushbutton21],'Visible','off')
 
 %Initialize parameters
 set(handles.edit9,'String','100'); %Window length
@@ -970,7 +970,7 @@ function template_manipulation_tool_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to template_manipulation_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+set([handles.pushbutton21],'Visible','on')
 templates = handles.SynthesisObject.SourceSpectrogram.S;
 [~,I]=max(templates);
 [~,Ix] = sort(I,'ascend');
@@ -988,3 +988,20 @@ if strcmp(get(hObject,'Checked'),'on')
 else 
     set(hObject,'Checked','on');
 end
+
+
+% --- Executes on button press in pushbutton21.
+function pushbutton21_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton21 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+SynthesisCtr('rerun', handles);
+
+
+% --- Executes on button press in checkbox14.
+function checkbox14_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox14

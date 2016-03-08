@@ -13,6 +13,7 @@ for k=1:size(H, 2)
 %             disp(strcat('k:', num2str(k)))
 %             disp(strcat('i:', num2str(i)))
             win = window(@hann,(windowLength));
+            %Tukey (75%), Sin window
             segments(k, :)=(segments(k, :)'+ win.*(X(location:location+windowLength-1)*extracted(i))); %TODO: Pointwise multiply X by smooth window e.g. van Hann
 %             segments(k, :)=segments(k, :)'+ X(location:location+windowLength-1)*extracted(i);
         end
