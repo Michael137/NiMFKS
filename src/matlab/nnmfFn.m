@@ -87,11 +87,20 @@ for l=1:L-1
     
     if(continuityEnhanced && l==L-1)
         if(l>1)
-            C = conv2(P, eye(c), 'same');
+            C = conv2(P, eye(c), 'same'); %Default
+
+%             C = conv2(P, flip(eye(c)), 'same'); %Reverse
+            
+%             C = conv2(P, flip(ones(c)), 'same'); %Blurring
+
+%             %Vertical
+%             M = zeros(c, c);
+%             M(:, floor(c/2)) = 1;
+%             C = conv2(P, M, 'same');
         end
     end
     
-    %     if(l >= 3 && continuityEnhanced)
+    %     if(l >= 3 && )
     %         H = C;
     %     end
     %     H = H./max(max(H)); %Normalize activations at each iteration to force matrix to be between 0 and 1

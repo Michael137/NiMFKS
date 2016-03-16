@@ -1,4 +1,12 @@
-function [output, segments] = templateAdditionResynth(X, H, windowLength, overlap)
+function [output, segments] = templateAdditionResynth(X, H, varargin)
+
+if(nargin > 2)
+    windowLength = varargin{1};
+    overlap = varargin{2}
+else
+    overlap = floor(length(X)/size(H, 2))/2;
+    windowLength = floor(2*overlap);
+end
 
 segments=zeros(size(H, 2), windowLength);
 % m=1;
@@ -12,10 +20,13 @@ for k=1:size(H, 2)
             location=i*floor(length(X)/size(H, 1));
 %             disp(strcat('k:', num2str(k)))
 %             disp(strcat('i:', num2str(i)))
+
             win = window(@hann,(windowLength));
-            %Tukey (75%), Sin window
+%             win = window(@sin,(windowLength));
+%             win = tukeywin(windowLength, 0.75);
             segments(k, :)=(segments(k, :)'+ win.*(X(location:location+windowLength-1)*extracted(i))); %TODO: Pointwise multiply X by smooth window e.g. van Hann
 %             segments(k, :)=segments(k, :)'+ X(location:location+windowLength-1)*extracted(i);
+
         end
     end
 %     m=m+overlap;  

@@ -334,13 +334,19 @@ synth.computeSpectrogram('Target');
 synth.synthesize('NNMF', 'Divergence', 10, 'repititionRestricted', true, 'continuityEnhanced', true, 'polyphonyRestricted', true, 'convergenceCriteria', convergence);
 synth.NNMFSynthesis.showActivations(synth, -120);
 %% CQT Toolbox Tests
+clear
+clc
 fs = 44100;
 fmin = 500;
 B = 48;
 gamma = 0; 
 fmax = fs;
 x = audioread('glock2.wav');
-x = x(:); xlen = length(x);
+x = x(:);
+
+x = x(1:2*fs);
+
+xlen = length(x);
 
 Xcq = cqt(x, B, fs, fmin, fmax, 'rasterize', 'none', 'gamma', gamma);
 c = Xcq.c;
@@ -359,30 +365,39 @@ else
        length(Xcq.cDC) + length(Xcq.cNyq)) / length(x))]); 
 end
 
-%resample
-%Streamline GUI
-figure; plotnsgtf({Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.',Xcq.shift,fs,fmin,fmax,B,2,60);
+% figure; plotnsgtf({Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.',Xcq.shift,fs,fmin,fmax,B,2,60);
 
-% coeffs = {Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.';
-% for i = 1:length(coeffs)
-%     lengths(i) = length(coeffs{i})
-% end
-% maxLen = max(lengths);
-% 
-% for i = 1:length(coeffs)
-%     coeffs{i} = [coeffs{i}; zeros(maxLen - length(coeffs{i}), 1)]
-% end
-% 
-% coeffMat = zeros(maxLen, length(coeffs));
-% for i = 1:length(coeffs)
-%     coeffMat(:, i) = coeffs{i}(:);
-% end
-% 
-% ma=20*log10(max(abs(cell2mat(coeffs))));
-% imagesc([0,length(Xcq.shift)-1]/fs,[0:maxLen],20*log10(abs(coeffMat')+eps),...
-%             [ma-60,ma]);
+[S,F,T] = spectrogram(x, window(@hann, 400*44100/1000), 200*44100/1000, 2048*8, 44100);
+spect = Spectrogram(S, F, T);
+figure()
+spect.showSpectrogram(80);
 
-% [S,F,T] = spectrogram(audioread('glock2.wav'), window(@hann, 400*44100/1000), 200*44100/1000, 2048*8, 44100);
-% spect = Spectrogram(S, F, T);
-% figure()
-% spect.showSpectrogram(80);
+coeffs = Xcq.c;
+for i = 1:length(coeffs)
+    lengths(i) = length(coeffs{i});
+end
+maxLen = max(lengths);
+
+for i = 1:length(coeffs)
+    coeffs{i} = resample(coeffs{i}, maxLen, length(coeffs{i}));
+end
+
+coeffMat = zeros(length(coeffs), maxLen);
+for i = 1:length(coeffs)
+    coeffMat(i, :) = coeffs{i}(:);
+end
+
+db=20*log10(abs(coeffMat)/max(max(abs(coeffMat))));
+figure()
+imagesc(db)
+axis xy
+colormap('jet')
+colorbar
+title('Glockenspiel Spectrogram')
+
+H = nnmfFn(abs(coeffMat), abs(coeffMat), 35, 'convergenceCriteria', 0);
+figure()
+imagesc(H)
+title('Glockenspiel-Glockenspiel Activations')
+axis xy
+resynth = templateAdditionResynth(x, H);
