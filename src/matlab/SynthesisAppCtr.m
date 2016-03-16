@@ -3,6 +3,12 @@ function SynthesisAppCtr(action, datastruct)
 handles = datastruct;
 
 switch action
+    case 'openResynthesis'
+        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+        set(handles.synth_edit, 'String', pathname);
+    case 'playResynthesis'
+        [y, Fs] = audioread(get(handles.synth_edit, 'String'));
+        soundsc(y, Fs);
     case 'run' %Separate into further modules; controller helper functions file
 %         verifyParameters(handles)
 %         performCalculations(handles)
@@ -45,12 +51,14 @@ switch action
         
         synth.synthesize('NNMF', costMetrics(costMetricSelected), handles.iterations, ...
                                 'continuityEnhanced', handles.continuityEnhanced, 'polyphonyRestricted', handles.polyphonyRestricted, 'convergenceCriteria', handles.convergenceCriteria, ...
-                                    'r', handles.represtrictVal, 'c', handles.contenhancedVal, 'p', handles.polyrestrictVal);
+                                    'r', handles.repRestrictVal, 'c', handles.contEnhancedVal, 'p', handles.polyRestrictVal);
         
         waitbar(0.9, handles.waitbarHandle, 'Performing resynthesis...')
 %         resynthMethodSelected=get(handles.popupmenu4, 'Value');
 %         resynthMethods=get(handles.popupmenu4, 'String');
 %         synth.resynthesize(resynthMethods(resynthMethodSelected));
+
+        synth.resynthesize(handles.synthMethods(handles.synthMethodSelected));
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
@@ -80,7 +88,6 @@ switch action
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
-        
 end
 
 % function performCalculations()

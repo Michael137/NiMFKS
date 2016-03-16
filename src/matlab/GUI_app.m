@@ -22,7 +22,7 @@ function varargout = GUI_app(varargin)
 
 % Edit the above text to modify the response to help GUI_app
 
-% Last Modified by GUIDE v2.5 11-Mar-2016 10:13:13
+% Last Modified by GUIDE v2.5 16-Mar-2016 23:43:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,9 +63,27 @@ set(handles.playTarget_btn,'CData',g);
 set(handles.playSynth_btn,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.playSynth_btn handles.synth_txt handles.synth_edit],'Visible','off')
+set([handles.playSynth_btn, handles.synth_txt handles.synth_edit, handles.text21, handles.openTarget_btn, handles.playTarget_btn, handles.text5, handles.playSource_btn, handles.synth_btn, handles.viewParams_btn],'Visible','off')
 
 %Initialize parameters
+handles.edit9 = 400; %Window Length
+handles.edit10 = 200; %Overlap
+handles.sourceLen = 5;
+handles.edit11 = 5; %Target Length
+handles.checkbox14 = 1; %Full length checkbox
+handles.convergenceCriteria = 0.0005;
+handles.costMetrics = {'Fast Euclidean', 'Fast Divergence',  'Euclidean',  'Divergence'};
+handles.costMetricSelected = 1;
+handles.iterations = 26;
+handles.repRestrictVal = 0;
+handles.repititionRestricted = 0;
+handles.polyRestrictVal = 100;
+handles.polyphonyRestricted = 0;
+handles.contEnhancedVal = 1;
+handles.continuityEnhanced = 0;
+%Currently not included in settings GUIs
+handles.synthMethods = {'ISTFT', 'Template Addition'};
+handles.synthMethodSelected = 1;
 
 % Choose default command line output for GUI_app
 handles.output = hObject;
@@ -348,6 +366,7 @@ function openSource_btn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('openSource', handles);
+set([handles.text21, handles.openTarget_btn, handles.playSource_btn],'Visible','on')
 
 % --- Executes on button press in openTarget_btn.
 function openTarget_btn_Callback(hObject, eventdata, handles)
@@ -355,6 +374,7 @@ function openTarget_btn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('openTarget', handles);
+set([handles.playTarget_btn, handles.text5, handles.synth_btn], 'Visible', 'on')
 
 
 % --- Executes on button press in synth_btn.
@@ -367,6 +387,8 @@ handles.waitbarHandle = waitbarHandle;
 guidata(hObject, handles);
 SynthesisAppCtr('run', handles);
 close(waitbarHandle)
+set([handles.synth_txt, handles.synth_edit, handles.playSynth_btn, handles.viewParams_btn],'Visible','on')
+SynthesisAppCtr('openResynthesis', handles);
 
 % --- Executes on button press in playTarget_btn.
 function playTarget_btn_Callback(hObject, eventdata, handles)
@@ -387,3 +409,57 @@ function playSynth_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to playSynth_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+SynthesisAppCtr('playResynthesis', handles);
+
+% --- Executes on button press in viewParams_btn.
+function viewParams_btn_Callback(hObject, eventdata, handles)
+% hObject    handle to viewParams_btn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+f = figure('Visible','off','Position',[500,500, 300, 300], 'Resize', 'off');
+   
+    %  Construct the components.
+    htext_iter = uicontrol('Style','text','String','Iterations:',...
+        'Position',[40,250,70,35]);
+    htext_conv = uicontrol('Style','text','String','Convergence Criteria (%):',...
+        'Position',[40,210,70,35]);
+    htext_cost = uicontrol('Style','text','String','Cost Metric:',...
+        'Position',[40,170,70,35]);
+    htext_winlen = uicontrol('Style','text','String','Window Length (ms):',...
+        'Position',[40,130,70,35]);
+    htext_hop = uicontrol('Style','text','String','Overlap (ms):',...
+        'Position',[40,90,70,35]);
+    htext_sourcelen = uicontrol('Style','text','String','Source Length (s):',...
+        'Position',[40,50,70,35]);
+    htext_targetlen = uicontrol('Style','text','String','Target Length (s):',...
+        'Position',[40,10,70,35]);
+    align([htext_iter, htext_conv, htext_cost, htext_winlen, htext_hop, htext_sourcelen, htext_targetlen],'Center','None');
+    
+    htext_iterVal = uicontrol('Style','text','String',handles.iterations,...
+        'Position',[150,250,70,35]);
+    htext_convVal = uicontrol('Style','text','String',100*handles.convergenceCriteria,...
+        'Position',[150,210,70,35]);
+    htext_costVal = uicontrol('Style','text','String',handles.costMetrics(handles.costMetricSelected),...
+        'Position',[150,170,70,35]);
+    htext_winlenVal = uicontrol('Style','text','String',handles.edit9,...
+        'Position',[150,130,70,35]);
+    htext_hopVal = uicontrol('Style','text','String',handles.edit10,...
+        'Position',[150,90,70,35]);
+    htext_sourcelenVal = uicontrol('Style','text','String',handles.sourceLen,...
+        'Position',[150,50,70,35]);
+    htext_targetlenVal = uicontrol('Style','text','String',handles.edit11,...
+        'Position',[150,10,70,35]);
+    align([htext_iterVal, htext_convVal, htext_costVal, htext_winlenVal, htext_hopVal, htext_sourcelenVal, htext_targetlenVal],'Center','None');
+    
+    f.MenuBar = 'none';
+    f.ToolBar = 'none';
+    %Make the UI visible.
+    f.Visible = 'on';
+
+
+% --------------------------------------------------------------------
+function tools_plots_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to tools_plots_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+GUI_app_plots(handles)
