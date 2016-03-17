@@ -22,7 +22,7 @@ function varargout = GUI_app(varargin)
 
 % Edit the above text to modify the response to help GUI_app
 
-% Last Modified by GUIDE v2.5 16-Mar-2016 23:43:39
+% Last Modified by GUIDE v2.5 17-Mar-2016 21:59:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -389,6 +389,7 @@ SynthesisAppCtr('run', handles);
 close(waitbarHandle)
 set([handles.synth_txt, handles.synth_edit, handles.playSynth_btn, handles.viewParams_btn],'Visible','on')
 SynthesisAppCtr('openResynthesis', handles);
+showHint(handles.tools_menu);
 
 % --- Executes on button press in playTarget_btn.
 function playTarget_btn_Callback(hObject, eventdata, handles)
@@ -462,4 +463,26 @@ function tools_plots_menu_Callback(hObject, eventdata, handles)
 % hObject    handle to tools_plots_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-GUI_app_plots(handles)
+GUI_app_plots(handles);
+
+% --------------------------------------------------------------------
+function showHint(uicomponent)
+    
+for i = 1:10
+    set(uicomponent, 'ForegroundColor', 'blue');
+    pause(0.5)
+    set(uicomponent, 'ForegroundColor', 'red');
+    pause(0.5)
+    set(uicomponent, 'ForegroundColor', 'black');
+    pause(0.5)
+end
+
+set(uicomponent, 'ForegroundColor', 'black');
+        
+
+
+% --------------------------------------------------------------------
+function tools_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to tools_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
