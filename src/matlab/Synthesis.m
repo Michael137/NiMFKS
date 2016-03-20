@@ -37,11 +37,11 @@ classdef Synthesis < handle
             if(strcmp(identifier, 'Source'))
                 Y = obj.Source;
                 [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs, 'Spectrogram', type);
-                obj.SourceSpectrogram = Spectrogram(S, F, T);
+                obj.SourceSpectrogram = Spectrogram(S, F, T, type);
             elseif(strcmp(identifier, 'Target'))
                 Y = obj.Target;
                 [S F T] = computeSpectrogram(Y, obj.WindowLength, obj.Overlap, obj.Fs, 'Spectrogram', type);
-                obj.TargetSpectrogram = Spectrogram(S, F, T);
+                obj.TargetSpectrogram = Spectrogram(S, F, T, type);
             else
                 error(strcat('Invalid argument "', identifier, '". Use either "Source" or "Target".'));
             end
@@ -118,7 +118,11 @@ classdef Synthesis < handle
                 obj.Resynthesis = istft(obj.NNMFSynthesis.Reconstruction, obj.Overlap,2048*8,obj.Fs,hann(2048*8, 'periodic'));
                 audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis, obj.Fs);
             elseif(strcmp(identifier, 'Template Addition'))
-                obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
+                if(~strcmp(obj.SourceSpectrogram.Type, 'Chroma'))
+                    obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
+                else
+                    obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations);
+                end
 %                 obj.Resynthesis(abs(obj.Resynthesis)>5)=mean(obj.Resynthesis);
 %                 obj.Resynthesis=obj.Resynthesis/max(abs(obj.Resynthesis));
                 audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis/max(abs(obj.Resynthesis)), obj.Fs);

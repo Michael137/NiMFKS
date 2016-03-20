@@ -4,7 +4,7 @@ if(nargin > 2)
     windowLength = varargin{1};
     overlap = varargin{2}
 else
-    overlap = floor(length(X)/size(H, 2))/2;
+    overlap = floor((length(X)/size(H, 2))/2);
     windowLength = floor(2*overlap);
 end
 

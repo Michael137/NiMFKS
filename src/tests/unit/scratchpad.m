@@ -401,3 +401,66 @@ imagesc(H)
 title('Glockenspiel-Glockenspiel Activations')
 axis xy
 resynth = templateAdditionResynth(x, H);
+%% Chromagram Tests
+
+% Read an audio waveform
+[d,sr] = audioread('string_quartet_snippet.wav');
+d=d(:, 1);
+% d=d(20*sr:120*sr);
+% Calculate the chroma matrix.  Use a long FFT to discriminate
+% spectral lines as well as possible (2048 is the default value)
+cfftlen=2048;
+C = chromagram_IF(d,sr,cfftlen);
+% The frame advance is always one quarter of the FFT length.  Thus,
+% the columns  of C are at timebase of fftlen/4/sr
+tt = [1:size(C,2)]*cfftlen/4/sr;
+% Plot spectrogram using a shorter window
+subplot(311)
+sfftlen = 512;
+specgram(d,sfftlen,sr);
+% Always use a 60 dB colormap range
+caxis(max(caxis)+[-60 0])
+% .. and look only at the bottom 4 kHz of spectrum
+axis([0 length(d)/sr 0 4000])
+title('Original Sound')
+% Now the chromagram, also on a dB magnitude scale
+subplot(312)
+imagesc(tt,[1:12],20*log10(C+eps));
+axis xy
+caxis(max(caxis)+[-60 0])
+title('Chromagram')
+
+% chromsynth takes a chroma matrix as the first argument, the
+% *period* (in seconds) corresponding to each time frame, and
+% the sampling rate for the waveform to be generated.
+x = chromsynth(C,cfftlen/4/sr,sr);
+% Plot this alongside the others to see how it differs
+subplot(313)
+specgram(x,sfftlen,sr);
+caxis(max(caxis)+[-60 0])
+axis([0 length(d)/sr 0 4000])
+title('Shepard tone synthesis')
+% Of course, the main point is to listen to the resynthesis:
+% soundsc(x,sr);
+
+figure()
+db=20*log10(abs(C)/max(max(abs(C))));
+imagesc(db)
+axis xy
+colormap('jet')
+colorbar
+title('Glockenspiel Chromagram')
+
+% H = nnmfFn(abs(C'), abs(C'), 36, 'convergenceCriteria', 0);
+% H = nnmfFn(abs(C), abs(C), 36, 'convergenceCriteria', 0);
+% figure()
+% imagesc(20*log10(H/max(max(H))));
+% title('Glockenspiel-Glockenspiel Activations')
+% axis xy; colormap(flipud(colormap('gray')));colorbar;
+% resynth = templateAdditionResynth(d, H);
+% 
+% figure()
+% subplot(211)
+% plot(resynth)
+% subplot(212)
+% plot(d)

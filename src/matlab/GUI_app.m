@@ -389,7 +389,7 @@ SynthesisAppCtr('run', handles);
 close(waitbarHandle)
 set([handles.synth_txt, handles.synth_edit, handles.playSynth_btn, handles.viewParams_btn],'Visible','on')
 SynthesisAppCtr('openResynthesis', handles);
-showHint(handles.tools_menu);
+% showHint(handles.tools_menu);
 
 % --- Executes on button press in playTarget_btn.
 function playTarget_btn_Callback(hObject, eventdata, handles)
