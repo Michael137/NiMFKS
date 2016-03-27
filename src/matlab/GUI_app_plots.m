@@ -101,7 +101,7 @@ switch popup_sel_index
     case 4
         handles.SynthesisObject.showTemplates;
     case 5
-        handles.SynthesisObject.NNMFSynthesis.showCost;
+        handles.SynthesisObject.NNMFSynthesis.showResynthesis;
     case 6
        handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
 end

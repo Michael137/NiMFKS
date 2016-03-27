@@ -404,9 +404,9 @@ resynth = templateAdditionResynth(x, H);
 %% Chromagram Tests
 
 % Read an audio waveform
-[d,sr] = audioread('string_quartet_snippet.wav');
+[d,sr] = audioread('Wind_Blowing_resampled.wav');
 d=d(:, 1);
-% d=d(20*sr:120*sr);
+d=d(1:2*sr);
 % Calculate the chroma matrix.  Use a long FFT to discriminate
 % spectral lines as well as possible (2048 is the default value)
 cfftlen=2048;
@@ -451,16 +451,65 @@ colormap('jet')
 colorbar
 title('Glockenspiel Chromagram')
 
+% C(C==0)=1E-6;
+C = resample(C', 1, 2)';
 % H = nnmfFn(abs(C'), abs(C'), 36, 'convergenceCriteria', 0);
-% H = nnmfFn(abs(C), abs(C), 36, 'convergenceCriteria', 0);
-% figure()
-% imagesc(20*log10(H/max(max(H))));
-% title('Glockenspiel-Glockenspiel Activations')
-% axis xy; colormap(flipud(colormap('gray')));colorbar;
-% resynth = templateAdditionResynth(d, H);
-% 
-% figure()
-% subplot(211)
-% plot(resynth)
-% subplot(212)
-% plot(d)
+H = nnmfFn_Div(abs(C), abs(C), 8, 'convergenceCriteria', 0);
+figure()
+db_H = 20*log10(H./max(max(H)));
+imagesc(max(-20, db_H));
+title('Glockenspiel-Glockenspiel Activations')
+axis xy; colormap(flipud(colormap('gray')));colorbar;
+resynth = templateAdditionResynth(d, H);
+
+figure()
+subplot(211)
+plot(resynth)
+subplot(212)
+plot(d)
+
+%TODO: resample rows of C
+%% Constructing source sounds for experiments
+[y, fs] = audioread('drum.wav');
+y = y(:,1);
+% y2 = interp(y, 2);
+% y3 = interp(y, 3);
+% y4 = interp(y, 4);
+% y5 = interp(y, 5);
+% y6 = interp(y, 6);
+
+y2 = resample(y, fs*0.25, fs);
+y3 = resample(y, fs*0.5, fs);
+y4 = resample(y, fs*0.75, fs);
+y5 = resample(y, fs*1.25, fs);
+y6 = resample(y, fs*1.5, fs);
+y7 = resample(y, fs*1.75, fs);
+y8 = resample(y, fs*2, fs);
+y9 = resample(y, fs*2.25, fs);
+y10 = resample(y, fs*2.5, fs);
+y11 = resample(y, fs*2.75, fs);
+y12 = resample(y, fs*3, fs);
+
+output = [y; y2; y3; y4; y5; y6; y7; y8; y9; y10; y11; y12];
+output = flip(output);
+
+plot(output)
+figure()
+[S, F, T] = spectrogram(output);
+imagesc(20*log10(abs(S)/max(max(abs(S)))))
+axis xy
+colormap('jet')
+colorbar
+audiowrite('drum_set.wav', output, fs);
+
+%Rubberband
+%% Chromagram Analysis
+plotChromagram('Whales_Singing_resampled.wav', 20)
+plotChromagram('Wind_Blowing_resampled.wav', 20)
+plotChromagram('RaceCar_Engine_resampled.wav', 20)
+plotChromagram('Bees_Buzzing_resampled.wav', 20)
+plotChromagram('Beatles_LetItBe_resampled.wav', 20)
+plotChromagram('sinScale_v2.wav', 20)
+plotChromagram('sinScale_v3.wav', 20)
+plotChromagram('speech_female.wav', 20)
+plotChromagram('opera_female.mp3', 20)
