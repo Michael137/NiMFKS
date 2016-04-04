@@ -12,6 +12,11 @@ switch action
         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text7, 'String', sourcepathname);
+    case 'Swap Sounds'
+        sourceFile = get(handles.text7, 'String');
+        targetFile = get(handles.text5, 'String');
+        set(handles.text5, 'String', sourceFile);
+        set(handles.text7, 'String', targetFile);
     case 'openResynthesis'
         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
         set(handles.text8, 'String', pathname);

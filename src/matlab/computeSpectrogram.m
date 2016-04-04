@@ -74,6 +74,7 @@ function [S,F,T] = computeSpectrogram(Y, winLength, hop, Fs, varargin)
         C = chromagram_IF(p.Results.Y,p.Results.Fs,cfftlen);
         % The frame advance is always one quarter of the FFT length.  Thus,
         % the columns  of C are at timebase of fftlen/4/sr
+        C = resample(C', 1, 2)';
         tt = [1:size(C,2)]*cfftlen/4/p.Results.Fs;
         sfftlen = 512;
         S=(C+eps);

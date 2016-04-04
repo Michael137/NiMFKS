@@ -8,17 +8,20 @@ portionLength = 1;
 windowLength=100;
 overlap=50;
 convergence = 0.0005;
-[Y, Fs] = audioread('glock2.wav');
-[Y2, Fs2] = audioread('sawtoothbirthday.wav');
-Y=Y(1:min(portionLength*Fs, length(Y)));
-Y2=Y2(1:min(portionLength*Fs, length(Y2))); 
+[Y, Fs] = audioread('RaceCar_Engine_resampled.wav');
+[Y2, Fs2] = audioread('Bees_Buzzing_resampled.wav');
+% Y=Y(1:min(portionLength*Fs, length(Y)));
+% Y2=Y2(1:min(portionLength*Fs, length(Y2))); 
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source');
 synth.computeSpectrogram('Target');
-synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', false, 'polyphonyRestricted', false, 'convergenceCriteria', convergence);
-synth.NNMFSynthesis.showActivations(synth);
+synth.SourceSpectrogram.showSpectrogram(80);
 figure()
-synth.NNMFSynthesis.showCost;
+synth.TargetSpectrogram.showSpectrogram(80);
+% synth.synthesize('NNMF', 'Euclidean', 20, 'repititionRestricted', true, 'continuityEnhanced', false, 'polyphonyRestricted', false, 'convergenceCriteria', convergence);
+% synth.NNMFSynthesis.showActivations(synth);
+% figure()
+% synth.NNMFSynthesis.showCost;
 %% Article Replication Scratchpad
 clear all
 clc
@@ -192,22 +195,8 @@ soundsc(synth.Resynthesis, Fs/2)
 clear all
 clc
 
-workspaces = {'synth3' ...
-    'synth4' ...
-    'synth7' ...
-    'synth8' ...
-    'synth11' ...
-    'synth12' ...
-    'synth15' ...
-    'synth16' ...
-    'synth17' ...
-    'synth18' ...
-    'synth19' ...
-    'synth20' ...
-    'synth21' ...
-    'synth22' ...
-    'synth23' ...
-    'synth24' ...
+workspaces = {'BeesBeatles' ...
+    
     }
 
 for i = 1:length(workspaces)
@@ -404,9 +393,9 @@ resynth = templateAdditionResynth(x, H);
 %% Chromagram Tests
 
 % Read an audio waveform
-[d,sr] = audioread('Wind_Blowing_resampled.wav');
+[d,sr] = audioread('glock2.wav');
 d=d(:, 1);
-d=d(1:2*sr);
+d=d(1:5*sr);
 % Calculate the chroma matrix.  Use a long FFT to discriminate
 % spectral lines as well as possible (2048 is the default value)
 cfftlen=2048;
@@ -443,18 +432,18 @@ title('Shepard tone synthesis')
 % Of course, the main point is to listen to the resynthesis:
 % soundsc(x,sr);
 
-figure()
-db=20*log10(abs(C)/max(max(abs(C))));
-imagesc(db)
-axis xy
-colormap('jet')
-colorbar
-title('Glockenspiel Chromagram')
+% figure()
+% db=20*log10(abs(C)/max(max(abs(C))));
+% imagesc(db)
+% axis xy
+% colormap('jet')
+% colorbar
+% title('Glockenspiel Chromagram')
 
 % C(C==0)=1E-6;
 C = resample(C', 1, 2)';
 % H = nnmfFn(abs(C'), abs(C'), 36, 'convergenceCriteria', 0);
-H = nnmfFn_Div(abs(C), abs(C), 8, 'convergenceCriteria', 0);
+H = nnmfFn_Div(abs(C), abs(C), 15, 'convergenceCriteria', 0);
 figure()
 db_H = 20*log10(H./max(max(H)));
 imagesc(max(-20, db_H));
@@ -467,6 +456,8 @@ subplot(211)
 plot(resynth)
 subplot(212)
 plot(d)
+
+soundsc(resynth, sr/2);
 
 %TODO: resample rows of C
 %% Constructing source sounds for experiments
@@ -504,12 +495,40 @@ audiowrite('drum_set.wav', output, fs);
 
 %Rubberband
 %% Chromagram Analysis
+% plotChromagram('Whales_Singing_resampled.wav', 20)
+% plotChromagram('Wind_Blowing_resampled.wav', 20)
+% plotChromagram('RaceCar_Engine_resampled.wav', 20)
+% plotChromagram('Bees_Buzzing_resampled.wav', 20)
+% plotChromagram('Beatles_LetItBe_resampled.wav', 20)
+% plotChromagram('sinScale_v2.wav', 20)
+% plotChromagram('sinScale_v3.wav', 20)
+% plotChromagram('speech_female.wav', 20)
+% plotChromagram('opera_female.mp3', 20)
+plotChromagram('Black Sabbath - Iron Man Instrumental.wav', 20)
+plotChromagram('wild_cherry_play_that_funky_music.mp3', 20)
 plotChromagram('Whales_Singing_resampled.wav', 20)
-plotChromagram('Wind_Blowing_resampled.wav', 20)
-plotChromagram('RaceCar_Engine_resampled.wav', 20)
-plotChromagram('Bees_Buzzing_resampled.wav', 20)
-plotChromagram('Beatles_LetItBe_resampled.wav', 20)
-plotChromagram('sinScale_v2.wav', 20)
-plotChromagram('sinScale_v3.wav', 20)
-plotChromagram('speech_female.wav', 20)
-plotChromagram('opera_female.mp3', 20)
+plotChromagram('WildCherryWhale.wav', 20)
+%% Phase Vocoder Tests
+[d,sr]=audioread('drum.wav'); 
+y = d(:,1);
+output = y;
+
+for n = [0.1:0.1:1.5]
+    e = pvoc(y, n);
+    [num, den] = rat(n);
+    f = resample(e,num,den);
+    output = [output; y(1:length(f))+f];
+end
+
+output = flip(output);
+
+[S, F, T] = spectrogram(output);
+figure()
+imagesc(20*log10(abs(S)/max(max(abs(S)))))
+axis xy
+colormap('jet')
+colorbar
+
+% soundsc(output,sr)
+
+audiowrite('drum_vocoded.wav', output, sr)

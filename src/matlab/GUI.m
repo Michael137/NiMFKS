@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 08-Mar-2016 12:26:32
+% Last Modified by GUIDE v2.5 28-Mar-2016 12:26:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1005,3 +1005,11 @@ function checkbox14_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox14
+
+
+% --- Executes on button press in pushbutton22.
+function pushbutton22_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton22 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+SynthesisCtr('Swap Sounds', handles);
