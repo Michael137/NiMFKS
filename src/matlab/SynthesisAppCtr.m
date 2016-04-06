@@ -1,10 +1,12 @@
 function SynthesisAppCtr(action, datastruct)
 
 handles = datastruct;
+[pathstr, ~, ~] = fileparts(pwd);
 
 switch action
     case 'openResynthesis'
-        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+%         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+        pathname = 'resynthesis.wav';
         set(handles.synth_edit, 'String', pathname);
     case 'playResynthesis'
         [y, Fs] = audioread(get(handles.synth_edit, 'String'));

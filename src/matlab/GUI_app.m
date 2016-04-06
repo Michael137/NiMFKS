@@ -52,7 +52,12 @@ function GUI_app_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to GUI_app (see VARARGIN)
 %Place "playback" symbol onto buttons
-[a,map]=imread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\playButton.jpg');
+% [a,map]=imread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\playButton.jpg');
+
+[pathstr, ~, ~] = fileparts(pwd);
+addpath(genpath(strcat(pathstr, '/MFAMC', '/assets')));
+[a,map]=imread('playButton.jpg');
+
 [r,c,d]=size(a); 
 x=ceil(r/30); 
 y=ceil(c/30); 

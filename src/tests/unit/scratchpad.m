@@ -195,8 +195,8 @@ soundsc(synth.Resynthesis, Fs/2)
 clear all
 clc
 
-workspaces = {'BeesBeatles' ...
-    
+workspaces = {
+    'ChainsawOsbourne (Fast Restriction Comparison)' ...
     }
 
 for i = 1:length(workspaces)
@@ -495,19 +495,19 @@ audiowrite('drum_set.wav', output, fs);
 
 %Rubberband
 %% Chromagram Analysis
-% plotChromagram('Whales_Singing_resampled.wav', 20)
-% plotChromagram('Wind_Blowing_resampled.wav', 20)
-% plotChromagram('RaceCar_Engine_resampled.wav', 20)
-% plotChromagram('Bees_Buzzing_resampled.wav', 20)
-% plotChromagram('Beatles_LetItBe_resampled.wav', 20)
-% plotChromagram('sinScale_v2.wav', 20)
-% plotChromagram('sinScale_v3.wav', 20)
-% plotChromagram('speech_female.wav', 20)
-% plotChromagram('opera_female.mp3', 20)
-plotChromagram('Black Sabbath - Iron Man Instrumental.wav', 20)
-plotChromagram('wild_cherry_play_that_funky_music.mp3', 20)
-plotChromagram('Whales_Singing_resampled.wav', 20)
-plotChromagram('WildCherryWhale.wav', 20)
+plotChromagram('Whales_Singing_resampled.wav', 15)
+plotChromagram('Wind_Blowing_resampled.wav', 50)
+plotChromagram('RaceCar_Engine_resampled.wav', 20)
+plotChromagram('Chainsaw_Sawing_resampled.wav', 15)
+plotChromagram('Bees_Buzzing_resampled.wav', 15)
+plotChromagram('Beatles_LetItBe_resampled.wav', 15)
+plotChromagram('sinScale_v2.wav', 15)
+plotChromagram('sinScale.wav', 60)
+plotChromagram('speech_female.wav', 15)
+plotChromagram('Black Sabbath - Iron Man Instrumental.wav', 15)
+plotChromagram('wild_cherry_play_that_funky_music.mp3', 15)
+plotChromagram('Sawtoothbirthday.wav', 15)
+plotChromagram('glock2.wav', 15)
 %% Phase Vocoder Tests
 [d,sr]=audioread('drum.wav'); 
 y = d(:,1);
