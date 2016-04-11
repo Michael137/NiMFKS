@@ -557,3 +557,4 @@ audiowrite('drum_vocoded.wav', output, sr)
 Spectrogram(S, F, T).showSpectrogram(80)
 figure()
 Spectrogram(S2, F2, T2).showSpectrogram(80)
+%% Testing GIT Branching
