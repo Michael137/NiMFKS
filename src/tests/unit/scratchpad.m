@@ -395,42 +395,56 @@ resynth = templateAdditionResynth(x, H);
 % Read an audio waveform
 [d,sr] = audioread('glock2.wav');
 d=d(:, 1);
-d=d(1:5*sr);
+% d=d(1:8*sr);
+
+[d2,sr] = audioread('glock2.wav');
+d2=d2(:, 1);
+d2=d2(1:8*sr);
+
 % Calculate the chroma matrix.  Use a long FFT to discriminate
 % spectral lines as well as possible (2048 is the default value)
 cfftlen=2048;
 C = chromagram_IF(d,sr,cfftlen);
+C2 = chromagram_IF(d2,sr,cfftlen);
 % The frame advance is always one quarter of the FFT length.  Thus,
 % the columns  of C are at timebase of fftlen/4/sr
 tt = [1:size(C,2)]*cfftlen/4/sr;
+tt2 = [1:size(C2,2)]*cfftlen/4/sr;
 % Plot spectrogram using a shorter window
-subplot(311)
-sfftlen = 512;
-specgram(d,sfftlen,sr);
-% Always use a 60 dB colormap range
-caxis(max(caxis)+[-60 0])
-% .. and look only at the bottom 4 kHz of spectrum
-axis([0 length(d)/sr 0 4000])
-title('Original Sound')
-% Now the chromagram, also on a dB magnitude scale
-subplot(312)
+% subplot(311)
+% sfftlen = 512;
+% specgram(d,sfftlen,sr);
+% % Always use a 60 dB colormap range
+% caxis(max(caxis)+[-60 0])
+% % .. and look only at the bottom 4 kHz of spectrum
+% axis([0 length(d)/sr 0 4000])
+% title('Original Sound')
+% % Now the chromagram, also on a dB magnitude scale
+% subplot(312)
+figure()
 imagesc(tt,[1:12],20*log10(C+eps));
 axis xy
 caxis(max(caxis)+[-60 0])
-title('Chromagram')
+title('Source Chromagram')
 
-% chromsynth takes a chroma matrix as the first argument, the
-% *period* (in seconds) corresponding to each time frame, and
-% the sampling rate for the waveform to be generated.
-x = chromsynth(C,cfftlen/4/sr,sr);
-% Plot this alongside the others to see how it differs
-subplot(313)
-specgram(x,sfftlen,sr);
+figure()
+imagesc(tt2,[1:12],20*log10(C2+eps));
+axis xy
 caxis(max(caxis)+[-60 0])
-axis([0 length(d)/sr 0 4000])
-title('Shepard tone synthesis')
-% Of course, the main point is to listen to the resynthesis:
-% soundsc(x,sr);
+title('Target Chromagram')
+
+% % chromsynth takes a chroma matrix as the first argument, the
+% % *period* (in seconds) corresponding to each time frame, and
+% % the sampling rate for the waveform to be generated.
+% x = chromsynth(C,cfftlen/4/sr,sr);
+% % Plot this alongside the others to see how it differs
+% subplot(313)
+% specgram(x,sfftlen,sr);
+% caxis(max(caxis)+[-60 0])
+% axis([0 length(d)/sr 0 4000])
+% title('Shepard tone synthesis')
+% % Of course, the main point is to listen to the resynthesis:
+% % soundsc(x,sr);
 
 % figure()
 % db=20*log10(abs(C)/max(max(abs(C))));
@@ -442,12 +456,13 @@ title('Shepard tone synthesis')
 
 % C(C==0)=1E-6;
 C = resample(C', 1, 2)';
+C2 = resample(C2', 1, 2)';
 % H = nnmfFn(abs(C'), abs(C'), 36, 'convergenceCriteria', 0);
-H = nnmfFn_Div(abs(C), abs(C), 15, 'convergenceCriteria', 0);
+H = nnmfFn(abs(C), abs(C2), 15, 'convergenceCriteria', 0);
 figure()
 db_H = 20*log10(H./max(max(H)));
-imagesc(max(-20, db_H));
-title('Glockenspiel-Glockenspiel Activations')
+imagesc(max(-30, db_H));
+title('Activations')
 axis xy; colormap(flipud(colormap('gray')));colorbar;
 resynth = templateAdditionResynth(d, H);
 
@@ -457,7 +472,7 @@ plot(resynth)
 subplot(212)
 plot(d)
 
-soundsc(resynth, sr/2);
+% soundsc(resynth, sr/2);
 
 %TODO: resample rows of C
 %% Constructing source sounds for experiments
@@ -495,18 +510,20 @@ audiowrite('drum_set.wav', output, fs);
 
 %Rubberband
 %% Chromagram Analysis
-plotChromagram('Whales_Singing_resampled.wav', 15)
-plotChromagram('Wind_Blowing_resampled.wav', 50)
-plotChromagram('RaceCar_Engine_resampled.wav', 20)
-plotChromagram('Chainsaw_Sawing_resampled.wav', 15)
-plotChromagram('Bees_Buzzing_resampled.wav', 15)
-plotChromagram('Beatles_LetItBe_resampled.wav', 15)
-plotChromagram('sinScale_v2.wav', 15)
-plotChromagram('sinScale.wav', 60)
-plotChromagram('speech_female.wav', 15)
-plotChromagram('Black Sabbath - Iron Man Instrumental.wav', 15)
-plotChromagram('wild_cherry_play_that_funky_music.mp3', 15)
-plotChromagram('Sawtoothbirthday.wav', 15)
+% plotChromagram('Whales_Singing_resampled.wav', 15)
+% plotChromagram('Wind_Blowing_resampled.wav', 50)
+% plotChromagram('RaceCar_Engine_resampled.wav', 20)
+% plotChromagram('Chainsaw_Sawing_resampled.wav', 15)
+% plotChromagram('Bees_Buzzing_resampled.wav', 15)
+% plotChromagram('Beatles_LetItBe_resampled.wav', 15)
+% plotChromagram('sinScale_v2.wav', 15)
+% plotChromagram('sinScale.wav', 60)
+% plotChromagram('speech_female.wav', 15)
+% plotChromagram('Black Sabbath - Iron Man Instrumental.wav', 15)
+% plotChromagram('wild_cherry_play_that_funky_music.mp3', 15)
+% plotChromagram('Sawtoothbirthday.wav', 15)
+plotChromagram('SinSpiel_frestrict_temp.wav', 15)
+plotChromagram('SinSpiel_restrict_temp.wav', 15)
 plotChromagram('glock2.wav', 15)
 %% Phase Vocoder Tests
 [d,sr]=audioread('drum.wav'); 
@@ -532,3 +549,11 @@ colorbar
 % soundsc(output,sr)
 
 audiowrite('drum_vocoded.wav', output, sr)
+%% Synthesis Spectrogram Preview Script
+[y, fs] = audioread('WindOpera_frestrict_istft.wav');
+[y2, fs2] = audioread('WindOpera_frestrict_temp.wav');
+[S, F, T] = computeSpectrogram(y, 100*fs/1000, 50*fs/1000, fs);
+[S2, F2, T2] = computeSpectrogram(y2, 100*fs2/1000, 50*fs2/1000, fs2);
+Spectrogram(S, F, T).showSpectrogram(80)
+figure()
+Spectrogram(S2, F2, T2).showSpectrogram(80)

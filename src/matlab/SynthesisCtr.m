@@ -4,14 +4,14 @@ handles = datastruct;
 
 switch action
     case 'openTarget'
-%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text5, 'String', sourcepathname);
     case 'openSource'
         handles = datastruct;
-%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         set(handles.text7, 'String', sourcepathname);
     case 'Swap Sounds'
@@ -20,8 +20,8 @@ switch action
         set(handles.text5, 'String', sourceFile);
         set(handles.text7, 'String', targetFile);
     case 'openResynthesis'
-%         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
-        pathname = 'resynthesis.wav';
+        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+%         pathname = 'resynthesis.wav';
         set(handles.text8, 'String', pathname);
     case 'savePlot'
         frame = getframe(handles.axes1);
