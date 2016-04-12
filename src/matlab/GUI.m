@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 12-Apr-2016 11:59:06
+% Last Modified by GUIDE v2.5 12-Apr-2016 16:34:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -69,7 +69,7 @@ set(handles.btn_play_2,'CData',g);
 set(handles.btn_play_3,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3],'Visible','off')
+set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, handles.tbl_plotdata],'Visible','off')
 
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
@@ -1608,7 +1608,7 @@ function tool_menu_activations_Callback(hObject, eventdata, handles)
 % hObject    handle to tool_menu_activations (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set([handles.pnl_activation_sketching, handles.draw_activations, handles.delete_activations, handles.btn_resynthesize], 'Visible', 'on');
+set([handles.pnl_activation_sketching, handles.draw_activations, handles.delete_activations, handles.btn_resynthesis], 'Visible', 'on');
 
 % --------------------------------------------------------------------
 function tool_menu_templates_Callback(hObject, eventdata, handles)
@@ -1616,3 +1616,11 @@ function tool_menu_templates_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 set([handles.template_manipulation_tool, handles.btn_post_processing_run], 'Visible', 'on');
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_plotData_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev_plotData (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.tbl_plotdata, 'Visible', 'on');
