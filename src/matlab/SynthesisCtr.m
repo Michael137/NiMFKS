@@ -238,7 +238,7 @@ switch action
         plotRequest = plotOptions(selectedPlot);
 %         view(0, 90);
         switch(plotRequest{1})
-            case 'Resynthesis'
+            case 'Synthesis Plot'
 %                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
                 handles.SynthesisObject.showResynthesis;
                 set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.Resynthesis');
@@ -253,7 +253,7 @@ switch action
                 handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.sld_maxdb, 'Value'));
                 set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
 %                 fig2plotly()
-            case 'Source Spectrogram'
+            case 'Corpus Spectrogram'
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
                 set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
@@ -266,7 +266,7 @@ switch action
                                         handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
                 resynthSpectrogram.showSpectrogram(80);
                 set(handles.tbl_plotdata, 'Data', abs(resynthSpectrogram.S));
-            case 'Source Templates'
+            case 'Templates'
                 handles.SynthesisObject.showTemplates;
                 set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
 %                 fig2plotly()

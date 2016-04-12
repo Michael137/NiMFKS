@@ -1,7 +1,7 @@
 %Used for the plot drawing function
 function drawClickCallBack(src,callbackdata, action)
 handles = guidata(src);
-ah = handles.axes1;
+ah = handles.axes2;
 xAxisProps = get(ah, 'XAxis');
 xLimits = get(xAxisProps, 'Limits')
 
@@ -12,9 +12,9 @@ xMax = size(acts, 2);
 
 xUnit = xLimits/size(acts, 2);
 
-sliderHandle = handles.slider3;
+sliderHandle = handles.sld_actstrength;
 
-paintBrush = handles.uibuttongroup11.SelectedObject.String;
+paintBrush = handles.grp_paintbrush.SelectedObject.String;
 paintBrushSize = 0;
 
 if(strcmp(paintBrush, 'Large Brush'))
@@ -97,7 +97,7 @@ src.WindowButtonUpFcn = @releaseCallBack;
     end
 
     function releaseCallBack(src, callbackdata)
-        SynthesisCtr('switchPlot', handles);
+        SynthesisCtr('selectPlot', handles);
         src.Pointer = 'arrow';
         src.WindowButtonMotionFcn = '';
         src.WindowButtonUpFcn = '';

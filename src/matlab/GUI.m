@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 12-Apr-2016 09:04:28
+% Last Modified by GUIDE v2.5 12-Apr-2016 11:59:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -69,7 +69,7 @@ set(handles.btn_play_2,'CData',g);
 set(handles.btn_play_3,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont],'Visible','off')
+set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3],'Visible','off')
 
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
@@ -899,10 +899,10 @@ function draw_activations_ClickedCallback(hObject, eventdata, handles)
 % guidata(hObject, handles);
 
 acts = handles.SynthesisObject.NNMFSynthesis.Activations;
-set(handles.slider3, 'Max', max(max(acts)));
-set(handles.slider3, 'Value', mean(mean(acts)));
-set(handles.slider3, 'Min', min(min(acts)));
-set(handles.slider3, 'SliderStep', [mean(mean(acts)) mean(mean(acts))]);
+set(handles.sld_actstrength, 'Max', max(max(acts)));
+set(handles.sld_actstrength, 'Value', mean(mean(acts)));
+set(handles.sld_actstrength, 'Min', min(min(acts)));
+set(handles.sld_actstrength, 'SliderStep', [mean(mean(acts)) mean(mean(acts))]);
 guidata(hObject, handles);
 
 
@@ -968,7 +968,6 @@ function template_manipulation_tool_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to template_manipulation_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set([handles.pushbutton21],'Visible','on')
 templates = handles.SynthesisObject.SourceSpectrogram.S;
 [~,I]=max(templates);
 [~,Ix] = sort(I,'ascend');
@@ -1018,14 +1017,31 @@ function btn_synthesis_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_synthesis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('runSynthesis', handles);
+if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
+    tic
+    SynthesisCtr('runSynthesis', handles);
+    toc
+else
+    SynthesisCtr('runSynthesis', handles);
+end
+set([handles.btn_play_3], 'Visible', 'on');
+if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
+    synthObj = handles.SynthesisObject;
+    save('synth.mat','synthObj');
+end
 
 % --- Executes on button press in btn_analysis.
 function btn_analysis_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('runAnalysis', handles);
+if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
+    tic
+    SynthesisCtr('runAnalysis', handles);
+    toc
+else
+    SynthesisCtr('runAnalysis', handles);
+end
 
 % --- Executes on selection change in popupmenu11.
 function popupmenu11_Callback(hObject, eventdata, handles)
@@ -1278,12 +1294,12 @@ function btn_load_corpus_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('openSource', handles);
 
-% --- Executes on button press in pushbutton33.
-function pushbutton33_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton33 (see GCBO)
+% --- Executes on button press in btn_post_processing_run.
+function btn_post_processing_run_Callback(hObject, eventdata, handles)
+% hObject    handle to btn_post_processing_run (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+SynthesisCtr('rerun', handles);
 
 % --- Executes on slider movement.
 function sld_maxdb_Callback(hObject, eventdata, handles)
@@ -1307,12 +1323,12 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
-% --- Executes on button press in pushbutton32.
-function pushbutton32_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton32 (see GCBO)
+% --- Executes on button press in btn_resynthesis.
+function btn_resynthesis_Callback(hObject, eventdata, handles)
+% hObject    handle to btn_resynthesis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+SynthesisCtr('Resynthesize', handles);
 
 % --- Executes on slider movement.
 function sld_actstrength_Callback(hObject, eventdata, handles)
@@ -1585,3 +1601,18 @@ function tbl_plotdata_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to tbl_plotdata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+% --------------------------------------------------------------------
+function tool_menu_activations_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_activations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set([handles.pnl_activation_sketching, handles.draw_activations, handles.delete_activations, handles.btn_resynthesize], 'Visible', 'on');
+
+% --------------------------------------------------------------------
+function tool_menu_templates_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_templates (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set([handles.template_manipulation_tool, handles.btn_post_processing_run], 'Visible', 'on');
