@@ -11,6 +11,10 @@ end
 waitbarHandle = waitbar(0, 'Starting Template Addition Synthesis...')
 
 segments=zeros(size(H, 2), windowLength);
+win = window(@hann,(windowLength));
+% win = window(@sin,(windowLength));
+% win = tukeywin(windowLength, 0.75);
+
 % m=1;
 for k=1:size(H, 2)
     waitbar(k/size(H, 2), waitbarHandle, strcat('Creating segments...', num2str(k), '/', num2str(size(H, 2))))
@@ -24,9 +28,6 @@ for k=1:size(H, 2)
 %             disp(strcat('k:', num2str(k)))
 %             disp(strcat('i:', num2str(i)))
 
-            win = window(@hann,(windowLength));
-%             win = window(@sin,(windowLength));
-%             win = tukeywin(windowLength, 0.75);
             segments(k, :)=(segments(k, :)'+ win.*(X(location:location+windowLength-1)*extracted(i))); %TODO: Pointwise multiply X by smooth window e.g. van Hann
 %             segments(k, :)=segments(k, :)'+ X(location:location+windowLength-1)*extracted(i);
 
