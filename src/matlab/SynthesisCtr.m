@@ -262,38 +262,46 @@ switch action
         selectedPlot=get(handles.pop_plot, 'Value');
         plotOptions=get(handles.pop_plot, 'String');
         delete(handles.axes2.Children);
+        cla(gca,'reset')
         plotRequest = plotOptions(selectedPlot);
 %         view(0, 90);
         switch(plotRequest{1})
             case 'Synthesis Plot'
+                view(gca, 2);
 %                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
                 handles.SynthesisObject.showResynthesis;
                 set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.Resynthesis');
 %                 fig2plotly()
             case 'Cost'
+                view(gca, 2);
 %                 set(handles.figure1, 'CurrentAxes', handles.CostPlot);
                 handles.SynthesisObject.NNMFSynthesis.showCost;
                 set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
 %                 fig2plotly()
             case 'Activations'
+                view(gca, 2);
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.sld_maxdb, 'Value'));
                 set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
 %                 fig2plotly()
             case 'Corpus Spectrogram'
+                view(gca, 2);
 %                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
                 handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
                 set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
 %                 fig2plotly()
             case 'Target Spectrogram'
+                view(gca, 2);
                 handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
                 set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.TargetSpectrogram.S));
             case 'Synthesis Spectrogram'
+                view(gca, 2);
                 resynthSpectrogram = Spectrogram(handles.SynthesisObject.NNMFSynthesis.Reconstruction, ...
                                         handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
                 resynthSpectrogram.showSpectrogram(80);
                 set(handles.tbl_plotdata, 'Data', abs(resynthSpectrogram.S));
             case 'Templates'
+                view(gca, 3);
                 handles.SynthesisObject.showTemplates;
                 set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
 %                 fig2plotly()
