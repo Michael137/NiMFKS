@@ -183,25 +183,27 @@ switch action
         synth = handles.SynthesisObject;
         H = synth.NNMFSynthesis.Activations;
         C = synth.NNMFSynthesis.Cost;
-        resynthMethodSelected=get(handles.popupmenu4, 'Value');
-        resynthMethods=get(handles.popupmenu4, 'String');
+        resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
+        resynthMethods=get(handles.pop_synthmethod, 'String');
         recon = synth.SourceSpectrogram.S*H;
         synth.NNMFSynthesis = NNMF(H, recon, C);
         synth.resynthesize(resynthMethods(resynthMethodSelected));
+        handles.SynthesisObject = synth;
+        guidata(handles.figure1, handles);
     case 'rerun'
-        synthMethodSelected=get(handles.popupmenu2, 'Value');
-        synthMethods=get(handles.popupmenu2, 'String');
+%         synthMethodSelected=get(handles.popupmenu2, 'Value');
+%         synthMethods=get(handles.popupmenu2, 'String');
         synth = handles.SynthesisObject;
         
-        if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
+%         if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
             
-            costMetricSelected=get(handles.popupmenu3, 'Value');
-            costMetrics=get(handles.popupmenu3, 'String');
+            costMetricSelected=get(handles.pop_cost, 'Value');
+            costMetrics=get(handles.pop_cost, 'String');
             
-            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), 'repititionRestricted', get(handles.checkbox7, 'Value'), ...
-                'continuityEnhanced', get(handles.checkbox9, 'Value'), 'polyphonyRestricted', get(handles.checkbox8, 'Value'), 'convergenceCriteria', str2double(get(handles.edit15, 'String')), ...
-                'r', str2double(get(handles.edit19, 'String')), 'c', str2double(get(handles.edit21, 'String')), 'p', str2double(get(handles.edit20, 'String')));
-        end
+            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edt_iter, 'String')), 'repititionRestricted', get(handles.chk_mod_rep, 'Value'), ...
+                'continuityEnhanced', get(handles.chk_mod_cont, 'Value'), 'polyphonyRestricted', get(handles.chk_mod_poly, 'Value'), 'convergenceCriteria', str2double(get(handles.edt_conv, 'String')), ...
+                'r', str2double(get(handles.edt_mod_rep, 'String')), 'c', str2double(get(handles.edt_mod_cont, 'String')), 'p', str2double(get(handles.edt_mod_poly, 'String')));
+%         end
         
         
         handles.SynthesisObject = synth;
