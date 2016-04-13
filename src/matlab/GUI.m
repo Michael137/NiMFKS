@@ -1039,6 +1039,10 @@ function btn_analysis_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+waitbarHandle = waitbar(0, 'Starting analysis...'); 
+handles.waitbarHandle = waitbarHandle;
+guidata(hObject, handles);
+
 if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
     tic
     SynthesisCtr('runAnalysis', handles);
@@ -1047,6 +1051,7 @@ else
     SynthesisCtr('runAnalysis', handles);
 end
 set(handles.btn_synthesis, 'Visible', 'on');
+close(waitbarHandle);
 
 % --- Executes on selection change in popupmenu11.
 function popupmenu11_Callback(hObject, eventdata, handles)

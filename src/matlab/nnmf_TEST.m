@@ -25,6 +25,8 @@ r = parser.Results.r;
 c = parser.Results.c;
 p = parser.Results.p;
 
+waitbarHandle = waitbar(0, 'Starting NMF synthesis...'); 
+
 cost=0;
 
 targetDim=size(V);
@@ -42,6 +44,7 @@ C=zeros(K, M);
 fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 
 for l=1:L-1
+    waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
     
     num=W'*V;
     den=W'*W*H;
@@ -55,6 +58,7 @@ for l=1:L-1
     
     
     if(repititionRestricted)
+    waitbar(l/(L-1), waitbarHandle, strcat('Repition Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k=1:K
             %Updating H
             for m=1:M
@@ -69,6 +73,7 @@ for l=1:L-1
     end
     
     if(polyphonyRestricted)
+    waitbar(l/(L-1), waitbarHandle, strcat('Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k=1:K
             %Updating H
             for m=1:M
@@ -92,6 +97,7 @@ for l=1:L-1
     end
     
     if(continuityEnhanced)
+    waitbar(l/(L-1), waitbarHandle, strcat('Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)))
         C = conv2(P, eye(c), 'same');
         num=W'*V;
         den=W'*W*C;
@@ -132,4 +138,5 @@ iterations = l;
 disp(strcat('Iterations:', num2str(iterations)))
 
 Y = Y./max(max(Y)); %Normalize activations
+close(waitbarHandle);
 end

@@ -25,6 +25,8 @@ r = parser.Results.r;
 c = parser.Results.c;
 p = parser.Results.p;
 
+waitbarHandle = waitbar(0, 'Starting NMF synthesis...'); 
+
 cost=0;
 
 targetDim=size(V);
@@ -43,6 +45,7 @@ fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 converged = false;
 
 for l=1:L-1
+    waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
     
     num=W'*V;
     den=W'*W*H;
@@ -78,7 +81,7 @@ for l=1:L-1
             end
         end
     end
-    
+
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
     if(l > 5 && (cost(l) > cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
         converged = true;
@@ -128,6 +131,8 @@ Y = Y./max(max(Y)); %Normalize activations
 % if(converged)
 %     Y(20*log10(Y/max(max(Y)))<-25)=0;
 % end
+
+close(waitbarHandle);
 end
 
 % %Version 1:

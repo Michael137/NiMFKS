@@ -207,6 +207,8 @@ switch action
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
     case 'runAnalysis'
+        waitbar(0.25, handles.waitbarHandle, 'Reading audio files...')
+        
         portionLength = str2num(get(handles.edt_sndlen, 'String'));
         windowLength = str2num(get(handles.edt_winlen, 'String'));
         overlap = str2num(get(handles.edt_overlap, 'String'));
@@ -224,11 +226,16 @@ switch action
             Y=Y(1:min(portionLength*Fs, length(Y)));
         end
         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+        
+        waitbar(0.6, handles.waitbarHandle, 'Performing audio analysis...')
         synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
         
+        waitbar(0.75, handles.waitbarHandle, 'Performing corpus analysis...')
         spectTypeSelected=get(handles.pop_specttype, 'Value');
         spectTypes=get(handles.pop_specttype, 'String');
         synth.computeSpectrogram('Source', spectTypes(spectTypeSelected));
+        
+        waitbar(0.9, handles.waitbarHandle, 'Performing target analysis...')
         synth.computeSpectrogram('Target', spectTypes(spectTypeSelected));
         handles.SynthesisObject = synth;
     case 'runSynthesis'

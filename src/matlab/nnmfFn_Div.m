@@ -24,6 +24,8 @@ r = parser.Results.r;
 c = parser.Results.c;
 p = parser.Results.p;
 
+waitbarHandle = waitbar(0, 'Starting NMF synthesis...');
+
 fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 converged = false;
 
@@ -37,6 +39,7 @@ H=random('unif',0, 1, K, M);
 den = sum(W);
 
 for l=1:L-1
+    waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
     
     for k = 1:size(H, 1)
         for m = 1:size(H, 2)
@@ -111,6 +114,7 @@ Y = Y./max(max(Y)); %Normalize activations
 % if(converged)
 %     Y(20*log10(Y/max(max(Y)))<-25)=0;
 % end
+close(waitbarHandle);
 end
 
 % % Version 1:

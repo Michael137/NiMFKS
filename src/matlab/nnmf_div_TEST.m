@@ -24,6 +24,8 @@ r = parser.Results.r;
 c = parser.Results.c;
 p = parser.Results.p;
 
+waitbarHandle = waitbar(0, 'Starting NMF synthesis...');
+
 fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 converged = false;
 
@@ -40,6 +42,7 @@ C=zeros(K, M);
 den = sum(W);
 
 for l=1:L-1
+    waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
     
     for k = 1:size(H, 1)
         for m = 1:size(H, 2)
@@ -52,6 +55,7 @@ for l=1:L-1
     end
     
     if(repititionRestricted)
+    waitbar(l/(L-1), waitbarHandle, strcat('Repitition Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
                 if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
@@ -64,6 +68,7 @@ for l=1:L-1
     end
     
     if(polyphonyRestricted)
+    waitbar(l/(L-1), waitbarHandle, strcat('Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
                 [~, sortedIndices] = sort(R(:, m),'descend');
@@ -80,6 +85,7 @@ for l=1:L-1
     end
     
     if(continuityEnhanced)
+    waitbar(l/(L-1), waitbarHandle, strcat('Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
                 C = conv2(P, eye(c), 'same');
@@ -142,6 +148,7 @@ Y = Y./max(max(Y)); %Normalize activations
 % if(converged)
 %     Y(20*log10(Y/max(max(Y)))<-25)=0;
 % end
+close(waitbarHandle);
 end
 
 % % Version 1:
