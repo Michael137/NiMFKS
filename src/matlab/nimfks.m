@@ -1,35 +1,35 @@
-function varargout = GUI(varargin)
-% GUI MATLAB code for GUI.fig
-%      GUI, by itself, creates a new GUI or raises the existing
+function varargout = nimfks(varargin)
+% nimfks MATLAB code for nimfks.fig
+%      nimfks, by itself, creates a new nimfks or raises the existing
 %      singleton*.
 %
-%      H = GUI returns the handle to a new GUI or the handle to
+%      H = nimfks returns the handle to a new nimfks or the handle to
 %      the existing singleton*.
 %
-%      GUI('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in GUI.M with the given input arguments.
+%      nimfks('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in nimfks.M with the given input arguments.
 %
-%      GUI('Property','Value',...) creates a new GUI or raises the
+%      nimfks('Property','Value',...) creates a new nimfks or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before GUI_OpeningFcn gets called.  An
+%      applied to the nimfks before nimfks_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to GUI_OpeningFcn via varargin.
+%      stop.  All inputs are passed to nimfks_OpeningFcn via varargin.
 %
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      *See nimfks Options on GUIDE's Tools menu.  Choose "nimfks allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help GUI
+% Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 13-Apr-2016 08:58:56
+% Last Modified by GUIDE v2.5 13-Apr-2016 18:36:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @GUI_OpeningFcn, ...
-                   'gui_OutputFcn',  @GUI_OutputFcn, ...
+                   'gui_OpeningFcn', @nimfks_OpeningFcn, ...
+                   'gui_OutputFcn',  @nimfks_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,13 +44,13 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before GUI is made visible.
-function GUI_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before nimfks is made visible.
+function nimfks_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to GUI (see VARARGIN)
+% varargin   command line arguments to nimfks (see VARARGIN)
 
 %Place "playback" symbol onto buttons
 [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
@@ -85,18 +85,18 @@ set(handles.edt_mod_cont,'String','2'); %Continuity enhancement parameter
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
 
-% Choose default command line output for GUI
+% Choose default command line output for nimfks
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes GUI wait for user response (see UIRESUME)
+% UIWAIT makes nimfks wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = GUI_OutputFcn(hObject, eventdata, handles) 
+function varargout = nimfks_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
