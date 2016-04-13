@@ -4,18 +4,24 @@ handles = datastruct;
 
 switch action
     case 'openTarget'
-        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         targetpathname= strcat(pathname, filename);
         handles.targetfile = targetpathname;
+        
+        [y, fs] = audioread(handles.targetfile);
+        handles.targetPlayer = audioplayer(y, fs);
 %         guidata(gcf, handles);
         set(handles.txt_targetfile, 'String', filename);
     case 'openSource'
         handles = datastruct;
-        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
         handles.corpusfile = sourcepathname;
+        
+        [y, fs] = audioread(handles.corpusfile);
+        handles.corpusPlayer = audioplayer(y, fs);
 %         guidata(gcf, handles);
         set(handles.txt_corpusfile, 'String', filename);
     case 'Swap Sounds'
@@ -35,16 +41,30 @@ switch action
         imwrite(image, strcat(path, file));
     case 'exportResynth'
         [file,path] = uiputfile({'*.wav'},'Save Sound As');
-        copyfile('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', strcat(path, file));
+%         copyfile('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', strcat(path, file));
+        audiowrite([path filesep file], handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'playTarget'
-        [y, Fs] = audioread(handles.targetfile);
-        soundsc(y, Fs);
+%         [y, Fs] = audioread(handles.targetfile);
+        targetPlayer = handles.targetPlayer;
+        if(isplaying(targetPlayer))
+            stop(targetPlayer);
+        else
+            play(targetPlayer);
+        end
+%         soundsc(y, Fs);
     case 'playSource'
-        [y, Fs] = audioread(handles.corpusfile);
-        soundsc(y, Fs);
+%         [y, Fs] = audioread(handles.corpusfile);
+        corpusPlayer = handles.corpusPlayer;
+        if(isplaying(corpusPlayer))
+            stop(corpusPlayer);
+        else
+            play(corpusPlayer);
+        end
+%         soundsc(y, Fs);
     case 'playResynthesis'
-        [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
-        soundsc(y, Fs);
+%         [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
+%         soundsc(y, Fs);
+          soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'configPlotlist'
 %         plotMap = containers.Map({'Cost', 'Resynthesis', 'Activations'}, [get(handles.checkbox1, 'Value'), get(handles.checkbox4, 'Value'), get(handles.checkbox5, 'Value')]);
         plotList = {};

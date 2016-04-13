@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 12-Apr-2016 16:34:23
+% Last Modified by GUIDE v2.5 13-Apr-2016 08:58:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,7 +53,7 @@ function GUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to GUI (see VARARGIN)
 
 %Place "playback" symbol onto buttons
-[a,map]=imread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\playButton.jpg');
+[a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
 
 % [pathstr, ~, ~] = fileparts(pwd);
 % addpath(genpath(strcat(pathstr, '/MFAMC', '/assets')));
@@ -69,7 +69,7 @@ set(handles.btn_play_2,'CData',g);
 set(handles.btn_play_3,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, handles.tbl_plotdata],'Visible','off')
+set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, handles.tbl_plotdata, handles.btn_synthesis, handles.btn_play_1, handles.btn_play_2],'Visible','off')
 
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
@@ -81,6 +81,9 @@ set(handles.edt_conv,'String','0.0005'); %NNMF Convergence Criteria
 set(handles.edt_mod_rep,'String','3'); %Repitition restriction parameter
 set(handles.edt_mod_poly,'String','3'); %Polyphony restriction parameter
 set(handles.edt_mod_cont,'String','2'); %Continuity enhancement parameter
+
+% fig=gcf;
+% set(findall(fig,'-property','FontSize'),'FontSize',11)
 
 % Choose default command line output for GUI
 handles.output = hObject;
@@ -1029,6 +1032,7 @@ if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
     synthObj = handles.SynthesisObject;
     save('synth.mat','synthObj');
 end
+SynthesisCtr('selectPlot', handles);
 
 % --- Executes on button press in btn_analysis.
 function btn_analysis_Callback(hObject, eventdata, handles)
@@ -1042,6 +1046,7 @@ if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
 else
     SynthesisCtr('runAnalysis', handles);
 end
+set(handles.btn_synthesis, 'Visible', 'on');
 
 % --- Executes on selection change in popupmenu11.
 function popupmenu11_Callback(hObject, eventdata, handles)
@@ -1272,6 +1277,23 @@ function btn_play_2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('playTarget', handles);
+if(isplaying(handles.targetPlayer))
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+    [r,c,d]=size(a); 
+    x=ceil(r/30); 
+    y=ceil(c/30); 
+    g=a(1:x:end,1:y:end,:);
+    g(g==255)=5.5*255;
+    set(handles.btn_play_2,'CData',g)
+else
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+    [r,c,d]=size(a); 
+    x=ceil(r/30); 
+    y=ceil(c/30); 
+    g=a(1:x:end,1:y:end,:);
+    g(g==255)=5.5*255;
+    set(handles.btn_play_2,'CData',g);
+end
 
 % --- Executes on button press in btn_load_target.
 function btn_load_target_Callback(hObject, eventdata, handles)
@@ -1279,6 +1301,7 @@ function btn_load_target_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('openTarget', handles);
+set(handles.btn_play_2, 'Visible', 'on');
 
 % --- Executes on button press in btn_play_1.
 function btn_play_1_Callback(hObject, eventdata, handles)
@@ -1286,6 +1309,23 @@ function btn_play_1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('playSource', handles);
+if(isplaying(handles.corpusPlayer))
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+    [r,c,d]=size(a); 
+    x=ceil(r/30); 
+    y=ceil(c/30); 
+    g=a(1:x:end,1:y:end,:);
+    g(g==255)=5.5*255;
+    set(handles.btn_play_1,'CData',g)
+else
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+    [r,c,d]=size(a); 
+    x=ceil(r/30); 
+    y=ceil(c/30); 
+    g=a(1:x:end,1:y:end,:);
+    g(g==255)=5.5*255;
+    set(handles.btn_play_1,'CData',g);
+end
 
 % --- Executes on button press in btn_load_corpus.
 function btn_load_corpus_Callback(hObject, eventdata, handles)
@@ -1293,6 +1333,7 @@ function btn_load_corpus_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('openSource', handles);
+set(handles.btn_play_1, 'Visible', 'on');
 
 % --- Executes on button press in btn_post_processing_run.
 function btn_post_processing_run_Callback(hObject, eventdata, handles)
