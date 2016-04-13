@@ -29,7 +29,7 @@ classdef Synthesis < handle
         
         function obj = computeSpectrogram(obj, identifier, varargin)
             if(nargin <= 2)
-                type = 'Regular';
+                type = 'STFT';
             else
                 type = varargin{1};
             end
