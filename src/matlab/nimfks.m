@@ -74,7 +74,7 @@ set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
 set(handles.edt_overlap,'String','50'); %Overlap
-set(handles.edt_sndlen,'String','5'); %Length of synthesis
+% set(handles.edt_sndlen,'String','5'); %Length of synthesis
 set(handles.edt_iter,'String','20'); %NNMF Iterations
 set(handles.edt_rand,'String','0'); %NNMF Activations Random Seed
 set(handles.edt_conv,'String','0.0005'); %NNMF Convergence Criteria
