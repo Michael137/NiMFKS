@@ -211,7 +211,7 @@ switch action
     case 'runAnalysis'
         waitbar(0.25, handles.waitbarHandle, 'Reading audio files...')
         
-        portionLength = str2num(get(handles.edt_sndlen, 'String'));
+%         portionLength = str2num(get(handles.edt_sndlen, 'String'));
         windowLength = str2num(get(handles.edt_winlen, 'String'));
         overlap = str2num(get(handles.edt_overlap, 'String'));
         [Y, Fs] = audioread(handles.corpusfile);
@@ -220,14 +220,16 @@ switch action
         %Convert to Monophonic sound
         if(size(Y, 2) ~= 1)
             Y = (Y(:,1)+Y(:,2))/2;
-        elseif(size(Y2, 2) ~= 1)
+        end
+        
+        if(size(Y2, 2) ~= 1)
             Y2 = (Y2(:,1)+Y2(:,2))/2;
         end
         
-        if(~get(handles.chk_corpuslen, 'Value'))
-            Y=Y(1:min(portionLength*Fs, length(Y)));
-        end
-        Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+%         if(~get(handles.chk_corpuslen, 'Value'))
+%             Y=Y(1:min(portionLength*Fs, length(Y)));
+%         end
+%         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
         
         waitbar(0.6, handles.waitbarHandle, 'Performing audio analysis...')
         synth = Synthesis(Y, Y2, Fs, windowLength, overlap);

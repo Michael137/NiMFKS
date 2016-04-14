@@ -36,17 +36,19 @@ M=size(V, 2);
 H=random('unif',0, 1, K, M);
 % H=rand(K, M);
 % num = 0;
-den = sum(W);
+% V = WH
 
+V = V+1E-6;
+W = W+1E-6;
+den = sum(W);
 for l=1:L-1
     waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
-    
-    for k = 1:size(H, 1)
-        for m = 1:size(H, 2)
-            recon = W*H(:,m);
-            num = W(:, k)'*(V(:, m)./(recon));
-            H(k, m) = H(k, m) * num / den(k);
-        end
+
+    recon = W*H;
+    for mm = 1:size(H,2)
+      num = V(:,mm).*(1./recon(:,mm));
+      num2 = num'*W./den;
+      H(:,mm) = H(:, mm).*num2';
     end
     
     if(repititionRestricted && l==L-1)
@@ -117,7 +119,6 @@ Y = Y./max(max(Y)); %Normalize activations
 close(waitbarHandle);
 end
 
-% % Version 1:
 % function [Y, cost] = nnmfFn_Div(V, W, L, varargin)
 % %L: Iterations
 % %V: Matrix to be factorized
@@ -144,6 +145,8 @@ end
 % c = parser.Results.c;
 % p = parser.Results.p;
 % 
+% waitbarHandle = waitbar(0, 'Starting NMF synthesis...');
+% 
 % fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 % converged = false;
 % 
@@ -157,32 +160,31 @@ end
 % den = sum(W);
 % 
 % for l=1:L-1
-%     %     for k = 1:size(H, 1)
-%     %         for m = 1:size(H, 2)
-%     %             recon = W*H;
-%     %             n = 1 : size(W, 1);
-%     %             tmp = W(n, k).*V(n, m)./(recon(n, m));
-%     %             num = sum(tmp);
-%     %             den = sum(W(:, k));
-%     %             H(k, m) = H(k, m) * num / den;
-%     %         end
-%     %     end
+%     waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
 %     
 %     for k = 1:size(H, 1)
 %         for m = 1:size(H, 2)
 %             recon = W*H(:,m);
 %             num = W(:, k)'*(V(:, m)./(recon));
 %             H(k, m) = H(k, m) * num / den(k);
-%             
-%             if(repititionRestricted)
+%         end
+%     end
+%     
+%     if(repititionRestricted && l==L-1)
+%         for k = 1:size(H, 1)
+%             for m = 1:size(H, 2)
 %                 if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
 %                     R(k,m)=H(k,m);
 %                 else
 %                     R(k,m)=H(k,m)*(1-(l+1)/L);
 %                 end
 %             end
-%             
-%             if(polyphonyRestricted)
+%         end
+%     end
+%     
+%     if(polyphonyRestricted && l==L-1)
+%         for k = 1:size(H, 1)
+%             for m = 1:size(H, 2)
 %                 [~, sortedIndices] = sort(R(:, m),'descend');
 %                 index = (length(sortedIndices) >= p) * p + ...
 %                     (length(sortedIndices) < p) * length(sortedIndices);
@@ -193,28 +195,24 @@ end
 %                     P(k,m)=R(k,m)*(1-(l+1)/L);
 %                 end
 %             end
-%             
-%             if(continuityEnhanced)
-%                 if(l>1 && k > c && m > c && k < K-c && m < M-c)
-%                     kernelSum = 0;
-%                     for z = -c:1:c;
-%                         kernelSum = kernelSum + P(k+z, m+z);
-%                     end
-%                     C(k, m) = kernelSum;
-%                 else
-%                     C(k, m) = P(k, m);
-%                 end
-%             end
 %         end
 %     end
 %     
 %     %     cost(l)=norm(V-W*H, 'fro');
 %     cost(l)=KLDivCost(V, W*H);
-%     if(l>1 && (cost(l) >= cost(l-1) || abs(((cost(l)-cost(l-1)))/max(cost))<=parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
+%     if(l>3 && (abs(((cost(l)-cost(l-1)))/max(cost))<=parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
 %         converged = true;
 %         break;
 %     end
-%     %     disp(l)
+%     
+%     %     if(l >= 3 && continuityEnhanced)
+%     %         H = C;
+%     %     end
+%     %     H = H./max(max(H)); %Normalize activations at each iteration to force matrix to be between 0 and 1
+%     
+%     if(continuityEnhanced && l==L-1)
+%         C = conv2(P, eye(c), 'same');
+%     end
 % end
 % 
 % Y=H;
@@ -233,8 +231,9 @@ end
 % 
 % disp(strcat('Iterations:', num2str(l)))
 % 
-% % Y = Y./max(max(Y)); %Normalize activations
+% Y = Y./max(max(Y)); %Normalize activations
 % % if(converged)
 % %     Y(20*log10(Y/max(max(Y)))<-25)=0;
 % % end
+% close(waitbarHandle);
 % end
