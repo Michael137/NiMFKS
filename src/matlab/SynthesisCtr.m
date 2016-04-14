@@ -30,10 +30,12 @@ switch action
         set(handles.text5, 'String', sourceFile);
         set(handles.text7, 'String', targetFile);
     case 'openResynthesis'
-        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
-%         pathname = 'resynthesis.wav';
-        handles.synthesisfile = pathname;
-%         guidata(gcf, handles);
+        %         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+        % %         pathname = 'resynthesis.wav';
+        %         handles.synthesisfile = pathname;
+        %         guidata(gcf, handles);
+        
+        handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'savePlot'
         frame = getframe(handles.axes1);
         image = frame2im(frame);
@@ -62,9 +64,17 @@ switch action
         end
 %         soundsc(y, Fs);
     case 'playResynthesis'
-%         [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
-%         soundsc(y, Fs);
-          soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
+        %         [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
+        %         soundsc(y, Fs);
+        
+%         synthesisPlayer = handles.synthesisPlayer;
+%         if(isplaying(synthesisPlayer))
+%             stop(synthesisPlayer);
+%         else
+%             play(synthesisPlayer);
+%         end
+
+        soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'configPlotlist'
 %         plotMap = containers.Map({'Cost', 'Resynthesis', 'Activations'}, [get(handles.checkbox1, 'Value'), get(handles.checkbox4, 'Value'), get(handles.checkbox5, 'Value')]);
         plotList = {};
@@ -312,6 +322,7 @@ switch action
         end
 end
 
+% disp(handles.synthesisPlayer);
 guidata(handles.figure1, handles);
 % function performCalculations()
 % function verifyParameters()

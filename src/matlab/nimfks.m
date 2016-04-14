@@ -1027,6 +1027,8 @@ if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
 else
     SynthesisCtr('runSynthesis', handles);
 end
+
+% SynthesisCtr('openResynthesis', handles);
 set([handles.btn_play_3], 'Visible', 'on');
 if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
     synthObj = handles.SynthesisObject;
@@ -1252,6 +1254,23 @@ function btn_play_3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 SynthesisCtr('playResynthesis', handles);
+% if(isplaying(handles.synthesisPlayer))
+%     [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+%     [r,c,d]=size(a); 
+%     x=ceil(r/30); 
+%     y=ceil(c/30); 
+%     g=a(1:x:end,1:y:end,:);
+%     g(g==255)=5.5*255;
+%     set(handles.btn_play_3,'CData',g)
+% else
+%     [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+%     [r,c,d]=size(a); 
+%     x=ceil(r/30); 
+%     y=ceil(c/30); 
+%     g=a(1:x:end,1:y:end,:);
+%     g(g==255)=5.5*255;
+%     set(handles.btn_play_3,'CData',g);
+% end
 
 % --- Executes on selection change in pop_plot.
 function pop_plot_Callback(hObject, eventdata, handles)
