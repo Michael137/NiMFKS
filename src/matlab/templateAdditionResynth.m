@@ -9,34 +9,39 @@ else
 end
 
 windowhop = windowLength - overlap;
+start_samples_in_corpus=[0:size(H,1)-1]*windowhop + 1;
+end_samples_in_corpus = start_samples_in_corpus + windowLength - 1;
+start_samples_in_synthesis=[0:size(H,2)-1]*windowhop + 1;
+end_samples_in_synthesis = start_samples_in_corpus + windowLength - 1;
 
 waitbarHandle = waitbar(0, 'Starting Template Addition Synthesis...');
 
-segments=zeros(windowLength,size(H, 2));
+% segments=zeros(windowLength,size(H, 2));
+output=zeros(windowhop*(size(H,2)-1)+windowLength,1);
 win = window(@hann,(windowLength));
 for kk=1:size(H, 2)
-    waitbar(kk/size(H, 2), waitbarHandle, ['Creating segments...', num2str(kk), '/', num2str(size(H, 2))]);
+%     waitbar(kk/size(H, 2), waitbarHandle, ['Creating segments...', num2str(kk), '/', num2str(size(H, 2))]);
     extracted=H(:,kk);
     
     for ii=find(extracted>1e-10)'
-      start_sample_in_corpus=(ii-1)*windowhop + 1;
-      end_sample_in_corpus = start_sample_in_corpus + windowLength - 1;
-      if length(X) > end_sample_in_corpus
-        segments(:,kk) = segments(:,kk) + win.*( ...
-          X(start_sample_in_corpus:end_sample_in_corpus)*extracted(ii));
+      if length(X) > end_samples_in_corpus(ii)
+        output(start_samples_in_synthesis(kk):end_samples_in_synthesis(kk)) = ...
+          output(start_samples_in_synthesis(kk):end_samples_in_synthesis(kk)) + ...
+          win.*( ...
+          X(start_samples_in_corpus(ii):end_samples_in_corpus(ii))*extracted(ii));
+%         segments(:,kk) = segments(:,kk) + win.*( ...
+%           X(start_samples_in_corpus(ii):end_samples_in_corpus(ii))*extracted(ii));
       end
     end
 end
 
-waitbar(0, waitbarHandle, strcat('Generating output...', num2str(kk), '/', num2str(size(H, 2))))
-output=zeros(windowhop*(size(H,2)-1)+windowLength,1);
-for jj=1:size(H,2)
-    waitbar(jj/length(output), waitbarHandle, strcat('Generating output...', num2str(jj), '/', num2str(length(output)-windowLength)))
-    start_sample_in_synthesis=(jj-1)*windowhop + 1;
-    end_sample_in_synthesis = start_sample_in_synthesis + windowLength - 1;
-    output(start_sample_in_synthesis:end_sample_in_synthesis) = ...
-      output(start_sample_in_synthesis:end_sample_in_synthesis) + segments(:,jj);
-end
+% waitbar(0, waitbarHandle, strcat('Generating output...', num2str(kk), '/', num2str(size(H, 2))))
+% output=zeros(windowhop*(size(H,2)-1)+windowLength,1);
+% for jj=1:size(H,2)
+%     waitbar(jj/length(output), waitbarHandle, strcat('Generating output...', num2str(jj), '/', num2str(size(H,2))))
+%     output(start_samples_in_synthesis(jj):end_samples_in_synthesis(jj)) = ...
+%       output(start_samples_in_synthesis(jj):end_samples_in_synthesis(jj)) + segments(:,jj);
+% end
 
 % output=zeros(1, 6615);
 % output(1:4410)=segments(1, :);
