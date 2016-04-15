@@ -134,7 +134,7 @@ classdef Synthesis < handle
         function showResynthesis(obj)
 %             obj.Resynthesis(abs(obj.Resynthesis)>5)=mean(obj.Resynthesis);
 %             obj.Resynthesis=obj.Resynthesis/max(abs(obj.Resynthesis));
-            plot(obj.Resynthesis);
+            plot([1:length(obj.Resynthesis)]/obj.Fs, obj.Resynthesis, 'Color', [0, 0, 0]);
         end
         
         function showTemplates(obj)

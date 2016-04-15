@@ -20,7 +20,7 @@ waitbarHandle = waitbar(0, 'Starting Template Addition Synthesis...');
 output=zeros(windowhop*(size(H,2)-1)+windowLength,1);
 win = window(@hann,(windowLength));
 for kk=1:size(H, 2)
-%     waitbar(kk/size(H, 2), waitbarHandle, ['Creating segments...', num2str(kk), '/', num2str(size(H, 2))]);
+    waitbar(kk/size(H, 2), waitbarHandle, ['Creating segments...', num2str(kk), '/', num2str(size(H, 2))]);
     extracted=H(:,kk);
     
     for ii=find(extracted>1e-10)'
