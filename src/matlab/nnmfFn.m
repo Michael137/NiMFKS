@@ -44,11 +44,13 @@ H=random('unif',0, 1, K, M);
 fprintf('Convergence Criteria: %d%%\n', 100*parser.Results.convergenceCriteria)
 converged = false;
 
+num=W'*V;
+WTW = W'*W;
+
 for l=1:L-1
     waitbar(l/(L-1), waitbarHandle, strcat('Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)))
     
-    num=W'*V;
-    den=W'*W*H;
+    den=WTW*H;
     H=H.*(num./den);
     H(isnan(H))=0;
     
