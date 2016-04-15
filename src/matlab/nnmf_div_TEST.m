@@ -65,56 +65,45 @@ for l=1:L-1
                 end
             end
         end
+        
+        H = R;
     end
     
     if(polyphonyRestricted)
     waitbar(l/(L-1), waitbarHandle, strcat('Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
-                [~, sortedIndices] = sort(R(:, m),'descend');
+                [~, sortedIndices] = sort(H(:, m),'descend');
                 index = (length(sortedIndices) >= p) * p + ...
                     (length(sortedIndices) < p) * length(sortedIndices);
                 maximumIndices = sortedIndices(1:index);
                 if(ismember(k, maximumIndices))
-                    P(k,m)=R(k,m);
+                    P(k,m)=H(k,m);
                 else
-                    P(k,m)=R(k,m)*(1-(l+1)/L);
+                    P(k,m)=H(k,m)*(1-(l+1)/L);
                 end
             end
         end
+        
+        H = P;
     end
     
     if(continuityEnhanced)
     waitbar(l/(L-1), waitbarHandle, strcat('Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)))
-        for k = 1:size(H, 1)
-            for m = 1:size(H, 2)
-                C = conv2(P, eye(c), 'same');
-                recon = W*C(:,m);
-                num = W(:, k)'*(V(:, m)./(recon));
-                H(k, m) = C(k, m) * num / den(k);
-                H(isnan(H))=0;
-            end
-        end
-    elseif(polyphonyRestricted)
-        for k = 1:size(H, 1)
-            for m = 1:size(H, 2)
-                recon = W*P(:,m);
-                num = W(:, k)'*(V(:, m)./(recon));
-                H(k, m) = P(k, m) * num / den(k);
-                H(isnan(H))=0;
-            end
-        end
-    elseif(repititionRestricted)
-        for k = 1:size(H, 1)
-            for m = 1:size(H, 2)
-                recon = W*R(:,m);
-                num = W(:, k)'*(V(:, m)./(recon));
-                H(k, m) = R(k, m) * num / den(k);
-                H(isnan(H))=0;
-            end
+        C = conv2(H, eye(c), 'same');
+        
+        H = C;
+    end
+    
+    for k = 1:size(H, 1)
+        for m = 1:size(H, 2)
+            recon = W*H(:,m);
+            num = W(:, k)'*(V(:, m)./(recon));
+            H(k, m) = H(k, m) * num / den(k);
+            H(isnan(H))=0;
         end
     end
-
+            
     %     cost(l)=norm(V-W*H, 'fro');
     cost(l)=KLDivCost(V, W*H);
     if(l>3 && (abs(((cost(l)-cost(l-1)))/max(cost))<=parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition

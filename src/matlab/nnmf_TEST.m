@@ -70,6 +70,8 @@ for l=1:L-1
                 end
             end
         end
+        
+        H = R;
     end
     
     if(polyphonyRestricted)
@@ -77,42 +79,37 @@ for l=1:L-1
         for k=1:K
             %Updating H
             for m=1:M
-                [~, sortedIndices] = sort(R(:, m),'descend');
+                [~, sortedIndices] = sort(H(:, m),'descend');
                 index = (length(sortedIndices) >= p) * p + ...
                     (length(sortedIndices) < p) * length(sortedIndices);
                 maximumIndices = sortedIndices(1:index);
                 if(ismember(k, maximumIndices))
-                    P(k,m)=R(k,m);
+                    P(k,m)=H(k,m);
                 else
-                    P(k,m)=R(k,m)*(1-(l+1)/L);
+                    P(k,m)=H(k,m)*(1-(l+1)/L);
                 end
             end
         end
+        
+        H = P;
     end
+    
+    if(continuityEnhanced)
+    waitbar(l/(L-1), waitbarHandle, strcat('Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)))
+        C = conv2(H, eye(c), 'same');
+        
+        H = C;
+    end
+    
+    num=W'*V;
+    den=W'*W*H;
+    H=H.*(num./den);
+    H(isnan(H))=0;
     
     cost(l)=norm(V-W*H, 'fro'); %Frobenius norm of a matrix
     if(l > 5 && (abs(((cost(l)-cost(l-1)))/max(cost))<parser.Results.convergenceCriteria)) %TODO: Reconsider exit condition
         converged = true;
         break;
-    end
-    
-    if(continuityEnhanced)
-    waitbar(l/(L-1), waitbarHandle, strcat('Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)))
-        C = conv2(P, eye(c), 'same');
-        num=W'*V;
-        den=W'*W*C;
-        H=C.*(num./den);
-        H(isnan(H))=0;
-    elseif(polyphonyRestricted)
-        num=W'*V;
-        den=W'*W*P;
-        H=P.*(num./den);
-        H(isnan(H))=0;
-    elseif(repititionRestricted)
-        num=W'*V;
-        den=W'*W*R;
-        H=R.*(num./den);
-        H(isnan(H))=0;
     end
     
     %     Hmat{l} = H;

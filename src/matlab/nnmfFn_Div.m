@@ -61,22 +61,26 @@ for l=1:L-1
                 end
             end
         end
+        
+        H = R;
     end
     
     if(polyphonyRestricted && l==L-1)
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
-                [~, sortedIndices] = sort(R(:, m),'descend');
+                [~, sortedIndices] = sort(H(:, m),'descend');
                 index = (length(sortedIndices) >= p) * p + ...
                     (length(sortedIndices) < p) * length(sortedIndices);
                 maximumIndices = sortedIndices(1:index);
                 if(ismember(k, maximumIndices))
-                    P(k,m)=R(k,m);
+                    P(k,m)=H(k,m);
                 else
-                    P(k,m)=R(k,m)*(1-(l+1)/L);
+                    P(k,m)=H(k,m)*(1-(l+1)/L);
                 end
             end
         end
+        
+        H = P;
     end
     
     %     cost(l)=norm(V-W*H, 'fro');
@@ -92,23 +96,25 @@ for l=1:L-1
     %     H = H./max(max(H)); %Normalize activations at each iteration to force matrix to be between 0 and 1
     
     if(continuityEnhanced && l==L-1)
-        C = conv2(P, eye(c), 'same');
+        C = conv2(H, eye(c), 'same');
+        
+        H = C;
     end
 end
 
 Y=H;
 
-if(repititionRestricted)
-    Y=R;
-end
-
-if(polyphonyRestricted)
-    Y=P;
-end
-
-if(continuityEnhanced)
-    Y=C;
-end
+% if(repititionRestricted)
+%     Y=R;
+% end
+% 
+% if(polyphonyRestricted)
+%     Y=P;
+% end
+% 
+% if(continuityEnhanced)
+%     Y=C;
+% end
 
 disp(strcat('Iterations:', num2str(l)))
 
