@@ -67,14 +67,14 @@ switch action
         %         [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
         %         soundsc(y, Fs);
         
-%         synthesisPlayer = handles.synthesisPlayer;
-%         if(isplaying(synthesisPlayer))
-%             stop(synthesisPlayer);
-%         else
-%             play(synthesisPlayer);
-%         end
+        synthesisPlayer = handles.synthesisPlayer;
+        if(isplaying(synthesisPlayer))
+            stop(synthesisPlayer);
+        else
+            play(synthesisPlayer);
+        end
 
-        soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
+%         soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'configPlotlist'
 %         plotMap = containers.Map({'Cost', 'Resynthesis', 'Activations'}, [get(handles.checkbox1, 'Value'), get(handles.checkbox4, 'Value'), get(handles.checkbox5, 'Value')]);
         plotList = {};
