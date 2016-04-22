@@ -557,4 +557,10 @@ audiowrite('drum_vocoded.wav', output, sr)
 Spectrogram(S, F, T).showSpectrogram(80)
 figure()
 Spectrogram(S2, F2, T2).showSpectrogram(80)
+%% Activations Preview Script
+load('wind_opera_temp_eucl12_3253')
+synthObj.NNMFSynthesis.showActivations(synthObj, -120)
+%% Cost Preview Script
+load('wind_opera_temp_eucl12_3253')
+synthObj.showCost
 %% Testing GIT Branching

@@ -37,7 +37,7 @@ switch action
         
         handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'savePlot'
-        frame = getframe(handles.axes1);
+        frame = getframe(handles.axes2);
         image = frame2im(frame);
         [file,path] = uiputfile({'*.png'},'Save As');
         imwrite(image, strcat(path, file));

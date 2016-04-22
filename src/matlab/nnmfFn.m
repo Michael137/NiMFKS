@@ -92,14 +92,14 @@ for l=1:L-1
     if(continuityEnhanced && l==L-1)
         C = conv2(H, eye(c), 'same'); %Default
         
-        %             C = conv2(P, flip(eye(c)), 'same'); %Reverse
+%                     C = conv2(P, flip(eye(c)), 'same'); %Reverse
         
-        %             C = conv2(P, flip(ones(c)), 'same'); %Blurring
+%                     C = conv2(P, flip(ones(c)), 'same'); %Blurring
         
         %             %Vertical
-        %             M = zeros(c, c);
-        %             M(:, floor(c/2)) = 1;
-        %             C = conv2(P, M, 'same');
+%                     M = zeros(c, c);
+%                     M(:, floor(c/2)) = 1;
+%                     C = conv2(P, M, 'same');
         H = C;
     end
     
