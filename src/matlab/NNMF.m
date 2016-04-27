@@ -34,7 +34,7 @@ classdef NNMF
             else
                 maxDb = -45;
             end
-
+            maxDb = -120;
             W = abs(SynthObj.SourceSpectrogram.S);
             T = SynthObj.TargetSpectrogram.T;
             H = NNMFObj.Activations;
