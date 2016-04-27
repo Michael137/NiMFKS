@@ -66,22 +66,11 @@ synth.showResynthesis;
 %% Constant Q Spectrograms
 clear all
 clc
-portionLength = 5;
 windowLength=100;
 overlap=50;
 convergence = 0.000005;
 [Y, Fs] = audioread('sawtoothbirthday.wav');
 [Y2, Fs2] = audioread('sawtoothbirthday.wav');
-Y=Y(1:min(portionLength*Fs, length(Y)));
-Y2=Y2(1:min(portionLength*Fs, length(Y2)));
-
-Q = 50;
-[s_q, f_q, t_q] = iir_cqt_spectrogram(Y,2048*8,windowLength*Fs/2000,Fs,Q);
-[s_q2, f_q2, t_q2] = iir_cqt_spectrogram(Y,2048*8,windowLength*Fs/2000,Fs,Q);
-padding = zeros(1, size(s_q, 2));
-padding2 = zeros(1, size(s_q2, 2));
-s_q = [s_q; padding];
-s_q2 = [s_q2; padding2];
 
 synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
 synth.computeSpectrogram('Source')
