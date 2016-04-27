@@ -1,9 +1,15 @@
 %Used for the plot drawing function
 function drawClickCallBack(src,callbackdata, action)
+matlabVer = version;
 handles = guidata(src);
 ah = handles.axes2;
-xAxisProps = get(ah, 'XAxis');
-xLimits = get(xAxisProps, 'Limits')
+if(strcmp(matlabVer, '9.0.0.341360 (R2016a)'))
+    xAxisProps = get(ah, 'XAxis');
+    xLimits = get(xAxisProps, 'Limits')
+else
+    xAxisProps = get(ah, 'Xlim');
+    xLimits = xAxisProps
+end
 
 acts = handles.SynthesisObject.NNMFSynthesis.Activations;
 
