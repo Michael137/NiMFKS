@@ -199,6 +199,7 @@ switch action
         synth.NNMFSynthesis = NNMF(H, recon, C);
         synth.resynthesize(resynthMethods(resynthMethodSelected));
         handles.SynthesisObject = synth;
+        handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
         guidata(handles.figure1, handles);
     case 'rerun'
 %         synthMethodSelected=get(handles.popupmenu2, 'Value');
