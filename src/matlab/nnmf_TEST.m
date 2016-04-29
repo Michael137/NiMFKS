@@ -75,23 +75,16 @@ for l=1:L-1
     end
     
     if(polyphonyRestricted)
-    waitbar(l/(L-1), waitbarHandle, strcat('Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
-        for k=1:K
-            %Updating H
-            for m=1:M
-                [~, sortedIndices] = sort(H(:, m),'descend');
-                index = (length(sortedIndices) >= p) * p + ...
-                    (length(sortedIndices) < p) * length(sortedIndices);
-                maximumIndices = sortedIndices(1:index);
-                if(ismember(k, maximumIndices))
-                    P(k,m)=H(k,m);
-                else
-                    P(k,m)=H(k,m)*(1-(l+1)/L);
-                end
-            end
-        end
-        
-        H = P;
+      P = zeros(size(H));
+      mask = zeros(size(H,1),1);
+      waitbar(l/(L-1), waitbarHandle, strcat('Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)))
+      for m = 1:size(H, 2)
+        [~, sortedIndices] = sort(H(:, m),'descend');
+        mask(sortedIndices(1:p)) = 1;
+        mask(sortedIndices(p+1:end)) = (1-(l+1)/L);
+        P(:,m)=H(:,m).*mask;
+      end
+      H = P;
     end
     
     if(continuityEnhanced)
