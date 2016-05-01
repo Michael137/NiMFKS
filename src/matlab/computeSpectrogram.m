@@ -60,7 +60,7 @@ function [S,F,T] = computeSpectrogram(Y, winLength, hop, Fs, varargin)
         T=size(S, 2);
         F=size(S, 1);
     elseif(strcmp(p.Results.Spectrogram, 'STFT'))
-        [S,F,T]=spectrogram(p.Results.Y, window(@hann,(p.Results.winLength)), p.Results.hop, 2048*8, p.Results.Fs); %F: normalized frequencies; T: Time instants
+        [S,F,T]=spectrogram(p.Results.Y, hann(winLength, 'periodic'), p.Results.hop, p.Results.winLength, p.Results.Fs); %F: normalized frequencies; T: Time instants
         %         [S,F,T]=spectrogram(p.Results.Y, window(@hann,(p.Results.winLength)), p.Results.hop, 2048*8-1, p.Results.Fs); %F: normalized frequencies; T: Time instants
         fprintf('Reg F: %d\n', length(F))
         fprintf('Reg T: %d\n', length(T))

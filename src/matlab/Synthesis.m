@@ -115,9 +115,19 @@ classdef Synthesis < handle
         
         function obj = resynthesize(obj, identifier)
             if(strcmp(identifier, 'ISTFT'))
-                obj.Resynthesis = istft(obj.NNMFSynthesis.Reconstruction, obj.Overlap,2048*8,obj.Fs,hann(2048*8, 'periodic'));
-%                 audiowrite('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', obj.Resynthesis, obj.Fs);
-%                 audiowrite('resynthesis.wav', obj.Resynthesis, obj.Fs);
+                parameters = [];
+                parameters.synHop = obj.Overlap;
+                parameters.win = hann(obj.WindowLength, 'periodic');
+                
+                padding = size(obj.NNMFSynthesis.Reconstruction, 1)*2 - obj.WindowLength - 2;
+                if padding >= 0
+                    parameters.zeroPad = padding
+                end
+                
+                obj.Resynthesis = istft(obj.NNMFSynthesis.Reconstruction, parameters);
+
+%                 obj.Resynthesis = InvertSpectrogram(obj.NNMFSynthesis.Reconstruction, obj.Overlap, 10);
+                                
             elseif(strcmp(identifier, 'Template Addition'))
                 if(~strcmp(obj.SourceSpectrogram.Type, 'Chroma'))
                     obj.Resynthesis = templateAdditionResynth(obj.Source, obj.NNMFSynthesis.Activations, obj.WindowLength, obj.Overlap);
