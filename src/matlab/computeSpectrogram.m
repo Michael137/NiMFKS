@@ -60,7 +60,7 @@ function [S,F,T] = computeSpectrogram(Y, winLength, hop, Fs, varargin)
         T=size(S, 2);
         F=size(S, 1);
     elseif(strcmp(p.Results.Spectrogram, 'STFT'))
-        [S,F,T]=spectrogram(p.Results.Y, hann(winLength, 'periodic'), p.Results.hop, p.Results.winLength, p.Results.Fs); %F: normalized frequencies; T: Time instants
+        [S,F,T]=spectrogram(p.Results.Y, hann(p.Results.winLength, 'periodic'), p.Results.hop, p.Results.winLength, p.Results.Fs); %F: normalized frequencies; T: Time instants
         %         [S,F,T]=spectrogram(p.Results.Y, window(@hann,(p.Results.winLength)), p.Results.hop, 2048*8-1, p.Results.Fs); %F: normalized frequencies; T: Time instants
         fprintf('Reg F: %d\n', length(F))
         fprintf('Reg T: %d\n', length(T))
@@ -70,7 +70,7 @@ function [S,F,T] = computeSpectrogram(Y, winLength, hop, Fs, varargin)
     elseif(strcmp(p.Results.Spectrogram, 'Chroma'))
         % Calculate the chroma matrix.  Use a long FFT to discriminate
         % spectral lines as well as possible (2048 is the default value)
-        cfftlen=2048;
+        cfftlen=p.Results.winLength;
         C = chromagram_IF(p.Results.Y,p.Results.Fs,cfftlen);
         % The frame advance is always one quarter of the FFT length.  Thus,
         % the columns  of C are at timebase of fftlen/4/sr

@@ -121,7 +121,7 @@ classdef Synthesis < handle
                 
                 padding = size(obj.NNMFSynthesis.Reconstruction, 1)*2 - obj.WindowLength - 2;
                 if padding >= 0
-                    parameters.zeroPad = padding
+                    parameters.zeroPad = padding;
                 end
                 
                 obj.Resynthesis = istft(obj.NNMFSynthesis.Reconstruction, parameters);
