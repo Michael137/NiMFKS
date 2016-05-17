@@ -23,7 +23,7 @@ tt = [1:size(C,2)]*cfftlen/4/sr;
 % % Now the chromagram, also on a dB magnitude scale
 % subplot(212)
 imagesc(tt,[1:12],20*log10(C+eps));
-axis xy
+% axis xy
 caxis(max(caxis)+[-60 0])
-title(strcat(strtok(file, '_'), ' Chromagram'))
+% title(strcat(strtok(file, '_'), ' Chromagram'))
 colorbar

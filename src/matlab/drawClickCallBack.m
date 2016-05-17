@@ -1,9 +1,15 @@
 %Used for the plot drawing function
 function drawClickCallBack(src,callbackdata, action)
+matlabVer = version;
 handles = guidata(src);
-ah = handles.axes1;
-xAxisProps = get(ah, 'XAxis');
-xLimits = get(xAxisProps, 'Limits')
+ah = handles.axes2;
+if(strcmp(matlabVer, '9.0.0.341360 (R2016a)'))
+    xAxisProps = get(ah, 'XAxis');
+    xLimits = get(xAxisProps, 'Limits')
+else
+    xAxisProps = get(ah, 'Xlim');
+    xLimits = xAxisProps
+end
 
 acts = handles.SynthesisObject.NNMFSynthesis.Activations;
 
@@ -12,9 +18,9 @@ xMax = size(acts, 2);
 
 xUnit = xLimits/size(acts, 2);
 
-sliderHandle = handles.slider3;
+sliderHandle = handles.sld_actstrength;
 
-paintBrush = handles.uibuttongroup11.SelectedObject.String;
+paintBrush = handles.grp_paintbrush.SelectedObject.String;
 paintBrushSize = 0;
 
 if(strcmp(paintBrush, 'Large Brush'))
@@ -97,7 +103,7 @@ src.WindowButtonUpFcn = @releaseCallBack;
     end
 
     function releaseCallBack(src, callbackdata)
-        SynthesisCtr('switchPlot', handles);
+        SynthesisCtr('selectPlot', handles);
         src.Pointer = 'arrow';
         src.WindowButtonMotionFcn = '';
         src.WindowButtonUpFcn = '';

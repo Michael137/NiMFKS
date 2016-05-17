@@ -4,42 +4,77 @@ handles = datastruct;
 
 switch action
     case 'openTarget'
-        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
-        sourcepathname= strcat(pathname, filename);
-        set(handles.text5, 'String', sourcepathname);
+%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+        targetpathname= strcat(pathname, filename);
+        handles.targetfile = targetpathname;
+        
+        [y, fs] = audioread(handles.targetfile);
+        handles.targetPlayer = audioplayer(y, fs);
+%         guidata(gcf, handles);
+        set(handles.txt_targetfile, 'String', filename);
     case 'openSource'
         handles = datastruct;
-        [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
-%         [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
+%         [filename pathname] = uigetfile({'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\*.wav;*.mp3;'}, 'File Selector');
+        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
         sourcepathname= strcat(pathname, filename);
-        set(handles.text7, 'String', sourcepathname);
+        handles.corpusfile = sourcepathname;
+        
+        [y, fs] = audioread(handles.corpusfile);
+        handles.corpusPlayer = audioplayer(y, fs);
+%         guidata(gcf, handles);
+        set(handles.txt_corpusfile, 'String', filename);
     case 'Swap Sounds'
         sourceFile = get(handles.text7, 'String');
         targetFile = get(handles.text5, 'String');
         set(handles.text5, 'String', sourceFile);
         set(handles.text7, 'String', targetFile);
     case 'openResynthesis'
-        pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
-%         pathname = 'resynthesis.wav';
-        set(handles.text8, 'String', pathname);
+        %         pathname = 'C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav';
+        % %         pathname = 'resynthesis.wav';
+        %         handles.synthesisfile = pathname;
+        %         guidata(gcf, handles);
+        
+        handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'savePlot'
-        frame = getframe(handles.axes1);
+        frame = getframe(handles.axes2);
         image = frame2im(frame);
         [file,path] = uiputfile({'*.png'},'Save As');
         imwrite(image, strcat(path, file));
     case 'exportResynth'
         [file,path] = uiputfile({'*.wav'},'Save Sound As');
-        copyfile('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', strcat(path, file));
+%         copyfile('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav', strcat(path, file));
+        audiowrite([path filesep file], handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'playTarget'
-        [y, Fs] = audioread(get(handles.text5, 'String'));
-        soundsc(y, Fs);
+%         [y, Fs] = audioread(handles.targetfile);
+        targetPlayer = handles.targetPlayer;
+        if(isplaying(targetPlayer))
+            stop(targetPlayer);
+        else
+            play(targetPlayer);
+        end
+%         soundsc(y, Fs);
     case 'playSource'
-        [y, Fs] = audioread(get(handles.text7, 'String'));
-        soundsc(y, Fs);
+%         [y, Fs] = audioread(handles.corpusfile);
+        corpusPlayer = handles.corpusPlayer;
+        if(isplaying(corpusPlayer))
+            stop(corpusPlayer);
+        else
+            play(corpusPlayer);
+        end
+%         soundsc(y, Fs);
     case 'playResynthesis'
-        [y, Fs] = audioread(get(handles.text8, 'String'));
-        soundsc(y, Fs);
+        %         [y, Fs] = audioread('C:\Users\User\Dropbox\Programs\MFAMC\MFAMC\assets\resynthesis.wav');
+        %         soundsc(y, Fs);
+        
+        synthesisPlayer = handles.synthesisPlayer;
+        if(isplaying(synthesisPlayer))
+            stop(synthesisPlayer);
+        else
+            play(synthesisPlayer);
+        end
+
+%         soundsc(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
     case 'configPlotlist'
 %         plotMap = containers.Map({'Cost', 'Resynthesis', 'Activations'}, [get(handles.checkbox1, 'Value'), get(handles.checkbox4, 'Value'), get(handles.checkbox5, 'Value')]);
         plotList = {};
@@ -158,30 +193,137 @@ switch action
         synth = handles.SynthesisObject;
         H = synth.NNMFSynthesis.Activations;
         C = synth.NNMFSynthesis.Cost;
-        resynthMethodSelected=get(handles.popupmenu4, 'Value');
-        resynthMethods=get(handles.popupmenu4, 'String');
+        resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
+        resynthMethods=get(handles.pop_synthmethod, 'String');
         recon = synth.SourceSpectrogram.S*H;
         synth.NNMFSynthesis = NNMF(H, recon, C);
         synth.resynthesize(resynthMethods(resynthMethodSelected));
+        handles.SynthesisObject = synth;
+        handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
+        guidata(handles.figure1, handles);
     case 'rerun'
-        synthMethodSelected=get(handles.popupmenu2, 'Value');
-        synthMethods=get(handles.popupmenu2, 'String');
+%         synthMethodSelected=get(handles.popupmenu2, 'Value');
+%         synthMethods=get(handles.popupmenu2, 'String');
         synth = handles.SynthesisObject;
         
-        if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
+%         if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
             
-            costMetricSelected=get(handles.popupmenu3, 'Value');
-            costMetrics=get(handles.popupmenu3, 'String');
+            costMetricSelected=get(handles.pop_cost, 'Value');
+            costMetrics=get(handles.pop_cost, 'String');
             
-            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edit13, 'String')), 'repititionRestricted', get(handles.checkbox7, 'Value'), ...
-                'continuityEnhanced', get(handles.checkbox9, 'Value'), 'polyphonyRestricted', get(handles.checkbox8, 'Value'), 'convergenceCriteria', str2double(get(handles.edit15, 'String')), ...
-                'r', str2double(get(handles.edit19, 'String')), 'c', str2double(get(handles.edit21, 'String')), 'p', str2double(get(handles.edit20, 'String')));
-        end
+            synth.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edt_iter, 'String')), 'repititionRestricted', get(handles.chk_mod_rep, 'Value'), ...
+                'continuityEnhanced', get(handles.chk_mod_cont, 'Value'), 'polyphonyRestricted', get(handles.chk_mod_poly, 'Value'), 'convergenceCriteria', str2double(get(handles.edt_conv, 'String')), ...
+                'r', str2double(get(handles.edt_mod_rep, 'String')), 'c', str2double(get(handles.edt_mod_cont, 'String')), 'p', str2double(get(handles.edt_mod_poly, 'String')));
+%         end
+        
         
         handles.SynthesisObject = synth;
         guidata(handles.figure1, handles);
+    case 'runAnalysis'
+        waitbar(0.25, handles.waitbarHandle, 'Reading audio files...')
         
+%         portionLength = str2num(get(handles.edt_sndlen, 'String'));
+        windowLength = str2num(get(handles.edt_winlen, 'String'));
+        overlap = str2num(get(handles.edt_overlap, 'String'));
+        [Y, Fs] = audioread(handles.corpusfile);
+        [Y2, Fs2] = audioread(handles.targetfile);
+        
+        %Convert to Monophonic sound
+        if(size(Y, 2) ~= 1)
+            Y = (Y(:,1)+Y(:,2))/2;
+        end
+        
+        if(size(Y2, 2) ~= 1)
+            Y2 = (Y2(:,1)+Y2(:,2))/2;
+        end
+        
+%         if(~get(handles.chk_corpuslen, 'Value'))
+%             Y=Y(1:min(portionLength*Fs, length(Y)));
+%         end
+%         Y2=Y2(1:min(portionLength*Fs, length(Y2)));
+        
+        waitbar(0.6, handles.waitbarHandle, 'Performing audio analysis...')
+        synth = Synthesis(Y, Y2, Fs, windowLength, overlap);
+        
+        waitbar(0.75, handles.waitbarHandle, 'Performing corpus analysis...')
+        spectTypeSelected=get(handles.pop_specttype, 'Value');
+        spectTypes=get(handles.pop_specttype, 'String');
+        synth.computeSpectrogram('Source', spectTypes(spectTypeSelected));
+        
+        waitbar(0.9, handles.waitbarHandle, 'Performing target analysis...')
+        synth.computeSpectrogram('Target', spectTypes(spectTypeSelected));
+        handles.SynthesisObject = synth;
+    case 'runSynthesis'
+        synthObj = handles.SynthesisObject;
+%         synthMethodSelected=get(handles.pop_synthmethod, 'Value');
+%         synthMethods=get(handles.pop_synthmethod, 'String');
+        
+%         if(strcmp(synthMethods(synthMethodSelected), 'NNMF'))
+            
+            costMetricSelected=get(handles.pop_cost, 'Value');
+            costMetrics=get(handles.pop_cost, 'String');
+            
+            synthObj.synthesize('NNMF', costMetrics(costMetricSelected), str2num(get(handles.edt_iter, 'String')), 'repititionRestricted', get(handles.chk_mod_rep, 'Value'), ...
+                                'continuityEnhanced', get(handles.chk_mod_cont, 'Value'), 'polyphonyRestricted', get(handles.chk_mod_poly, 'Value'), 'convergenceCriteria', str2double(get(handles.edt_conv, 'String')), ...
+                                    'r', str2double(get(handles.edt_mod_rep, 'String')), 'c', str2double(get(handles.edt_mod_cont, 'String')), 'p', str2double(get(handles.edt_mod_poly, 'String')));
+%         end
+        
+        resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
+        resynthMethods=get(handles.pop_synthmethod, 'String');
+        synthObj.resynthesize(resynthMethods(resynthMethodSelected));
+        
+        handles.SynthesisObject = synthObj;
+    case 'selectPlot'
+        selectedPlot=get(handles.pop_plot, 'Value');
+        plotOptions=get(handles.pop_plot, 'String');
+        delete(handles.axes2.Children);
+        cla(gca,'reset')
+        plotRequest = plotOptions(selectedPlot);
+%         view(0, 90);
+        switch(plotRequest{1})
+            case 'Synthesis Plot'
+                view(gca, 2);
+%                 set(handles.figure1, 'CurrentAxes', handles.ResynthesisPlot);
+                handles.SynthesisObject.showResynthesis;
+                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.Resynthesis');
+%                 fig2plotly()
+            case 'Cost'
+                view(gca, 2);
+%                 set(handles.figure1, 'CurrentAxes', handles.CostPlot);
+                handles.SynthesisObject.NNMFSynthesis.showCost;
+                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
+%                 fig2plotly()
+            case 'Activations'
+                view(gca, 2);
+%                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+                handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.sld_maxdb, 'Value'));
+                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
+%                 fig2plotly()
+            case 'Corpus Spectrogram'
+                view(gca, 2);
+%                 set(handles.figure1, 'CurrentAxes', handles.ActivationsPlot);
+                handles.SynthesisObject.SourceSpectrogram.showSpectrogram(80);
+                set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
+%                 fig2plotly()
+            case 'Target Spectrogram'
+                view(gca, 2);
+                handles.SynthesisObject.TargetSpectrogram.showSpectrogram(80);
+                set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.TargetSpectrogram.S));
+            case 'Synthesis Spectrogram'
+                view(gca, 2);
+                resynthSpectrogram = Spectrogram(handles.SynthesisObject.NNMFSynthesis.Reconstruction, ...
+                                        handles.SynthesisObject.TargetSpectrogram.F, handles.SynthesisObject.TargetSpectrogram.T);
+                resynthSpectrogram.showSpectrogram(80);
+                set(handles.tbl_plotdata, 'Data', abs(resynthSpectrogram.S));
+            case 'Templates'
+                view(gca, 3);
+                handles.SynthesisObject.showTemplates;
+                set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
+%                 fig2plotly()
+        end
 end
 
+% disp(handles.synthesisPlayer);
+guidata(handles.figure1, handles);
 % function performCalculations()
 % function verifyParameters()
