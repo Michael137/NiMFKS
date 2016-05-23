@@ -7,6 +7,14 @@ classdef CSS < handle
     end
     
     methods
+        function obj = Sound(varargin)
+            if nargin == 1
+            end
+            
+            obj.init;
+        end
         
+        function obj = init(obj)
+        end
     end
 end
