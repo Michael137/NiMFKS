@@ -1,26 +1,23 @@
 classdef CSS < handle
     properties
-        nmf_features
-        activations
-        cost
-        synthesis_method
+        NMF_features
+        Activations
+        Cost
+        Synthesis_method
     end
     
     methods
-        function obj = Sound(varargin)
-            if nargin == 1
+        function obj = CSS(varargin)
+            if nargin == 2
+                obj.NMF_features = varargin{1};
+                obj.Synthesis_method = varargin{2};
             end
-            
-            obj.init;
-        end
-        
-        function obj = init(obj)
         end
     end
     
     methods
-        function obj = nmf(obj, sound)
-            
+        function obj = nmf(obj, corpus_sound, target_sound)
+                [H, cost]=nmfFn(obj.NMF_Features, corpus_sound.Features.STFT, target_sound.Features.STFT);
         end
         
         function obj = synthesize(obj, sound)

@@ -57,7 +57,31 @@ classdef Sound < handle
 %             audiowrite([path filesep file], obj.Signal, handles.SynthesisObject.Fs);
 %         end
         
-        function plot_spectrogram()
+        function plot_spectrogram(obj, varargin)
+            if nargin > 1
+                mindB = varargin{1};
+            else
+                mindB = 80;
+            end
+            
+            S = obj.Features.STFT.S;
+            F = obj.Features.STFT.F;
+            T = obj.Features.STFT.T;
+            
+            dB = 20*log10(abs(S)/max(max(abs(S))));
+            sonodB = max(-mindB, dB);
+            imagesc(T,F./1000,sonodB);
+            cmap = colormap('jet');
+            cmap(1,:) = 0*ones(1,3);
+            colormap((cmap));
+            colorbar
+            axis xy; grid on;
+            axis([0 T(end) 0.01 10]);
+            set(gca,'XTick',[0:0.5:T(end)],'XTickLabel','');
+            set(gca, 'Layer', 'top');
+            ylabel('Frequency (kHz)');
+            grid on;
+            set(gca,'FontSize',16);
         end
         
         function plot_chromagram()
@@ -72,12 +96,9 @@ classdef Sound < handle
         
         function obj = computeFeatures(obj, window, analysis)
             obj.Features.window = window;
-            winlen = window.Length;
-            hop = window.Hop;
-            overlap = (window.Length - window.Hop)/window.Length;
-            wintype = window.Type;
+            
             if(strcmp(analysis, 'STFT'))
-                obj.Features.STFT = 0; % TODO: Call STFT analysis function here
+                obj.Features.STFT = computeSTFTFeat(obj.Signal, obj.Sampling_rate, obj.Features.window); % TODO: Call STFT analysis function here
             elseif(strcmp(analysis, 'CQT'))
 
             elseif(strcmp(analysis, 'Chroma'))
