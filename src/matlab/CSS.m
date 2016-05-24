@@ -17,4 +17,14 @@ classdef CSS < handle
         function obj = init(obj)
         end
     end
+    
+    methods
+        function obj = nmf(obj, sound)
+            
+        end
+        
+        function obj = synthesize(obj, sound)
+            
+        end
+    end
 end
