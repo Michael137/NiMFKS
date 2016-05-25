@@ -1,4 +1,5 @@
-classdef class_Synthesis < handles & Sound & CSS    
+classdef class_Synthesis < handle
+  
     methods
         function plot_activations()
         end
