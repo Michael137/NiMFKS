@@ -9,6 +9,7 @@ if nargin > 2
     c = nmf_params.Continuity_enhancement;
     pattern = nmf_params.Diagonal_pattern;
     endtime = nmf_params.Modification_application;
+    rng(nmf_params.Random_seed);
 elseif nargin == 2
     L = 10;
     convergence = 0;
@@ -17,6 +18,7 @@ elseif nargin == 2
     c = -1;
     pattern = 'Diagonal';
     endtime = false;
+    rng('shuffle');
 end
 
 cost=0;

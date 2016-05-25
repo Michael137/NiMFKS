@@ -107,7 +107,7 @@ t=[0:Ts:0.1];
 %f_i=440*2^i/12
 
 soundMix = [];
-win = window(@hann, length(t))';
+win = win(@hann, length(t))';
 
 for freq = 110*2.^([-12:24*8]/24)
     soundMix=[soundMix, win.*sin(2*pi*(freq)*t)];
@@ -272,7 +272,7 @@ fprintf('Frames: %d\n\n', ceil((length(Y)/(hop*Fs/1000))))
 cqt_resynth = templateAdditionResynth(Y, zeros(length(T), length(F)), Fs*windowLength/1000, Fs*hop/1000);
 disp(size(cqt_resynth))
 
-[S,F,T]=spectrogram(Y, window(@hann,(windowLength*Fs/1000)), Fs*hop/1000, 2048*8, Fs); %F: normalized frequencies; T: Time instants
+[S,F,T]=spectrogram(Y, win(@hann,(windowLength*Fs/1000)), Fs*hop/1000, 2048*8, Fs); %F: normalized frequencies; T: Time instants
 fprintf('Reg F: %d\n', length(F))
 fprintf('Reg T: %d\n', length(T))
 fprintf('Y: %d\n', length(Y))
@@ -345,7 +345,7 @@ end
 
 % figure; plotnsgtf({Xcq.cDC Xcq.c{1:end} Xcq.cNyq}.',Xcq.shift,fs,fmin,fmax,B,2,60);
 
-[S,F,T] = spectrogram(x, window(@hann, 400*44100/1000), 200*44100/1000, 2048*8, 44100);
+[S,F,T] = spectrogram(x, win(@hann, 400*44100/1000), 200*44100/1000, 2048*8, 44100);
 spect = Spectrogram(S, F, T);
 figure()
 spect.showSpectrogram(80);
@@ -552,4 +552,26 @@ synthObj.NNMFSynthesis.showActivations(synthObj, -120)
 %% Cost Preview Script
 load('wind_opera_temp_eucl12_3253')
 synthObj.showCost
-%% Testing GIT Branching
+%% Streamlined Driver
+corpus_sound = Sound('glock2.wav');
+target_sound = Sound('glock2.wav');
+
+win.Length = 200*44100/1000;
+win.Hop = 100*44100/1000;
+win.Type = 'Hamming';
+
+corpus_sound.computeFeatures(win, 'STFT');
+target_sound.computeFeatures(win, 'STFT');
+
+nmf_params.Algorithm = 'Euclidean';
+nmf_params.Iterations = 35;
+nmf_params.Convergence_criteria = 0;
+nmf_params.Repition_restriction = 1;
+nmf_params.Polyphony_restriction = 1;
+nmf_params.Continuity_enhancement = 1;
+nmf_params.Diagonal_pattern = 'Diagonal';
+nmf_params.Modification_application = true;
+nmf_params.Random_seed = 'shuffle';
+
+synth = CSS(nmf_params, 'Template Addition');
+synth.nmf(corpus_sound, target_sound);

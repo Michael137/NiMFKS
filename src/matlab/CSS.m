@@ -24,9 +24,17 @@ classdef CSS < handle
             
             switch nmf_alg
                 case 'Euclidean'
-                    [obj.Activations, obj.Cost] = nmf_euclidean(nmf_params, target_spect, corpus_spect);
+                    if length(fieldnames(obj.NMF_features)) > 1
+                        [obj.Activations, obj.Cost] = nmf_euclidean(target_spect, corpus_spect, obj.NMF_features);
+                    else
+                        [obj.Activations, obj.Cost] = nmf_euclidean(target_spect, corpus_spect);
+                    end
                 case 'Divergence'
-                    [obj.Activations, obj.Cost] = nmf_divergence(nmf_params, target_spect, corpus_spect);
+                    if length(fieldnames(obj.NMF_features)) > 1
+                        [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect, obj.NMF_features);
+                    else
+                        [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect);
+                    end
             end
         end
         
