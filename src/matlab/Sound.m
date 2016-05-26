@@ -26,7 +26,13 @@ classdef Sound < handle
         
         function obj = init(obj)
             if ~isempty(obj.Filename)
-                [Y, Fs] = audioread(obj.Filename);
+                [Y, Fs] = audioread([obj.Directory filesep obj.Filename]);
+                
+                %Convert to Monophonic sound
+                if(size(Y, 2) ~= 1)
+                    Y = (Y(:,1)+Y(:,2))/2;
+                end
+                
                 obj.Signal = Y;
                 obj.Sampling_rate = Fs;
             end
@@ -42,9 +48,9 @@ classdef Sound < handle
         function control_audio(obj, action)
             switch action
                 case 'play'
-                    obj.Audioplayer.play;
+                    play(obj.Audioplayer);
                 case 'stop'
-                    obj.Audioplayer.stop;
+                    stop(obj.Audioplayer);
                 case 'pause'
                     obj.Audioplayer.pause;
                 case 'resume'
@@ -98,7 +104,7 @@ classdef Sound < handle
             obj.Features.window = window;
             
             if(strcmp(analysis, 'STFT'))
-                obj.Features.STFT = computeSTFTFeat(obj.Signal, obj.Sampling_rate, obj.Features.window); % TODO: Call STFT analysis function here
+                obj.Features.STFT = computeSTFTFeat(obj.Signal, obj.Sampling_rate, obj.Features.window);
             elseif(strcmp(analysis, 'CQT'))
 
             elseif(strcmp(analysis, 'Chroma'))

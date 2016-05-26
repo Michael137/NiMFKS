@@ -19,8 +19,8 @@ classdef CSS < handle
     methods
         function obj = nmf(obj, corpus_sound, target_sound)
             nmf_alg = obj.NMF_features.Algorithm;
-            target_spect = corpus_sound.Features.STFT.S;
-            corpus_spect = target_sound.Features.STFT.S;
+            target_spect = target_sound.Features.STFT.S;
+            corpus_spect = corpus_sound.Features.STFT.S;
             
             switch nmf_alg
                 case 'Euclidean'

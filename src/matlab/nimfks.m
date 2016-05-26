@@ -78,9 +78,9 @@ set(handles.edt_overlap,'String','50'); %Overlap
 set(handles.edt_iter,'String','20'); %NNMF Iterations
 set(handles.edt_rand,'String','0'); %NNMF Activations Random Seed
 set(handles.edt_conv,'String','0.0005'); %NNMF Convergence Criteria
-set(handles.edt_mod_rep,'String','3'); %Repitition restriction parameter
-set(handles.edt_mod_poly,'String','3'); %Polyphony restriction parameter
-set(handles.edt_mod_cont,'String','2'); %Continuity enhancement parameter
+set(handles.edt_mod_rep,'String','-1'); %Repitition restriction parameter
+set(handles.edt_mod_poly,'String','-1'); %Polyphony restriction parameter
+set(handles.edt_mod_cont,'String','-1'); %Continuity enhancement parameter
 
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
@@ -1022,40 +1022,35 @@ function btn_synthesis_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
     tic
-    SynthesisCtr('runSynthesis', handles);
+    controller('runSynthesis', handles);
     toc
 else
-    SynthesisCtr('runSynthesis', handles);
+    controller('runSynthesis', handles);
 end
-
-% SynthesisCtr('openResynthesis', handles);
-handles.synthesisPlayer = audioplayer(handles.SynthesisObject.Resynthesis, handles.SynthesisObject.Fs);
 
 set([handles.btn_play_3], 'Visible', 'on');
 if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
     synthObj = handles.SynthesisObject;
     save('synth.mat','synthObj');
 end
-SynthesisCtr('selectPlot', handles);
+
+controller('switchPlot', handles);
 
 % --- Executes on button press in btn_analysis.
 function btn_analysis_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-waitbarHandle = waitbar(0, 'Starting analysis...'); 
-handles.waitbarHandle = waitbarHandle;
 guidata(hObject, handles);
 
 if(strcmp(get(handles.tool_menu_dev_timer, 'Checked'), 'on'))
     tic
-    SynthesisCtr('runAnalysis', handles);
+    controller('runAnalysis', handles);
     toc
 else
-    SynthesisCtr('runAnalysis', handles);
+    controller('runAnalysis', handles);
 end
 set(handles.btn_synthesis, 'Visible', 'on');
-close(waitbarHandle);
 
 % --- Executes on selection change in popupmenu11.
 function popupmenu11_Callback(hObject, eventdata, handles)
@@ -1282,7 +1277,7 @@ function pop_plot_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns pop_plot contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from pop_plot
-SynthesisCtr('selectPlot', handles);
+controller('switchPlot', handles);
 
 % --- Executes during object creation, after setting all properties.
 function pop_plot_CreateFcn(hObject, eventdata, handles)
@@ -1302,9 +1297,9 @@ function btn_play_2_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_play_2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('playTarget', handles);
-if(isplaying(handles.targetPlayer))
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+if(isplaying(handles.Sound_corpus.Audioplayer))
+    controller('stopTarget', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1312,7 +1307,8 @@ if(isplaying(handles.targetPlayer))
     g(g==255)=5.5*255;
     set(handles.btn_play_2,'CData',g)
 else
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+    controller('playTarget', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1326,7 +1322,7 @@ function btn_load_target_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_load_target (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('openTarget', handles);
+controller('openTarget', handles);
 set(handles.btn_play_2, 'Visible', 'on');
 
 % --- Executes on button press in btn_play_1.
@@ -1334,9 +1330,9 @@ function btn_play_1_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_play_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('playSource', handles);
-if(isplaying(handles.corpusPlayer))
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+if(isplaying(handles.Sound_corpus.Audioplayer))
+    controller('stopSource', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1344,7 +1340,8 @@ if(isplaying(handles.corpusPlayer))
     g(g==255)=5.5*255;
     set(handles.btn_play_1,'CData',g)
 else
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+    controller('playSource', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1358,7 +1355,7 @@ function btn_load_corpus_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_load_corpus (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('openSource', handles);
+controller('openSource', handles);
 set(handles.btn_play_1, 'Visible', 'on');
 
 % --- Executes on button press in btn_post_processing_run.
