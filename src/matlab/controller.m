@@ -21,6 +21,7 @@ switch action
         handles.Sound_corpus.control_audio('stop');
     case 'playResynthesis'
     case 'runAnalysis'
+        waitbarHandle = waitbar(0.33, 'Verifying parameters...');
         spectTypeSelected=get(handles.pop_specttype, 'Value');
         spectTypes=get(handles.pop_specttype, 'String');
         
@@ -28,11 +29,18 @@ switch action
         win.Hop = str2num(get(handles.edt_overlap, 'String'))*44100/1000;
         win.Type = 'Hamming';
         
+        waitbar(0.66, waitbarHandle, 'Analyzing corpus...')
         handles.Sound_corpus.computeFeatures(win, spectTypes(spectTypeSelected));
+        
+        waitbar(0.95, waitbarHandle, 'Analyzing target...')
         handles.Sound_target.computeFeatures(win, spectTypes(spectTypeSelected));
+        close(waitbarHandle);
     case 'runSynthesis'
         costMetricSelected=get(handles.pop_cost, 'Value');
         costMetrics=get(handles.pop_cost, 'String');
+        
+        actPatternSelected=get(handles.pop_pattern, 'Value');
+        actPatterns=get(handles.pop_pattern, 'String');
         
         nmf_params.Algorithm =  cell2mat(costMetrics(costMetricSelected));
         nmf_params.Iterations = str2num(get(handles.edt_iter, 'String'));
@@ -40,9 +48,9 @@ switch action
         nmf_params.Repition_restriction = str2double(get(handles.edt_mod_rep, 'String'));
         nmf_params.Polyphony_restriction = str2double(get(handles.edt_mod_poly, 'String'));
         nmf_params.Continuity_enhancement = str2double(get(handles.edt_mod_cont, 'String'));
-        nmf_params.Diagonal_pattern = 'Diagonal';
+        nmf_params.Diagonal_pattern =  cell2mat(actPatterns(actPatternSelected));
         nmf_params.Modification_application = false;
-        nmf_params.Random_seed = 'shuffle';
+        nmf_params.Random_seed = str2double(get(handles.edt_rand, 'String'));
         
         resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
         resynthMethods=get(handles.pop_synthmethod, 'String');
@@ -76,12 +84,12 @@ switch action
                 set(handles.tbl_plotdata, 'Data', handles.Sound_synthesis.Signal');
             case 'Cost'
                 view(gca, 2);
-                handles.SynthesisObject.NNMFSynthesis.showCost;
-                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Cost');
+                handles.SynthesisObject.plot_cost;
+                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.Cost');
             case 'Activations'
                 view(gca, 2);
-                handles.SynthesisObject.NNMFSynthesis.showActivations(handles.SynthesisObject, get(handles.sld_maxdb, 'Value'));
-                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.NNMFSynthesis.Activations);
+                handles.SynthesisObject.plot_activations(get(handles.sld_maxdb, 'Value'));
+                set(handles.tbl_plotdata, 'Data', handles.SynthesisObject.Activations);
             case 'Corpus Spectrogram'
                 view(gca, 2);
                 handles.Sound_corpus.plot_spectrogram;
@@ -93,11 +101,11 @@ switch action
             case 'Synthesis Spectrogram'
                 view(gca, 2);
                 handles.Sound_synthesis.plot_spectrogram;
-                set(handles.tbl_plotdata, 'Data', abs(handles.Sound_synthesis.plot_spectrogram));
+                set(handles.tbl_plotdata, 'Data', abs(handles.Sound_synthesis.Features.STFT.S));
             case 'Templates'
                 view(gca, 3);
-                handles.SynthesisObject.showTemplates;
-                set(handles.tbl_plotdata, 'Data', abs(handles.SynthesisObject.SourceSpectrogram.S));
+                handles.Sound_corpus.plot_templates;
+                set(handles.tbl_plotdata, 'Data', abs(handles.Sound_corpus.Features.STFT.S));
         end
     case 'resynthesize'
     case 'rerun'

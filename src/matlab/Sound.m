@@ -58,11 +58,6 @@ classdef Sound < handle
             end
         end
         
-%         function save_audio()
-%             [file,path] = uiputfile({'*.wav'},'Save Sound As');
-%             audiowrite([path filesep file], obj.Signal, handles.SynthesisObject.Fs);
-%         end
-        
         function plot_spectrogram(obj, varargin)
             if nargin > 1
                 mindB = varargin{1};
@@ -93,7 +88,22 @@ classdef Sound < handle
         function plot_chromagram()
         end
         
-        function plot_templates()
+        function plot_templates(obj)
+            W=abs(obj.Features.STFT.S);
+            F=abs(obj.Features.STFT.F);
+            hold on; grid on;
+            [~,I]=max(W);
+            [~,Ix] = sort(I,'ascend');
+            for jj=1:size(W,2)
+                specdB=W(:,Ix(jj))/max(max(W));
+                handle=plot3(jj*ones(size(W,1),1),F/1000,specdB, ...
+                    'Color',power((size(W,2)-jj)/(size(W,2)+1),0.65)*ones(3,1), ...
+                    'LineWidth',8*(2+size(W,2)-jj)/(size(W,2)));
+            end
+            ylabel('Frequency (kHz)');
+            xlabel('Template');
+            zlabel('Magnitude');
+            view(105,26);
         end
         
         function plot_signal(obj)

@@ -74,9 +74,9 @@ for l=1:L-1
             case 'Diagonal'
                 C = conv2(H, eye(c), 'same'); %Default
             case 'Reverse'
-                C = conv2(P, flip(eye(c)), 'same'); %Reverse
+                C = conv2(H, flip(eye(c)), 'same'); %Reverse
             case 'Blur'
-                C = conv2(P, flip(ones(c)), 'same'); %Blurring
+                C = conv2(H, flip(ones(c)), 'same'); %Blurring
             case 'Vertical'
                 M = zeros(c, c); %Vertical
                 M(:, floor(c/2)) = 1;

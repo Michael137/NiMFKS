@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 13-Apr-2016 18:36:05
+% Last Modified by GUIDE v2.5 26-May-2016 20:02:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -69,7 +69,9 @@ set(handles.btn_play_2,'CData',g);
 set(handles.btn_play_3,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
-set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, handles.tbl_plotdata, handles.btn_synthesis, handles.btn_play_1, handles.btn_play_2],'Visible','off')
+set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, ...
+    handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, ...
+        handles.tbl_plotdata, handles.btn_synthesis, handles.btn_play_1, handles.btn_play_2, handles.pop_pattern, handles.txt_pattern],'Visible','off');
 
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
@@ -1034,7 +1036,7 @@ if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
     save('synth.mat','synthObj');
 end
 
-controller('switchPlot', handles);
+% controller('switchPlot', handles);
 
 % --- Executes on button press in btn_analysis.
 function btn_analysis_Callback(hObject, eventdata, handles)
@@ -1370,7 +1372,7 @@ function sld_maxdb_Callback(hObject, eventdata, handles)
 % hObject    handle to sld_maxdb (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('selectPlot', handles);
+controller('switchPlot', handles);
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
@@ -1519,9 +1521,9 @@ function chk_mod_cont_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of chk_mod_cont
 if(get(hObject, 'Value'))
-    set([handles.edt_mod_cont],'Visible','on')
+    set([handles.edt_mod_cont, handles.pop_pattern, handles.txt_pattern],'Visible','on')
 else
-    set([handles.edt_mod_cont],'Visible','off')
+    set([handles.edt_mod_cont, handles.pop_pattern, handles.txt_pattern],'Visible','off')
 end
 
 
@@ -1688,3 +1690,26 @@ function tool_menu_dev_plotData_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.tbl_plotdata, 'Visible', 'on');
+
+
+% --- Executes on selection change in pop_pattern.
+function pop_pattern_Callback(hObject, eventdata, handles)
+% hObject    handle to pop_pattern (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns pop_pattern contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from pop_pattern
+
+
+% --- Executes during object creation, after setting all properties.
+function pop_pattern_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pop_pattern (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
