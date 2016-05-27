@@ -40,25 +40,25 @@ classdef CSS < handle
         
         function obj = synthesize(obj, corpus_sound)
             synth_method = obj.Synthesis_method;
-            window = corpus_sound.Features.window;
+            win = corpus_sound.Features.window;
             W = abs(corpus_sound.Features.STFT.S);
             H = obj.Activations;
             
             switch synth_method
                 case 'ISTFT'
                     parameters = [];
-                    parameters.synHop = window.Hop;
-                    parameters.win = window;
+                    parameters.synHop = win.Hop;
+                    parameters.win = window(lower(win.Type), win.Length);
 
                     reconstruction = W*H;
-                    padding = size(reconstruction, 1)*2 - window.Length - 2;
+                    padding = size(reconstruction, 1)*2 - win.Length - 2;
                     if padding >= 0
                         parameters.zeroPad = padding;
                     end
 
                     obj.Synthesis = istft(reconstruction, parameters);
                 case 'Template Addition'
-                    obj.Synthesis = templateAdditionResynth(corpus_sound.Signal, H, window.Length, window.Hop);
+                    obj.Synthesis = templateAdditionResynth(corpus_sound.Signal, H, win);
             end
         end
         

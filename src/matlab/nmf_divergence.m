@@ -101,6 +101,12 @@ for l=1:L-1
     end
 end
 
+fprintf('Iterations: %i/%i\n', l, L);
+fprintf('Convergence Criteria: %i\n', convergence*100);
+fprintf('Repitition: %i\n', r);
+fprintf('Polyphony: %i\n', p);
+fprintf('Continuity: %i\n', c);
+
 Y=H;
 Y = Y./max(max(Y)); %Normalize activations
 end

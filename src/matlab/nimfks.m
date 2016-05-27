@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 26-May-2016 20:02:30
+% Last Modified by GUIDE v2.5 27-May-2016 21:08:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1030,13 +1030,15 @@ else
     controller('runSynthesis', handles);
 end
 
+handles = guidata(hObject); %Necessary to update handles
+
 set([handles.btn_play_3], 'Visible', 'on');
 if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
     synthObj = handles.SynthesisObject;
     save('synth.mat','synthObj');
 end
 
-% controller('switchPlot', handles);
+controller('switchPlot', handles);
 
 % --- Executes on button press in btn_analysis.
 function btn_analysis_Callback(hObject, eventdata, handles)
@@ -1169,19 +1171,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in popupmenu13.
-function popupmenu13_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu13 (see GCBO)
+% --- Executes on selection change in pop_wintype.
+function pop_wintype_Callback(hObject, eventdata, handles)
+% hObject    handle to pop_wintype (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu13 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu13
+% Hints: contents = cellstr(get(hObject,'String')) returns pop_wintype contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from pop_wintype
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu13_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu13 (see GCBO)
+function pop_wintype_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pop_wintype (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1252,9 +1254,9 @@ function btn_play_3_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_play_3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('playResynthesis', handles);
-if(isplaying(handles.synthesisPlayer))
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
+if(isplaying(handles.Sound_synthesis.Audioplayer))
+    controller('stopSynthesis', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1262,7 +1264,8 @@ if(isplaying(handles.synthesisPlayer))
     g(g==255)=5.5*255;
     set(handles.btn_play_3,'CData',g)
 else
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
+    controller('playSynthesis', handles);
+    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
     [r,c,d]=size(a); 
     x=ceil(r/30); 
     y=ceil(c/30); 
@@ -1713,3 +1716,12 @@ function pop_pattern_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in chk_endtime.
+function chk_endtime_Callback(hObject, eventdata, handles)
+% hObject    handle to chk_endtime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of chk_endtime
