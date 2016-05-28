@@ -117,7 +117,20 @@ switch action
                 set(handles.tbl_plotdata, 'Data', abs(handles.Sound_corpus.Features.STFT.S));
         end
     case 'resynthesize'
+        synth = handles.SynthesisObject;
+        synth.synthesize(handles.Sound_corpus);
+        handles.SynthesisObject = synth;
+        handles.Sound_synthesis.Audioplayer = audioplayer(handles.SynthesisObject.Synthesis, handles.Sound_corpus.Sampling_rate);
     case 'rerun'
+        resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
+        resynthMethods=get(handles.pop_synthmethod, 'String');
+        nmf_params = handles.SynthesisObject.NMF_features;
+        
+        synth = CSS(nmf_params, cell2mat(resynthMethods(resynthMethodSelected)));
+        synth.nmf(handles.Sound_corpus, handles.Sound_target);
+        synth.synthesize(handles.Sound_corpus);
+        
+        handles.SynthesisObject = synth;
 end
 
 guidata(handles.figure1, handles);

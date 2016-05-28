@@ -812,7 +812,7 @@ function file_menu_export_Callback(hObject, eventdata, handles)
 % hObject    handle to file_menu_export (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('exportResynth', handles');
+handles.Sound_synthesis.save_audio;
 
 % --------------------------------------------------------------------
 function uipushtool1_ClickedCallback(hObject, eventdata, handles)
@@ -888,7 +888,7 @@ function pushbutton19_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton19 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('Resynthesize', handles);
+controller('resynthesize', handles);
 
 % --------------------------------------------------------------------
 function draw_activations_ClickedCallback(hObject, eventdata, handles)
@@ -903,7 +903,7 @@ function draw_activations_ClickedCallback(hObject, eventdata, handles)
 % set(handles.slider3, 'SliderStep', floor([min(min(acts)) mean(mean(acts))]));
 % guidata(hObject, handles);
 
-acts = handles.SynthesisObject.NNMFSynthesis.Activations;
+acts = handles.SynthesisObject.Activations;
 set(handles.sld_actstrength, 'Max', max(max(acts)));
 set(handles.sld_actstrength, 'Value', mean(mean(acts)));
 set(handles.sld_actstrength, 'Min', min(min(acts)));
@@ -973,7 +973,7 @@ function template_manipulation_tool_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to template_manipulation_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-templates = handles.SynthesisObject.SourceSpectrogram.S;
+templates = handles.Sound_corpus.Features.STFT.S;
 [~,I]=max(templates);
 [~,Ix] = sort(I,'ascend');
 handles.templateIndices = Ix;
@@ -1368,7 +1368,7 @@ function btn_post_processing_run_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_post_processing_run (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('rerun', handles);
+controller('rerun', handles);
 
 % --- Executes on slider movement.
 function sld_maxdb_Callback(hObject, eventdata, handles)
@@ -1397,7 +1397,7 @@ function btn_resynthesis_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_resynthesis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SynthesisCtr('Resynthesize', handles);
+controller('resynthesize', handles);
 
 % --- Executes on slider movement.
 function sld_actstrength_Callback(hObject, eventdata, handles)

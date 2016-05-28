@@ -5,8 +5,8 @@ if(strcmp(callbackdata.Key, 'delete'))
     selectedTemplate.YData = zeros(1, length(selectedTemplate.YData));
     selectedTemplate.ZData = zeros(1, length(selectedTemplate.ZData));
     handles = guidata(src);
-    templates = handles.SynthesisObject.SourceSpectrogram.S;
+    templates = handles.Sound_corpus.Features.STFT.S;
     selectedIndex = handles.templateIndices(selectedTemplate.XData);
     templates(:, selectedIndex) = 0;
-    handles.SynthesisObject.SourceSpectrogram.S = templates;
+    handles.Sound_corpus.Features.STFT.S = templates;
 end

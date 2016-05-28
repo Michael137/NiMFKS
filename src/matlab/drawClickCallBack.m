@@ -11,7 +11,7 @@ else
     xLimits = xAxisProps
 end
 
-acts = handles.SynthesisObject.NNMFSynthesis.Activations;
+acts = handles.SynthesisObject.Activations;
 
 yMax = size(acts, 1);
 xMax = size(acts, 2);
@@ -63,7 +63,7 @@ if(drawYMin <=0)
 end
 
 acts(drawYMin:drawYMax, drawXMin:drawXMax) = fillValue;
-handles.SynthesisObject.NNMFSynthesis.Activations = acts;
+handles.SynthesisObject.Activations = acts;
 size(acts, 1)
 guidata(src, handles);
 
@@ -98,12 +98,12 @@ src.WindowButtonUpFcn = @releaseCallBack;
         
         %         fprintf('X: %u Y: %u', ceil(cy), ceil(cx))
         acts(drawYMin:drawYMax, drawXMin:drawXMax) = fillValue;
-        handles.SynthesisObject.NNMFSynthesis.Activations = acts;
+        handles.SynthesisObject.Activations = acts;
         guidata(src, handles);
     end
 
     function releaseCallBack(src, callbackdata)
-        SynthesisCtr('selectPlot', handles);
+        controller('switchPlot', handles);
         src.Pointer = 'arrow';
         src.WindowButtonMotionFcn = '';
         src.WindowButtonUpFcn = '';

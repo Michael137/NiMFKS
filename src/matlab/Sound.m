@@ -58,6 +58,12 @@ classdef Sound < handle
             end
         end
         
+        function save_audio(obj)
+            handles = guidata(gcf);
+            [file,path] = uiputfile({'*.wav'},'Save Sound As');
+            audiowrite([path filesep file], handles.SynthesisObject.Synthesis, handles.Sound_corpus.Sampling_rate);
+        end
+        
         function plot_spectrogram(obj, varargin)
             if nargin > 1
                 mindB = varargin{1};
