@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 27-May-2016 21:08:41
+% Last Modified by GUIDE v2.5 28-May-2016 23:27:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -77,9 +77,9 @@ set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly
 set(handles.edt_winlen,'String','100'); %Window length
 set(handles.edt_overlap,'String','50'); %Overlap
 % set(handles.edt_sndlen,'String','5'); %Length of synthesis
-set(handles.edt_iter,'String','20'); %NNMF Iterations
+set(handles.edt_iter,'String','10'); %NNMF Iterations
 set(handles.edt_rand,'String','0'); %NNMF Activations Random Seed
-set(handles.edt_conv,'String','0.0005'); %NNMF Convergence Criteria
+set(handles.edt_conv,'String','0'); %NNMF Convergence Criteria
 set(handles.edt_mod_rep,'String','-1'); %Repitition restriction parameter
 set(handles.edt_mod_poly,'String','-1'); %Polyphony restriction parameter
 set(handles.edt_mod_cont,'String','-1'); %Continuity enhancement parameter
@@ -981,16 +981,17 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function tool_menu_dev_exportWorkspace_Callback(hObject, eventdata, handles)
-% hObject    handle to tool_menu_dev_exportWorkspace (see GCBO)
+function file_menu_exportWorkspace_Callback(hObject, eventdata, handles)
+% hObject    handle to file_menu_exportWorkspace_Callback (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if strcmp(get(hObject,'Checked'),'on')
-    set(hObject,'Checked','off');
-else 
-    set(hObject,'Checked','on');
-end
+currentWorkspace = struct('Sound_corpus', handles.Sound_corpus, ...
+                           'Sound_target', handles.Sound_target, ...
+                           'Sound_synthesis', handles.Sound_synthesis, ...
+                           'SynthesisObject', handles.SynthesisObject);
 
+[file,path] = uiputfile('*.mat','Save Workspace As');
+save([path filesep file], '-struct', 'currentWorkspace');
 
 % --- Executes on button press in pushbutton21.
 function pushbutton21_Callback(hObject, eventdata, handles)
@@ -1033,10 +1034,6 @@ end
 handles = guidata(hObject); %Necessary to update handles
 
 set([handles.btn_play_3], 'Visible', 'on');
-if(strcmp(get(handles.tool_menu_dev_exportWorkspace, 'Checked'), 'on'))
-    synthObj = handles.SynthesisObject;
-    save('synth.mat','synthObj');
-end
 
 controller('switchPlot', handles);
 
@@ -1725,3 +1722,23 @@ function chk_endtime_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of chk_endtime
+
+
+% --------------------------------------------------------------------
+function file_menu_importWorkspace_Callback(hObject, eventdata, handles)
+% hObject    handle to file_menu_importWorkspace (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[FileName,PathName] = uigetfile('*.mat','Select the workspace');
+importedWorkspace = load([PathName FileName]);
+
+handles.Sound_corpus = importedWorkspace.Sound_corpus;
+handles.Sound_target = importedWorkspace.Sound_target;
+handles.Sound_synthesis = importedWorkspace.Sound_synthesis;
+handles.SynthesisObject = importedWorkspace.SynthesisObject;
+
+guidata(hObject, handles);
+
+set([handles.btn_play_1, handles.btn_play_2, handles.btn_play_3, handles.btn_synthesis], 'Visible', 'on');
+set(handles.txt_corpusfile, 'String', handles.Sound_corpus.Filename);
+set(handles.txt_targetfile, 'String', handles.Sound_target.Filename);
