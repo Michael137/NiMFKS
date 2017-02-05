@@ -21,6 +21,8 @@ elseif nargin == 2
     rng('shuffle');
 end
 
+waitbarHandle = waitbar(0, 'Starting NMF synthesis...');
+
 cost=0;
 K=size(W, 2);
 M=size(V, 2);
@@ -35,6 +37,7 @@ W = W+1E-6;
 den = sum(W);
 
 for l=1:L-1
+    waitbar(l/(L-1), waitbarHandle, ['Computing approximation...Iteration: ', num2str(l), '/', num2str(L-1)])
     
     recon = W*H;
     for mm = 1:size(H,2)
@@ -44,6 +47,7 @@ for l=1:L-1
     end
     
     if((r > 0 && ~endtime) || (r > 0 && endtime && l==L-1))
+        waitbar(l/(L-1), waitbarHandle, ['Repition Restriction...Iteration: ', num2str(l), '/', num2str(L-1)])
         for k = 1:size(H, 1)
             for m = 1:size(H, 2)
                 if(m>r && (m+r)<=M && H(k,m)==max(H(k,m-r:m+r)))
@@ -58,6 +62,7 @@ for l=1:L-1
     end
     
     if((p > 0 && ~endtime) || (p > 0 && endtime && l==L-1))
+        waitbar(l/(L-1), waitbarHandle, ['Polyphony Restriction...Iteration: ', num2str(l), '/', num2str(L-1)])
       P = zeros(size(H));
       mask = zeros(size(H,1),1);
       for m = 1:size(H, 2)
@@ -70,6 +75,7 @@ for l=1:L-1
     end
     
     if((c > 0 && ~endtime) || (c > 0 && endtime && l==L-1))
+        waitbar(l/(L-1), waitbarHandle, ['Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)])
         switch pattern
             case 'Diagonal'
                 C = conv2(H, eye(c), 'same'); %Default
@@ -109,4 +115,6 @@ fprintf('Continuity: %i\n', c);
 
 Y=H;
 Y = Y./max(max(Y)); %Normalize activations
+
+close(waitbarHandle);
 end

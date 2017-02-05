@@ -37,5 +37,7 @@ for kk=1:size(H, 2)
 end
 
 output = output';
+
+output = output./max(max(output));
 close(waitbarHandle)
 end
