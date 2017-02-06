@@ -7,6 +7,7 @@ if nargin > 2
     r = nmf_params.Repition_restriction;
     p = nmf_params.Polyphony_restriction;
     c = nmf_params.Continuity_enhancement;
+    rot = nmf_params.Continuity_enhancement_rot;
     pattern = nmf_params.Diagonal_pattern;
     endtime = nmf_params.Modification_application;
     rng(nmf_params.Random_seed);

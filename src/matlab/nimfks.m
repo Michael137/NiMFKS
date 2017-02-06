@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 28-May-2016 23:27:44
+% Last Modified by GUIDE v2.5 06-Feb-2017 22:10:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1521,9 +1521,11 @@ function chk_mod_cont_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of chk_mod_cont
 if(get(hObject, 'Value'))
-    set([handles.edt_mod_cont, handles.pop_pattern, handles.txt_pattern],'Visible','on')
+    set([handles.edt_mod_cont, handles.pop_pattern, ...
+        handles.txt_pattern, handles.edt_mod_cont_rot, handles.txt_rot],'Visible','on')
 else
-    set([handles.edt_mod_cont, handles.pop_pattern, handles.txt_pattern],'Visible','off')
+    set([handles.edt_mod_cont, handles.pop_pattern, ...
+        handles.txt_pattern, handles.edt_mod_cont_rot, handles.txt_rot],'Visible','off')
 end
 
 
@@ -1742,3 +1744,26 @@ guidata(hObject, handles);
 set([handles.btn_play_1, handles.btn_play_2, handles.btn_play_3, handles.btn_synthesis], 'Visible', 'on');
 set(handles.txt_corpusfile, 'String', handles.Sound_corpus.Filename);
 set(handles.txt_targetfile, 'String', handles.Sound_target.Filename);
+
+
+
+function edt_mod_cont_rot_Callback(hObject, eventdata, handles)
+% hObject    handle to edt_mod_cont_rot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edt_mod_cont_rot as text
+%        str2double(get(hObject,'String')) returns contents of edt_mod_cont_rot as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edt_mod_cont_rot_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edt_mod_cont_rot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -54,6 +54,7 @@ switch action
         nmf_params.Repition_restriction = str2double(get(handles.edt_mod_rep, 'String'));
         nmf_params.Polyphony_restriction = str2double(get(handles.edt_mod_poly, 'String'));
         nmf_params.Continuity_enhancement = str2double(get(handles.edt_mod_cont, 'String'));
+        nmf_params.Continuity_enhancement_rot = str2double(get(handles.edt_mod_cont_rot, 'String'));
         nmf_params.Diagonal_pattern =  cell2mat(actPatterns(actPatternSelected));
         nmf_params.Modification_application = get(handles.chk_endtime, 'Value');
         nmf_params.Random_seed = str2double(get(handles.edt_rand, 'String'));

@@ -7,6 +7,7 @@ if nargin > 2
     r = nmf_params.Repition_restriction;
     p = nmf_params.Polyphony_restriction;
     c = nmf_params.Continuity_enhancement;
+    rot = nmf_params.Continuity_enhancement_rot;
     pattern = nmf_params.Diagonal_pattern;
     endtime = nmf_params.Modification_application;
     
@@ -79,7 +80,7 @@ for l=1:L-1
         waitbar(l/(L-1), waitbarHandle, ['Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)])
         switch pattern
             case 'Diagonal'
-                C = conv2(H, eye(c), 'same'); %Default
+                C = conv2(H, rot_kernel( eye(c), rot ), 'same'); %Default
             case 'Reverse'
                 C = conv2(H, flip(eye(c)), 'same'); %Reverse
             case 'Blur'
