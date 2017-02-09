@@ -29,6 +29,12 @@ K=size(W, 2);
 M=size(V, 2);
 
 H=random('unif',0, 1, K, M);
+
+% % Sparse NMF for finding activations
+% [~, H] = SA_B_NMF(V,W,H,5);
+% % Size (i.e. rows) gets squashed
+% H( size( H, 1 ) + 1:K, : ) = 0;
+
 P=zeros(K, M);
 R=zeros(K, M);
 C=zeros(K, M);

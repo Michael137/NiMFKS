@@ -35,6 +35,18 @@ classdef CSS < handle
                     else
                         [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect);
                     end
+                case 'Sparse NMF'
+                    targetDim=size(target_spect);
+                    sourceDim=size(corpus_spect);
+                    K=sourceDim(2);
+                    M=targetDim(2);
+
+                    H=random('unif',0, 1, K, M);
+                    [~, H] = SA_B_NMF(target_spect, corpus_spect, H, 5);
+                    % Size (i.e. rows) gets squashed
+                    H( size( H, 1 ) + 1:K, : ) = 0;
+
+                    obj.Activations = H;
             end
         end
         
