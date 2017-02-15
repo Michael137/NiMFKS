@@ -1,9 +1,10 @@
 % Author: Dr. Elio Quinton
 
-function [ W, H ] = SA_B_NMF(V, W, H, lambda )
+function [ W, H, deleted ] = SA_B_NMF(V, W, H, lambda, iterations )
 %SENMF Summary of this function goes here
 %   Detailed explanation goes here
 
+deleted = [];
 H = 0.01 * ones(size(H));% + (0.01 * rand(size(H)));
 cost = get_cost(V, W, H, lambda); % Function get_cost defined at the end of this file.
 
@@ -14,8 +15,9 @@ myeps = 10e-3; % A bigger eps here helps pruning out unused components
 V = V + myeps; % Note that V here is the `target' audio magnitude spectrogram
 
 % num_h_iter = 1;
-err = 0.001;
-max_iter = 1000;
+err = 0.0001;
+% max_iter = 1000;
+max_iter = iterations;
 
 
 
@@ -40,15 +42,15 @@ while ~converged && iter < max_iter
         
         
         %Update W: REMOVE THIS FOR OUR USE CASE
-        nn = sum(sqrt(H'));
-        NN = lambda * repmat(nn,size(V,1),1);
-        NNW = NN.*W;
-
-        R = W*H+eps;
-        RR = 1./R;
-        RRR = RR.^2;
-        RRRR = sqrt(R);
-        W = W .* ( ((V .* RRR.* RRRR)*H') ./ ( ((RR .* RRRR)*H') + NNW + eps)).^(1/3);
+%         nn = sum(sqrt(H'));
+%         NN = lambda * repmat(nn,size(V,1),1);
+%         NNW = NN.*W;
+% 
+%         R = W*H+eps;
+%         RR = 1./R;
+%         RRR = RR.^2;
+%         RRRR = sqrt(R);
+%         W = W .* ( ((V .* RRR.* RRRR)*H') ./ ( ((RR .* RRRR)*H') + NNW + eps)).^(1/3);
         % Update W: stop deleting here
 
         
@@ -63,16 +65,17 @@ while ~converged && iter < max_iter
         H = H .* (((W' * (V .* RRR.* RRRR)) ./ (W' * (RR .* RRRR) + eps)).^(1/3));
         
         %Update W: REMOVE THIS FOR OUR USE CASE
-        R = W*H + myeps;
-        RR = 1./R;
-        RRR = RR.^2;
-        RRRR = sqrt(R);
-        W = W .* ((((V .* RRR.* RRRR)*H') ./ (((RR .* RRRR)*H') + eps)).^(1/3));
+%         R = W*H + myeps;
+%         RR = 1./R;
+%         RRR = RR.^2;
+%         RRRR = sqrt(R);
+%         W = W .* ((((V .* RRR.* RRRR)*H') ./ (((RR .* RRRR)*H') + eps)).^(1/3));
         % Update W: stop deleting here
     end
     
     %% normalise and prune templates if their total activation reaches 0.
     todel = [];
+    shifts = [];
     for i = 1:size(W,2)
 %        nn =  norm(W(:,i)); % W is not being updated so this is of no use
        nn =  sum(H(i,:)); % Check if norm of rows of H get to zero instead. 
@@ -84,6 +87,16 @@ while ~converged && iter < max_iter
             W(:,i) = W(:,i) / nn; 
             H(i,:) = H(i,:) * nn;
        end
+    end
+
+    if( length(deleted) == 0 )
+        deleted = [deleted todel];
+    else
+        shifts = zeros(1, length(todel));
+        for i = 1:length(shifts)
+            shifts(i) = length( deleted( deleted >= todel(i) ) );
+        end
+        deleted = [deleted todel+shifts];
     end
     W(:,todel) = [];
     H(todel,:) = [];

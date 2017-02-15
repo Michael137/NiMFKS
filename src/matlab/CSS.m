@@ -42,9 +42,11 @@ classdef CSS < handle
                     M=targetDim(2);
 
                     H=random('unif',0, 1, K, M);
-                    [~, H] = SA_B_NMF(target_spect, corpus_spect, H, 5);
-                    % Size (i.e. rows) gets squashed
-                    H( size( H, 1 ) + 1:K, : ) = 0;
+                    [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, H, 5, 100);
+%                     % Size (i.e. rows) gets squashed
+%                     H( size( H, 1 ) + 1:K, : ) = 0;
+                    
+                    H( deleted, : ) = 0;
 
                     obj.Activations = H;
             end
