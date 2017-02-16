@@ -35,19 +35,14 @@ classdef CSS < handle
                     else
                         [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect);
                     end
-                case 'Sparse NMF'
-                    targetDim=size(target_spect);
-                    sourceDim=size(corpus_spect);
-                    K=sourceDim(2);
-                    M=targetDim(2);
-
-                    H=random('unif',0, 1, K, M);
-                    [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, H, 5, 100);
-%                     % Size (i.e. rows) gets squashed
-%                     H( size( H, 1 ) + 1:K, : ) = 0;
+                case 'Sparse NMF'                 
+                    if length(fieldnames(obj.NMF_features)) > 1
+                        [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, 5, obj.NMF_features);
+                    else
+                        [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, 5 );
+                    end
                     
                     H( deleted, : ) = 0;
-
                     obj.Activations = H;
             end
         end

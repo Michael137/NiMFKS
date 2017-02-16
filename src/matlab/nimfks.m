@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 06-Feb-2017 22:10:29
+% Last Modified by GUIDE v2.5 16-Feb-2017 20:35:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,6 +83,7 @@ set(handles.edt_conv,'String','0'); %NNMF Convergence Criteria
 set(handles.edt_mod_rep,'String','-1'); %Repitition restriction parameter
 set(handles.edt_mod_poly,'String','-1'); %Polyphony restriction parameter
 set(handles.edt_mod_cont,'String','-1'); %Continuity enhancement parameter
+set(handles.edt_sparse_lambda,'String','5'); %Lambda (regularizer) for sparse NMF
 
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
@@ -1084,7 +1085,13 @@ function pop_cost_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns pop_cost contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from pop_cost
-
+contents = cellstr(get(hObject,'String'));
+cost = contents{get(hObject,'Value')};
+if( strcmp(cost, 'Sparse NMF'))
+    set([handles.edt_sparse_lambda handles.txt_sparse_lambda], 'Visible', 'on');
+else
+    set([handles.edt_sparse_lambda handles.txt_sparse_lambda], 'Visible', 'off');
+end
 
 % --- Executes during object creation, after setting all properties.
 function pop_cost_CreateFcn(hObject, eventdata, handles)
@@ -1759,6 +1766,29 @@ function edt_mod_cont_rot_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function edt_mod_cont_rot_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edt_mod_cont_rot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edt_sparse_lambda_Callback(hObject, eventdata, handles)
+% hObject    handle to edt_sparse_lambda (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edt_sparse_lambda as text
+%        str2double(get(hObject,'String')) returns contents of edt_sparse_lambda as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edt_sparse_lambda_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edt_sparse_lambda (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

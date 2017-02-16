@@ -1,8 +1,24 @@
 % Author: Dr. Elio Quinton
 
-function [ W, H, deleted ] = SA_B_NMF(V, W, H, lambda, iterations )
+function [ W, H, deleted ] = SA_B_NMF(V, W, lambda, varargin )
 %SENMF Summary of this function goes here
 %   Detailed explanation goes here
+if nargin > 2
+    nmf_params = varargin{1};
+    iterations = nmf_params.Iterations;
+    lambda = nmf_params.Lambda;
+elseif nargin == 2
+    iterations = 500;
+    lambda = 5;
+end
+
+waitbarHandle = waitbar(0, 'Starting sparse NMF synthesis...');
+
+targetDim=size(V);
+sourceDim=size(W);
+K=sourceDim(2);
+M=targetDim(2);
+H=random('unif',0, 1, K, M);
 
 deleted = [];
 H = 0.01 * ones(size(H));% + (0.01 * rand(size(H)));
@@ -26,6 +42,7 @@ omit = 0;
 
 while ~converged && iter < max_iter
     
+    waitbar(iter/(iterations-1), waitbarHandle, ['Computing approximation...Iteration: ', num2str(iter), '/', num2str(iterations-1)])
     iter = iter + 1;
     %% sparse NMF decomposition
     if iter > 0
@@ -119,7 +136,7 @@ while ~converged && iter < max_iter
     
 end
 
-
+close(waitbarHandle);
 end
 
 

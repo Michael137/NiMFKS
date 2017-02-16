@@ -80,7 +80,7 @@ for l=1:L-1
         waitbar(l/(L-1), waitbarHandle, ['Continuity Enhancement...Iteration: ', num2str(l), '/', num2str(L-1)])
         switch pattern
             case 'Diagonal'
-                C = conv2(H, eye(c), 'same'); %Default
+                C = conv2(H, rot_kernel( eye(c), rot ), 'same'); %Default
             case 'Reverse'
                 C = conv2(H, flip(eye(c)), 'same'); %Reverse
             case 'Blur'

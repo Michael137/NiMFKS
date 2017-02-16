@@ -58,6 +58,7 @@ switch action
         nmf_params.Diagonal_pattern =  cell2mat(actPatterns(actPatternSelected));
         nmf_params.Modification_application = get(handles.chk_endtime, 'Value');
         nmf_params.Random_seed = str2double(get(handles.edt_rand, 'String'));
+        nmf_params.Lambda = str2double(get(handles.edt_sparse_lambda, 'String'));
         
         resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
         resynthMethods=get(handles.pop_synthmethod, 'String');
