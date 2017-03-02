@@ -21,6 +21,7 @@ classdef CSS < handle
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
+%             prune_corpus( target_spect, corpus_spect );
             
             switch nmf_alg
                 case 'Euclidean'
@@ -37,9 +38,9 @@ classdef CSS < handle
                     end
                 case 'Sparse NMF'                 
                     if length(fieldnames(obj.NMF_features)) > 1
-                        [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, 5, obj.NMF_features);
+                        [~, H, deleted, obj.Cost] = SA_B_NMF(target_spect, corpus_spect, 5, obj.NMF_features);
                     else
-                        [~, H, deleted] = SA_B_NMF(target_spect, corpus_spect, 5 );
+                        [~, H, deleted, obj.Cost] = SA_B_NMF(target_spect, corpus_spect, 5 );
                     end
                     
                     H( deleted, : ) = 0;

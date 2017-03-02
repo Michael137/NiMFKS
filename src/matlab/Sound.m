@@ -127,5 +127,14 @@ classdef Sound < handle
                 
             end
         end
+        
+        function obj = concat(obj, sound)
+            obj.Signal = [ obj.Signal; sound.Signal ]; 
+            
+            obj.Time_length = length(obj.Signal)/obj.Sampling_rate;
+            
+            obj.Audioplayer= audioplayer(obj.Signal, obj.Sampling_rate);
+            obj.Bits_per_sample = obj.Audioplayer.BitsPerSample;
+        end
     end
 end

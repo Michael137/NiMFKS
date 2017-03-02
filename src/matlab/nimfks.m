@@ -52,6 +52,7 @@ function nimfks_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to nimfks (see VARARGIN)
 
+set(gcf, 'units', 'normalized', 'position', [0.1 0.1 0.8 0.85])
 %Place "playback" symbol onto buttons
 [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
 
@@ -64,14 +65,13 @@ x=ceil(r/30);
 y=ceil(c/30); 
 g=a(1:x:end,1:y:end,:);
 g(g==255)=5.5*255;
-set(handles.btn_play_1,'CData',g);
 set(handles.btn_play_2,'CData',g);  
 set(handles.btn_play_3,'CData',g);
 
 %Set resynthesis file explorer and restriction parameters to invisible
 set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, ...
     handles.draw_activations, handles.delete_activations, handles.template_manipulation_tool, handles.btn_play_3, ...
-        handles.tbl_plotdata, handles.btn_synthesis, handles.btn_play_1, handles.btn_play_2, handles.pop_pattern, handles.txt_pattern],'Visible','off');
+        handles.tbl_plotdata, handles.btn_synthesis, handles.btn_play_2, handles.pop_pattern, handles.txt_pattern],'Visible','off');
 
 %Initialize parameters
 set(handles.edt_winlen,'String','100'); %Window length
@@ -1306,7 +1306,7 @@ function btn_play_2_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_play_2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if(isplaying(handles.Sound_corpus.Audioplayer))
+if(isplaying(handles.Sound_target.Audioplayer))
     controller('stopTarget', handles);
     [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
     [r,c,d]=size(a); 
@@ -1334,38 +1334,12 @@ function btn_load_target_Callback(hObject, eventdata, handles)
 controller('openTarget', handles);
 set(handles.btn_play_2, 'Visible', 'on');
 
-% --- Executes on button press in btn_play_1.
-function btn_play_1_Callback(hObject, eventdata, handles)
-% hObject    handle to btn_play_1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-if(isplaying(handles.Sound_corpus.Audioplayer))
-    controller('stopSource', handles);
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
-    [r,c,d]=size(a); 
-    x=ceil(r/30); 
-    y=ceil(c/30); 
-    g=a(1:x:end,1:y:end,:);
-    g(g==255)=5.5*255;
-    set(handles.btn_play_1,'CData',g)
-else
-    controller('playSource', handles);
-    [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'stopButton.png']);
-    [r,c,d]=size(a); 
-    x=ceil(r/30); 
-    y=ceil(c/30); 
-    g=a(1:x:end,1:y:end,:);
-    g(g==255)=5.5*255;
-    set(handles.btn_play_1,'CData',g);
-end
-
 % --- Executes on button press in btn_load_corpus.
 function btn_load_corpus_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_load_corpus (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 controller('openSource', handles);
-set(handles.btn_play_1, 'Visible', 'on');
 
 % --- Executes on button press in btn_post_processing_run.
 function btn_post_processing_run_Callback(hObject, eventdata, handles)
@@ -1505,6 +1479,7 @@ if(get(hObject, 'Value'))
     set([handles.edt_mod_rep],'Visible','on')
 else
     set([handles.edt_mod_rep],'Visible','off')
+    set([handles.edt_mod_rep],'String', '-1' )
 end
 
 % --- Executes on button press in chk_mod_poly.
@@ -1518,6 +1493,7 @@ if(get(hObject, 'Value'))
     set([handles.edt_mod_poly],'Visible','on')
 else
     set([handles.edt_mod_poly],'Visible','off')
+    set([handles.edt_mod_poly],'String', '-1' )
 end
 
 % --- Executes on button press in chk_mod_cont.
@@ -1533,6 +1509,7 @@ if(get(hObject, 'Value'))
 else
     set([handles.edt_mod_cont, handles.pop_pattern, ...
         handles.txt_pattern, handles.edt_mod_cont_rot, handles.txt_rot],'Visible','off')
+    set([handles.edt_mod_cont],'String', '-1' )
 end
 
 
@@ -1748,7 +1725,7 @@ handles.SynthesisObject = importedWorkspace.SynthesisObject;
 
 guidata(hObject, handles);
 
-set([handles.btn_play_1, handles.btn_play_2, handles.btn_play_3, handles.btn_synthesis], 'Visible', 'on');
+set([handles.btn_play_2, handles.btn_play_3, handles.btn_synthesis], 'Visible', 'on');
 set(handles.txt_corpusfile, 'String', handles.Sound_corpus.Filename);
 set(handles.txt_targetfile, 'String', handles.Sound_target.Filename);
 

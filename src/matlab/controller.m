@@ -6,19 +6,32 @@ switch action
         targetpathname= strcat(pathname, filename);
         handles.Sound_target = Sound(targetpathname);
         set(handles.txt_targetfile, 'String', filename);
+        set(handles.txt_targetfile,'TooltipString',filename);
     case 'openSource'
-        [filename pathname] = uigetfile({'*.wav;*.mp3;'}, 'File Selector');
-        sourcepathname= strcat(pathname, filename);
-        handles.Sound_corpus = Sound(sourcepathname);
-        set(handles.txt_corpusfile, 'String', filename);
+        [filenames pathname]= uigetfile({'*.wav;*.mp3;'}, 'File Selector', 'MultiSelect','on');
+        
+        if( isstruct( filenames ) )
+            for i = 1:length( filenames )
+                sourcepathname = strcat(pathname, filenames{i});
+                tmp_snd = Sound(sourcepathname);
+                if isfield(handles, 'Sound_corpus')
+                    handles.Sound_corpus = handles.Sound_corpus.concat( tmp_snd );
+                else
+                    handles.Sound_corpus = tmp_snd;                
+                end
+            end
+        else
+            sourcepathname = strcat(pathname, filenames);
+            handles.Sound_corpus = Sound(sourcepathname);    
+        end
+                    
+        cat_files = strjoin(string(filenames),'\n');
+        set(handles.txt_corpusfile, 'String', cat_files);
+        set(handles.txt_corpusfile,'TooltipString', char(cat_files));
     case 'playTarget'
         handles.Sound_target.control_audio('play');
     case 'stopTarget'
         handles.Sound_target.control_audio('stop');
-    case 'playSource'
-        handles.Sound_corpus.control_audio('play');
-    case 'stopSource'
-        handles.Sound_corpus.control_audio('stop');
     case 'playSynthesis'
         handles.Sound_synthesis.control_audio('play');
     case 'stopSynthesis'

@@ -1,6 +1,6 @@
 % Author: Dr. Elio Quinton
 
-function [ W, H, deleted ] = SA_B_NMF(V, W, lambda, varargin )
+function [ W, H, deleted, finalCost ] = SA_B_NMF(V, W, lambda, varargin )
 %SENMF Summary of this function goes here
 %   Detailed explanation goes here
 if nargin > 2
@@ -119,7 +119,7 @@ while ~converged && iter < max_iter
     H(todel,:) = [];
     
     %% get the cost and monitor convergence
-    if mod(iter, 5) == 0
+    if (mod(iter, 5) == 0) || (iter == 1)
 
         new_cost = get_cost(V, W, H, lambda);
     
@@ -129,9 +129,12 @@ while ~converged && iter < max_iter
         end
         
         cost = new_cost;
+        finalCost(iter) = cost;
         omit = 0;
         
 %         disp([int2str(iter)  '    ' num2str(cost)]); % this prints the cost function at each iteration. Could be commented out (printing is slow in matlab)
+    elseif iter > 1
+        finalCost(iter) = finalCost(iter - 1);
     end
     
 end

@@ -575,3 +575,74 @@ nmf_params.Random_seed = 'shuffle';
 
 synth = CSS(nmf_params, 'Template Addition');
 synth.nmf(corpus_sound, target_sound);
+%% Sparse NMF
+corpus_sound = Sound('glock2.wav');
+target_sound = Sound('glock2.wav');
+
+win.Length = 200*44100/1000;
+win.Hop = 100*44100/1000;
+win.Type = 'Hamming';
+
+corpus_sound.computeFeatures(win, 'STFT');
+target_sound.computeFeatures(win, 'STFT');
+
+nmf_params.Algorithm = 'Sparse NMF';
+nmf_params.Iterations = 35;
+nmf_params.Convergence_criteria = 0;
+nmf_params.Repition_restriction = 1;
+nmf_params.Polyphony_restriction = 1;
+nmf_params.Continuity_enhancement = 1;
+nmf_params.Diagonal_pattern = 'Diagonal';
+nmf_params.Modification_application = true;
+nmf_params.Random_seed = 'shuffle';
+nmf_params.Lambda = 100;
+
+synth = CSS(nmf_params, 'Template Addition');
+synth.nmf(corpus_sound, target_sound);
+%% Sparse NMF
+corpus_sound = Sound('Chainsaw_Sawing_snippet_resampled.wav');
+target_sound = Sound('Chainsaw_Sawing_snippet_resampled.wav');
+
+win.Length = 100*44100/1000;
+win.Hop = 50*44100/1000;
+win.Type = 'Hamming';
+
+corpus_sound.computeFeatures(win, 'STFT');
+target_sound.computeFeatures(win, 'STFT');
+
+nmf_params.Algorithm = 'Sparse NMF';
+nmf_params.Iterations = 150;
+nmf_params.Convergence_criteria = 0;
+nmf_params.Repition_restriction = 1;
+nmf_params.Polyphony_restriction = 1;
+nmf_params.Continuity_enhancement = 1;
+nmf_params.Diagonal_pattern = 'Diagonal';
+nmf_params.Modification_application = true;
+nmf_params.Random_seed = 'shuffle';
+nmf_params.Lambda = 5;
+
+synth = CSS(nmf_params, 'ISTFT');
+synth.nmf(corpus_sound, target_sound);
+%% Beta Divergence NMF
+V = random('unif',0, 100, 4, 4);
+W = random('unif',0, 100, 4, 4);
+L=5;
+cost=0;
+K=size(W, 2);
+M=size(V, 2);
+beta = 1;
+H=random('unif',0, 1, K, M);
+
+V = V+1E-6;
+W = W+1E-6;
+ 
+for l=1:L-1    
+    recon = W*H;
+    num = H.*(W'*(((recon).^(beta-2)).*V));
+    den = W'*((recon).^(beta-1));
+    H = num./den;    
+end
+%% Pruning Corpus
+V = random('unif',0, 100, 4, 4);
+W = random('unif',0, 100, 4, 20);
+Y = prune_corpus(V, W );
