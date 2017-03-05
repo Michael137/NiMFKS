@@ -10,7 +10,7 @@ switch action
     case 'openSource'
         [filenames pathname]= uigetfile({'*.wav;*.mp3;'}, 'File Selector', 'MultiSelect','on');
         
-        if( isstruct( filenames ) )
+        if( iscell( filenames ) )
             for i = 1:length( filenames )
                 sourcepathname = strcat(pathname, filenames{i});
                 tmp_snd = Sound(sourcepathname);
