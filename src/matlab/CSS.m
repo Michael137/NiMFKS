@@ -21,7 +21,7 @@ classdef CSS < handle
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
-%             prune_corpus( target_spect, corpus_spect );
+            [corpus_spect pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.5 );
             
             switch nmf_alg
                 case 'Euclidean'
@@ -46,6 +46,10 @@ classdef CSS < handle
                     H( deleted, : ) = 0;
                     obj.Activations = H;
             end
+            
+            H = obj.Activations;
+            H( pruned_frames, : ) = 0;
+            obj.Activations = H;
         end
         
         function obj = synthesize(obj, corpus_sound)

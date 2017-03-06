@@ -1,91 +1,52 @@
-function [ Y ] = prune_corpus( V, W )
+function [ Y, pruned ] = prune_corpus( V, W, reduction_coef )
 
-    similarities = [];
-    corpSimilarities = [];
-    dimV = size( V );
-    dimW = size( W );
+    [VRows VCols]= size( V );
+    [WRows WCols]= size( W );
     
-    for i = 1:dimV(2)
-        tmp = [];
-        for j = 1:dimV(2)
-            if j == i
-                tmp(:, j) = -1;
-            else
-                tmp(:, j) = calc_frame_similarity( V(:, i), V(:, j)');
+    % Matrix: distances of every target frame to every other target frame
+    % i.e. Self-similarity matrix
+    TargetSelfSimMat = zeros(VCols);
+    
+    % Matrix: distances of every target frame to every corpus frame
+    % Matrix( i, j ) = Similarity of corpus frame i to target frame j
+    TargetToCorpSimMat = -1*ones(WCols, VCols);
+    
+    % Calculate self-similarity of target (euclidean dist)
+    X = sum(V.^2,1);
+    DistanceMat = real( sqrt(bsxfun(@plus,X,X')-2*(V'*V)) );
+    TargetSelfSimMat = exp(-(1/10) * DistanceMat);
+    
+    % Calculate the distance between each corpus frame to each target
+    % frame
+    TargetFramesToDelete = [];
+    PossibleNextFrames = 1:VCols;
+    
+    % j: current target frame to compare to all corpus frames
+    j = 1;
+    while size( V(V ~= -1 ), 1 ) > 0        
+        Dist = V(:,j)-W;
+        TargetToCorpSimMat(:,j) = arrayfun(@(n) norm(Dist(:,n)), 1:size(Dist,2))';
+       
+        for i = 1:VCols
+            if TargetSelfSimMat(i,j) > mean( TargetSelfSimMat(:,i))
+                V(:, i) = -1;
+                TargetFramesToDelete = [TargetFramesToDelete i];
             end
         end
-        
-        similarities(:, i) = tmp;
-    end
-    
-    for j = 1:dimW(2)
-        tmp(j) = calc_frame_similarity( V(:, 1), W(:, j)' );
-    end
-    corpSimilarities(:, 1) = tmp;
-    
-    firstFrameSim = similarities(:, 1);
-    delFrames = [];
-    for i = 1:length(similarities(1))
-        if firstFrameSim(i) < 20
-            V(:, i) = 0;
-            delFrames = [delFrames i];
-        end
-    end
-    
-    possibleFrames = 1:dimV(2);
-    while size( V(V ~= 0 ), 1 ) > 0
-        remainingFrames = possibleFrames( ~ismember( possibleFrames, delFrames ) );
-        nextFrame = remainingFrames(1);
-        if nextFrame ~= size( corpSimilarities, 2 ) + 1
-            corpSimilarities(:, (size(corpSimilarities, 2) + 1):nextFrame - 1) = -1*ones(size(corpSimilarities, 1), 1);
+        RemainingFrames = PossibleNextFrames( ~ismember( PossibleNextFrames, TargetFramesToDelete ) );
+        if( size( RemainingFrames, 2) > 1 )
+            j = RemainingFrames(1);
         else
-            for j = 1:dimW(2)
-                tmp(j) = calc_frame_similarity( V(:, 1), W(:, j)' );
-            end
-            corpSimilarities( :, nextFrame ) = tmp;
-        end
-        for i = 1:length(similarities(:,nextFrame))
-            if similarities(i,nextFrame) < 20
-                V(:, i) = 0;
-                delFrames = [delFrames i];
-            end
+            j = RemainingFrames;
         end
     end
     
-    Y = corpSimilarities;
-end
-
-function [ sim ] = calc_frame_similarity( A, B )
-    sim = sum(sum(dist(A,B)));   
-end
-
-function [ mahalDist ] = calc_mahalbonis_similarity( A, B )
-% Analysis parameters
-    anal_windowsize = 100; % ms
-    anal_windowhop = anal_windowsize/2; % ms
-    Fs_op = 22050; 
-    fftsize = 2048;
-
-    anal_windowsize_insamples = floor(anal_windowsize*Fs_op/1000);
-    anal_windowhop_insamples = floor(anal_windowhop*Fs_op/1000);
-    anal_window = window(@hann,anal_windowsize_insamples);
-
-    featA = createFeatureMatrix(A,anal_window,anal_windowhop_insamples,fftsize,Fs_op);
-    featB = createFeatureMatrix(B,anal_window,anal_windowhop_insamples,fftsize,Fs_op);
+    % Prune all unnecessary corpus frames i.e. lower than a certain cost
+    % threshold
+    [~, Idxs] = sort(TargetToCorpSimMat(:), 'descend');
+    [CorpusFramesToBeDeleted, ~] = ind2sub(size(TargetToCorpSimMat), Idxs(end-reduction_coef*WCols:end));
     
-
-    % the dimension of the random hash
-    embeddingDimension = 2;
-    % create embedding matrix
-    M_embed = randn(embeddingDimension,size(A,1)-2);
-    
-    % project features
-    ECORPUS = M_embed*A(3:end,:);
-    ETARGET = M_embed*A(3:end,:);
-    
-    % find covariance matrix for Mahalanobis distance calculation
-    SIGMA = cov([ECORPUS'; ETARGET']);
-    sqrtSIGinv = sqrt(inv(SIGMA));
-    % compute distances between every corpus frame and target frame
-    sim = norm(sqrtSIGinv*(A-B));
+    W( :, CorpusFramesToBeDeleted ) = [];
+    Y = W;
+    pruned = CorpusFramesToBeDeleted;
 end

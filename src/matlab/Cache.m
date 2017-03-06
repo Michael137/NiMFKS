@@ -1,0 +1,2 @@
+classdef Cache < handle
+end
