@@ -1,2 +1,0 @@
-classdef Cache < handle
-end

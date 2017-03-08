@@ -21,7 +21,7 @@ classdef CSS < handle
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
-            [corpus_spect pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.5 );
+            [corpus_spect pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.1 );
             
             switch nmf_alg
                 case 'Euclidean'

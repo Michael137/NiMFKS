@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 16-Feb-2017 20:35:14
+% Last Modified by GUIDE v2.5 08-Mar-2017 21:58:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -87,6 +87,12 @@ set(handles.edt_sparse_lambda,'String','5'); %Lambda (regularizer) for sparse NM
 
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
+
+if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') && ~exist('nimfks_cache.mat','file') )
+    AnalysisCacheMap = struct();
+    SynthesisCacheMap = struct();
+    save('nimfks_cache.mat', 'SynthesisCacheMap', 'AnalysisCacheMap');
+end
 
 % Choose default command line output for nimfks
 handles.output = hObject;
@@ -1773,4 +1779,16 @@ function edt_sparse_lambda_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function tool_menu_dev_cacheEnable_Callback(hObject, eventdata, handles)
+% hObject    handle to tool_menu_dev_cacheEnable (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(get(hObject,'Checked'),'on')
+    set(hObject,'Checked','off');
+else 
+    set(hObject,'Checked','on');
 end

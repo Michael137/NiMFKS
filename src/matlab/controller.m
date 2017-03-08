@@ -6,7 +6,7 @@ switch action
         targetpathname= strcat(pathname, filename);
         handles.Sound_target = Sound(targetpathname);
         set(handles.txt_targetfile, 'String', filename);
-        set(handles.txt_targetfile,'TooltipString',filename);
+        set(handles.txt_targetfile,'TooltipString',filename);       
     case 'openSource'
         [filenames pathname]= uigetfile({'*.wav;*.mp3;'}, 'File Selector', 'MultiSelect','on');
         
@@ -37,22 +37,52 @@ switch action
     case 'stopSynthesis'
         handles.Sound_synthesis.control_audio('stop');
     case 'runAnalysis'
-        waitbarHandle = waitbar(0.33, 'Verifying parameters...');
+        waitbarHandle = waitbar(0.15, 'Verifying parameters...');
         spectTypeSelected=get(handles.pop_specttype, 'Value');
         spectTypes=get(handles.pop_specttype, 'String');
-        
+
         winTypeSelected=get(handles.pop_wintype, 'Value');
         winTypes=get(handles.pop_wintype, 'String');
-        
+
         win.Length = str2num(get(handles.edt_winlen, 'String'))*44100/1000;
         win.Hop = str2num(get(handles.edt_overlap, 'String'))*44100/1000;
         win.Type = cell2mat(winTypes(winTypeSelected));
         
-        waitbar(0.66, waitbarHandle, 'Analyzing corpus...')
-        handles.Sound_corpus.computeFeatures(win, spectTypes(spectTypeSelected));
-        
-        waitbar(0.95, waitbarHandle, 'Analyzing target...')
-        handles.Sound_target.computeFeatures(win, spectTypes(spectTypeSelected));
+        if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') )
+            waitbar(0.33, waitbarHandle,'Checking cache...');
+            CacheObj = AnalysisCache(handles.Sound_corpus.Signal, handles.Sound_target.Signal, ...
+                                     winTypeSelected, win.Length, win.Hop);
+            handles.CurrentAnalysisCache = CacheObj;
+            GenerateHash(CacheObj);
+            Cached = ExistsInCache(CacheObj.Hash, handles, 'Analysis');
+
+            if( ~Cached )
+                waitbar(0.66, waitbarHandle, 'Analyzing corpus...')
+                handles.Sound_corpus.computeFeatures(win, spectTypes(spectTypeSelected));
+
+                waitbar(0.95, waitbarHandle, 'Analyzing target...')
+                handles.Sound_target.computeFeatures(win, spectTypes(spectTypeSelected));
+
+                waitbar(0.98, waitbarHandle, 'Saving in cache...')       
+
+                DataToCache = struct( ...
+                    'Corpus', handles.Sound_corpus, ...
+                    'Target', handles.Sound_target ...
+                );
+                handles.Cache = SaveInCache( CacheObj, handles, 'Analysis', DataToCache );
+            else
+                waitbar(0.75, waitbarHandle, 'Hooray, exists in cache! Loading...')
+                FromCache = LoadFromCache( CacheObj.Hash, 'Analysis' );
+                handles.Sound_corpus = FromCache.Corpus;
+                handles.Sound_target = FromCache.Target;
+            end
+        else
+            waitbar(0.66, waitbarHandle, 'Analyzing corpus...')
+            handles.Sound_corpus.computeFeatures(win, spectTypes(spectTypeSelected));
+
+            waitbar(0.95, waitbarHandle, 'Analyzing target...')
+            handles.Sound_target.computeFeatures(win, spectTypes(spectTypeSelected));
+        end
         close(waitbarHandle);
     case 'runSynthesis'
         costMetricSelected=get(handles.pop_cost, 'Value');
@@ -77,19 +107,49 @@ switch action
         resynthMethods=get(handles.pop_synthmethod, 'String');
         
         synth = CSS(nmf_params, cell2mat(resynthMethods(resynthMethodSelected)));
-        synth.nmf(handles.Sound_corpus, handles.Sound_target);
-        synth.synthesize(handles.Sound_corpus);
         
+        % Cache related operations
+        if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') )
+            CacheObj = SynthesisCache( ...
+                nmf_params.Iterations, nmf_params.Random_seed, nmf_params.Convergence_criteria, ...
+                costMetricSelected, nmf_params.Repition_restriction, nmf_params.Polyphony_restriction, ...
+                nmf_params.Continuity_enhancement, actPatternSelected, nmf_params.Continuity_enhancement_rot, ...
+                nmf_params.Modification_application, nmf_params.Lambda, handles.CurrentAnalysisCache.Hash );
+
+            GenerateHash(CacheObj);
+            Cached = ExistsInCache(CacheObj.Hash, handles, 'Synthesis') & ExistsInCache(CacheObj.AnalysisHash, handles, 'Analysis' );
+        
+            if( ~Cached )
+                synth.nmf(handles.Sound_corpus, handles.Sound_target);
+
+                DataToCache = struct( ...
+                    'Activations', synth.Activations, ...
+                    'Cost', synth.Cost ...
+                );
+
+                handles.Cache = SaveInCache( CacheObj, handles, 'Synthesis', DataToCache );
+            else
+                disp( 'Found synthesis settings in cache...' );
+                FromCache = LoadFromCache( CacheObj.Hash, 'Synthesis' );
+                synth.Activations = FromCache.Activations;
+                synth.Cost = FromCache.Cost;
+            end  
+        else
+        	synth.nmf(handles.Sound_corpus, handles.Sound_target);
+        end
+        
+        synth.synthesize(handles.Sound_corpus);
+
         winTypeSelected=get(handles.pop_wintype, 'Value');
         winTypes=get(handles.pop_wintype, 'String');
-        
+
         win.Length = str2num(get(handles.edt_winlen, 'String'))*44100/1000;
         win.Hop = str2num(get(handles.edt_overlap, 'String'))*44100/1000;
         win.Type = cell2mat(winTypes(winTypeSelected));
-        
+
         spectTypeSelected=get(handles.pop_specttype, 'Value');
         spectTypes=get(handles.pop_specttype, 'String');
-        
+
         handles.SynthesisObject = synth;
         handles.Sound_synthesis = Sound(synth.Synthesis, handles.Sound_corpus.Sampling_rate);
         handles.Sound_synthesis.computeFeatures(win, spectTypes(spectTypeSelected));

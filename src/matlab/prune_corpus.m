@@ -1,11 +1,7 @@
 function [ Y, pruned ] = prune_corpus( V, W, reduction_coef )
 
-    [VRows VCols]= size( V );
-    [WRows WCols]= size( W );
-    
-    % Matrix: distances of every target frame to every other target frame
-    % i.e. Self-similarity matrix
-    TargetSelfSimMat = zeros(VCols);
+    [~, VCols]= size( V );
+    [~, WCols]= size( W );
     
     % Matrix: distances of every target frame to every corpus frame
     % Matrix( i, j ) = Similarity of corpus frame i to target frame j
@@ -44,7 +40,7 @@ function [ Y, pruned ] = prune_corpus( V, W, reduction_coef )
     % Prune all unnecessary corpus frames i.e. lower than a certain cost
     % threshold
     [~, Idxs] = sort(TargetToCorpSimMat(:), 'descend');
-    [CorpusFramesToBeDeleted, ~] = ind2sub(size(TargetToCorpSimMat), Idxs(end-reduction_coef*WCols:end));
+    [CorpusFramesToBeDeleted, ~] = ind2sub(size(TargetToCorpSimMat), Idxs(end-floor(reduction_coef*WCols):end));
     
     W( :, CorpusFramesToBeDeleted ) = [];
     Y = W;
