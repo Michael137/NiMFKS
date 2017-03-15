@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 08-Mar-2017 21:58:32
+% Last Modified by GUIDE v2.5 14-Mar-2017 21:10:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,7 +88,8 @@ set(handles.edt_sparse_lambda,'String','5'); %Lambda (regularizer) for sparse NM
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
 
-if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') && ~exist('nimfks_cache.mat','file') )
+% if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') && ~exist('nimfks_cache.mat','file') )
+if( ~exist('nimfks_cache.mat','file') )
     AnalysisCacheMap = struct();
     SynthesisCacheMap = struct();
     save('nimfks_cache.mat', 'SynthesisCacheMap', 'AnalysisCacheMap');

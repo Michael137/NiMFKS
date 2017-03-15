@@ -1,4 +1,4 @@
-classdef AnalysisCache < handle
+    classdef AnalysisCache < handle
     properties
         Corpus
         Target

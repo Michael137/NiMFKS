@@ -21,20 +21,20 @@ classdef CSS < handle
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
-            [corpus_spect pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.1 );
+            [corpus_spect, pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.75 );
             
             switch nmf_alg
                 case 'Euclidean'
                     if length(fieldnames(obj.NMF_features)) > 1
-                        [obj.Activations, obj.Cost] = nmf_euclidean(target_spect, corpus_spect, obj.NMF_features);
+                        [H, obj.Cost] = nmf_euclidean(target_spect, corpus_spect, obj.NMF_features);
                     else
-                        [obj.Activations, obj.Cost] = nmf_euclidean(target_spect, corpus_spect);
+                        [H, obj.Cost] = nmf_euclidean(target_spect, corpus_spect);
                     end
                 case 'Divergence'
                     if length(fieldnames(obj.NMF_features)) > 1
-                        [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect, obj.NMF_features);
+                        [H, obj.Cost] = nmf_divergence(target_spect, corpus_spect, obj.NMF_features);
                     else
-                        [obj.Activations, obj.Cost] = nmf_divergence(target_spect, corpus_spect);
+                        [H, obj.Cost] = nmf_divergence(target_spect, corpus_spect);
                     end
                 case 'Sparse NMF'                 
                     if length(fieldnames(obj.NMF_features)) > 1
@@ -47,8 +47,10 @@ classdef CSS < handle
                     obj.Activations = H;
             end
             
-            H = obj.Activations;
             H( pruned_frames, : ) = 0;
+            % Pad activations to size of corpus frames
+            % since pruned frames maximum can be < size of corpus
+            H( setdiff( 1:( size( corpus_spect, 2 ) + length( pruned_frames ) ), 1:size( H, 1 ) ), : ) = 0;
             obj.Activations = H;
         end
         

@@ -48,11 +48,12 @@ switch action
         win.Hop = str2num(get(handles.edt_overlap, 'String'))*44100/1000;
         win.Type = cell2mat(winTypes(winTypeSelected));
         
+        CacheObj = AnalysisCache(handles.Sound_corpus.Signal, handles.Sound_target.Signal, ...
+            winTypeSelected, win.Length, win.Hop);
+        handles.CurrentAnalysisCache = CacheObj;
         if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') )
             waitbar(0.33, waitbarHandle,'Checking cache...');
-            CacheObj = AnalysisCache(handles.Sound_corpus.Signal, handles.Sound_target.Signal, ...
-                                     winTypeSelected, win.Length, win.Hop);
-            handles.CurrentAnalysisCache = CacheObj;
+
             GenerateHash(CacheObj);
             Cached = ExistsInCache(CacheObj.Hash, handles, 'Analysis');
 
@@ -85,6 +86,7 @@ switch action
         end
         close(waitbarHandle);
     case 'runSynthesis'
+        waitbarHandle = waitbar(0.15, 'Checking cache...');
         costMetricSelected=get(handles.pop_cost, 'Value');
         costMetrics=get(handles.pop_cost, 'String');
         
@@ -109,7 +111,8 @@ switch action
         synth = CSS(nmf_params, cell2mat(resynthMethods(resynthMethodSelected)));
         
         % Cache related operations
-        if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') )
+%         if( strcmp(get(handles.tool_menu_dev_cacheEnable, 'Checked'), 'on') )
+            GenerateHash(handles.CurrentAnalysisCache);
             CacheObj = SynthesisCache( ...
                 nmf_params.Iterations, nmf_params.Random_seed, nmf_params.Convergence_criteria, ...
                 costMetricSelected, nmf_params.Repition_restriction, nmf_params.Polyphony_restriction, ...
@@ -117,11 +120,14 @@ switch action
                 nmf_params.Modification_application, nmf_params.Lambda, handles.CurrentAnalysisCache.Hash );
 
             GenerateHash(CacheObj);
-            Cached = ExistsInCache(CacheObj.Hash, handles, 'Synthesis') & ExistsInCache(CacheObj.AnalysisHash, handles, 'Analysis' );
+            Cached = ExistsInCache(CacheObj.Hash, handles, 'Synthesis');
+            disp( CacheObj.Hash );
         
-            if( ~Cached )
+            if( ~Cached )       
+                waitbar(0.5, waitbarHandle, 'Not found in cache. Running NMF...')
                 synth.nmf(handles.Sound_corpus, handles.Sound_target);
 
+                waitbar(0.75, waitbarHandle, 'Saving in cache...')
                 DataToCache = struct( ...
                     'Activations', synth.Activations, ...
                     'Cost', synth.Cost ...
@@ -129,14 +135,14 @@ switch action
 
                 handles.Cache = SaveInCache( CacheObj, handles, 'Synthesis', DataToCache );
             else
-                disp( 'Found synthesis settings in cache...' );
+                waitbar(0.75, waitbarHandle, 'Hooray, exists in cache! Loading...')
                 FromCache = LoadFromCache( CacheObj.Hash, 'Synthesis' );
                 synth.Activations = FromCache.Activations;
                 synth.Cost = FromCache.Cost;
             end  
-        else
-        	synth.nmf(handles.Sound_corpus, handles.Sound_target);
-        end
+%         else
+%         	synth.nmf(handles.Sound_corpus, handles.Sound_target);
+%         end
         
         synth.synthesize(handles.Sound_corpus);
 
@@ -153,6 +159,8 @@ switch action
         handles.SynthesisObject = synth;
         handles.Sound_synthesis = Sound(synth.Synthesis, handles.Sound_corpus.Sampling_rate);
         handles.Sound_synthesis.computeFeatures(win, spectTypes(spectTypeSelected));
+        
+        close(waitbarHandle);
     case 'savePlot'
     case 'exportResynth'
     case 'switchPlot'

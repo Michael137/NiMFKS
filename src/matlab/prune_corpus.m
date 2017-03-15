@@ -1,48 +1,54 @@
-function [ Y, pruned ] = prune_corpus( V, W, reduction_coef )
+function [ Y, PrunedFrames ] = prune_corpus( target, corpus, reduction_coef )
 
-    [~, VCols]= size( V );
-    [~, WCols]= size( W );
+    [targetRows, targetCols]= size( target );
+    [corpusRows, corpusCols]= size( corpus );
+    
+    % Matrix: distances of every target frame to every other target frame
+    % i.e. Self-similarity matrix
+    TargetSelfSimMat = zeros(targetCols);
     
     % Matrix: distances of every target frame to every corpus frame
     % Matrix( i, j ) = Similarity of corpus frame i to target frame j
-    TargetToCorpSimMat = -1*ones(WCols, VCols);
+%     TargetToCorpSimMat = -1*ones(WCols, targetCols);
     
     % Calculate self-similarity of target (euclidean dist)
-    X = sum(V.^2,1);
-    DistanceMat = real( sqrt(bsxfun(@plus,X,X')-2*(V'*V)) );
-    TargetSelfSimMat = exp(-(1/10) * DistanceMat);
+    X2 = sum(target.^2,1);
+    TargetSelfSimMat = bsxfun(@plus,X2,X2')-2*(target'*target);
+%     TargetSelfSimMat = exp(-(1/10) * DistanceMat);
     
-    % Calculate the distance between each corpus frame to each target
+    % Calculate the distance between each corpus frame to first target
     % frame
-    TargetFramesToDelete = [];
-    PossibleNextFrames = 1:VCols;
+    KeepCorpusFrames = [];
+    RemainingTargetFrames = 1:targetCols;
+    RemainingCorpusFrames = 1:corpusCols;
     
-    % j: current target frame to compare to all corpus frames
-    j = 1;
-    while size( V(V ~= -1 ), 1 ) > 0        
-        Dist = V(:,j)-W;
-        TargetToCorpSimMat(:,j) = arrayfun(@(n) norm(Dist(:,n)), 1:size(Dist,2))';
-       
-        for i = 1:VCols
-            if TargetSelfSimMat(i,j) > mean( TargetSelfSimMat(:,i))
-                V(:, i) = -1;
-                TargetFramesToDelete = [TargetFramesToDelete i];
-            end
-        end
-        RemainingFrames = PossibleNextFrames( ~ismember( PossibleNextFrames, TargetFramesToDelete ) );
-        if( size( RemainingFrames, 2) > 1 )
-            j = RemainingFrames(1);
-        else
-            j = RemainingFrames;
-        end
+    while ~isempty(RemainingTargetFrames)
+        Dist = repmat(target(:,RemainingTargetFrames(1)),1, ...
+            length(RemainingCorpusFrames)) - corpus(:,RemainingCorpusFrames);
+        Distances = sum(Dist.^2,1);
+        % compute mean distances
+        meanDistance = mean(Distances);
+        
+        % find those corpus frames closer than reduction_coef of mean
+        idxcorpuskeep = Distances < reduction_coef*meanDistance;
+        KeepCorpusFrames = [KeepCorpusFrames RemainingCorpusFrames(idxcorpuskeep)];
+        
+        % find those target frames within twice that to next frame
+        distancetonext = TargetSelfSimMat(RemainingTargetFrames(1)+1,RemainingTargetFrames(1));
+        idxtarget = TargetSelfSimMat(RemainingTargetFrames,RemainingTargetFrames(1)) ...
+            < 2*distancetonext;
+        
+        % shrink corpus
+        RemainingCorpusFrames = RemainingCorpusFrames(~idxcorpuskeep);
+        
+        % shrink target frames index
+        RemainingTargetFrames = RemainingTargetFrames(~idxtarget);
     end
     
-    % Prune all unnecessary corpus frames i.e. lower than a certain cost
-    % threshold
-    [~, Idxs] = sort(TargetToCorpSimMat(:), 'descend');
-    [CorpusFramesToBeDeleted, ~] = ind2sub(size(TargetToCorpSimMat), Idxs(end-floor(reduction_coef*WCols):end));
-    
-    W( :, CorpusFramesToBeDeleted ) = [];
-    Y = W;
-    pruned = CorpusFramesToBeDeleted;
+corpus = corpus( :, KeepCorpusFrames );
+Y = corpus;
+PrunedFrames = setdiff( 1:corpusCols, KeepCorpusFrames );
+
+fprintf( 'Pruned %d frames...\n', size( PrunedFrames ) );
+
 end
