@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 14-Mar-2017 21:10:32
+% Last Modified by GUIDE v2.5 19-Mar-2017 20:50:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,6 +84,7 @@ set(handles.edt_mod_rep,'String','-1'); %Repitition restriction parameter
 set(handles.edt_mod_poly,'String','-1'); %Polyphony restriction parameter
 set(handles.edt_mod_cont,'String','-1'); %Continuity enhancement parameter
 set(handles.edt_sparse_lambda,'String','5'); %Lambda (regularizer) for sparse NMF
+set(handles.edt_prune,'String','0'); %Pruning parameter
 
 % fig=gcf;
 % set(findall(fig,'-property','FontSize'),'FontSize',11)
@@ -1792,4 +1793,27 @@ if strcmp(get(hObject,'Checked'),'on')
     set(hObject,'Checked','off');
 else 
     set(hObject,'Checked','on');
+end
+
+
+
+function edt_prune_Callback(hObject, eventdata, handles)
+% hObject    handle to edt_prune (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edt_prune as text
+%        str2double(get(hObject,'String')) returns contents of edt_prune as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edt_prune_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edt_prune (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

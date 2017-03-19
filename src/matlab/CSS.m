@@ -17,11 +17,16 @@ classdef CSS < handle
     end
     
     methods
-        function obj = nmf(obj, corpus_sound, target_sound)
+        function obj = nmf(obj, corpus_sound, target_sound, varargin)
+            if( nargin == 4  )
+                pct_prune = varargin{1}
+            else
+                pct_prune = 1
+            end
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
-            [corpus_spect, pruned_frames] = prune_corpus( target_spect, corpus_spect, 0.75 );
+            [corpus_spect, pruned_frames] = prune_corpus( target_spect, corpus_spect, pct_prune );
             
             switch nmf_alg
                 case 'Euclidean'

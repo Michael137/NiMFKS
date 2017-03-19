@@ -107,7 +107,8 @@ switch action
         
         resynthMethodSelected=get(handles.pop_synthmethod, 'Value');
         resynthMethods=get(handles.pop_synthmethod, 'String');
-        
+
+        pct_prune = ( 100 - str2double(get(handles.edt_prune, 'String')) )/100;
         synth = CSS(nmf_params, cell2mat(resynthMethods(resynthMethodSelected)));
         
         % Cache related operations
@@ -117,7 +118,7 @@ switch action
                 nmf_params.Iterations, nmf_params.Random_seed, nmf_params.Convergence_criteria, ...
                 costMetricSelected, nmf_params.Repition_restriction, nmf_params.Polyphony_restriction, ...
                 nmf_params.Continuity_enhancement, actPatternSelected, nmf_params.Continuity_enhancement_rot, ...
-                nmf_params.Modification_application, nmf_params.Lambda, handles.CurrentAnalysisCache.Hash );
+                nmf_params.Modification_application, nmf_params.Lambda, pct_prune, handles.CurrentAnalysisCache.Hash );
 
             GenerateHash(CacheObj);
             Cached = ExistsInCache(CacheObj.Hash, handles, 'Synthesis');
@@ -125,7 +126,7 @@ switch action
         
             if( ~Cached )       
                 waitbar(0.5, waitbarHandle, 'Not found in cache. Running NMF...')
-                synth.nmf(handles.Sound_corpus, handles.Sound_target);
+                synth.nmf(handles.Sound_corpus, handles.Sound_target, pct_prune);
 
                 waitbar(0.75, waitbarHandle, 'Saving in cache...')
                 DataToCache = struct( ...
@@ -209,8 +210,9 @@ switch action
         resynthMethods=get(handles.pop_synthmethod, 'String');
         nmf_params = handles.SynthesisObject.NMF_features;
         
+        pct_prune = ( 100 - str2double(get(handles.edt_prune, 'String')) )/100;
         synth = CSS(nmf_params, cell2mat(resynthMethods(resynthMethodSelected)));
-        synth.nmf(handles.Sound_corpus, handles.Sound_target);
+        synth.nmf(handles.Sound_corpus, handles.Sound_target, pct_prune);
         synth.synthesize(handles.Sound_corpus);
         
         handles.SynthesisObject = synth;

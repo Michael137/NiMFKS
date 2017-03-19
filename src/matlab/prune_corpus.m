@@ -1,5 +1,10 @@
 function [ Y, PrunedFrames ] = prune_corpus( target, corpus, reduction_coef )
 
+    if reduction_coef == 1
+        Y = corpus;
+        PrunedFrames = [];
+        return;
+    end
     [targetRows, targetCols]= size( target );
     [corpusRows, corpusCols]= size( corpus );
     
