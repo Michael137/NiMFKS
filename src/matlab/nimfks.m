@@ -52,7 +52,7 @@ function nimfks_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to nimfks (see VARARGIN)
 
-% set(gcf, 'units', 'normalized', 'position', [0.1 0.1 0.8 0.85])
+set(gcf, 'units', 'normalized', 'position', [0.1 0.1 0.8 0.85])
 %Place "playback" symbol onto buttons
 [a,map]=imread(['..' filesep '..' filesep 'assets' filesep 'playButton.jpg']);
 
