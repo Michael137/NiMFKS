@@ -23,7 +23,12 @@
         function obj = GenerateHash(obj)
             ArrayToHash = [obj.Corpus; obj.Target; obj.WinType; obj.Window; obj.Hop];
             Opt = struct( 'Method', 'SHA-1' );
-            obj.Hash = ['id', char(DataHash(ArrayToHash, Opt))];
+            try
+                obj.Hash = ['id', char(DataHash(ArrayToHash, Opt))];
+            catch ME
+                disp( ME );
+                obj.Hash = abs( floor( 1000*randn ) );
+            end
         end
     end
 end
