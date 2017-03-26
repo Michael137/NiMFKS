@@ -26,7 +26,7 @@ classdef CSS < handle
             nmf_alg = obj.NMF_features.Algorithm;
             target_spect = abs(target_sound.Features.STFT.S);
             corpus_spect = abs(corpus_sound.Features.STFT.S);
-            [corpus_spect, pruned_frames] = prune_corpus( target_spect, corpus_spect, pct_prune );
+            [corpus_spect, pruned_frames, frames_to_keep] = prune_corpus( target_spect, corpus_spect, pct_prune );
             
             switch nmf_alg
                 case 'Euclidean'
@@ -52,10 +52,15 @@ classdef CSS < handle
                     obj.Activations = H;
             end
             
-            H( pruned_frames, : ) = 0;
-            % Pad activations to size of corpus frames
-            % since pruned frames maximum can be < size of corpus
-            H( setdiff( 1:( size( corpus_spect, 2 ) + length( pruned_frames ) ), 1:size( H, 1 ) ), : ) = 0;
+            tmp = zeros( size( corpus_sound.Features.STFT.S,2 ), size( target_spect,2 ) );
+            for i = 1:length( frames_to_keep )
+                tmp(frames_to_keep(i), :) = H(i,:);
+            end
+            H = tmp;
+%             H( pruned_frames, : ) = 0;
+%             % Pad activations to size of corpus frames
+%             % since pruned frames maximum can be < size of corpus
+%             H( setdiff( 1:( size( corpus_spect, 2 ) + length( pruned_frames ) ), 1:size( H, 1 ) ), : ) = 0;
             obj.Activations = H;
         end
         

@@ -1,8 +1,9 @@
-function [ Y, PrunedFrames ] = prune_corpus( target, corpus, reduction_coef )
+function [ Y, PrunedFrames, KeepCorpusFrames ] = prune_corpus( target, corpus, reduction_coef )
 
     if reduction_coef == 1
         Y = corpus;
         PrunedFrames = [];
+        KeepCorpusFrames = [];
         return;
     end
     [targetRows, targetCols]= size( target );
@@ -50,8 +51,8 @@ function [ Y, PrunedFrames ] = prune_corpus( target, corpus, reduction_coef )
         RemainingTargetFrames = RemainingTargetFrames(~idxtarget);
     end
     
-corpus = corpus( :, sort( KeepCorpusFrames ) );
-Y = corpus;
+KeepCorpusFrames = sort( KeepCorpusFrames );
+Y = corpus( :, KeepCorpusFrames );
 PrunedFrames = setdiff( 1:corpusCols, KeepCorpusFrames );
 
 fprintf( 'Pruned %d frames...\n', size( PrunedFrames ) );
