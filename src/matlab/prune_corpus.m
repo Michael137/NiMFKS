@@ -50,7 +50,7 @@ function [ Y, PrunedFrames ] = prune_corpus( target, corpus, reduction_coef )
         RemainingTargetFrames = RemainingTargetFrames(~idxtarget);
     end
     
-corpus = corpus( :, KeepCorpusFrames );
+corpus = corpus( :, sort( KeepCorpusFrames ) );
 Y = corpus;
 PrunedFrames = setdiff( 1:corpusCols, KeepCorpusFrames );
 
