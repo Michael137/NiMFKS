@@ -52,11 +52,13 @@ classdef CSS < handle
                     obj.Activations = H;
             end
             
-            tmp = zeros( size( corpus_sound.Features.STFT.S,2 ), size( target_spect,2 ) );
-            for i = 1:length( frames_to_keep )
-                tmp(frames_to_keep(i), :) = H(i,:);
+            if size( frames_to_keep ) > 0
+                tmp = zeros( size( corpus_sound.Features.STFT.S,2 ), size( target_spect,2 ) );
+                for i = 1:length( frames_to_keep )
+                    tmp(frames_to_keep(i), :) = H(i,:);
+                end
+                H = tmp;
             end
-            H = tmp;
 %             H( pruned_frames, : ) = 0;
 %             % Pad activations to size of corpus frames
 %             % since pruned frames maximum can be < size of corpus
