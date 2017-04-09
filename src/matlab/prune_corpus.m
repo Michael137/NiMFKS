@@ -44,11 +44,17 @@ function [ Y, PrunedFrames, KeepCorpusFrames ] = prune_corpus( target, corpus, r
         idxtarget = TargetSelfSimMat(RemainingTargetFrames,RemainingTargetFrames(1)) ...
             < 2*distancetonext;
         
+        if ~any( idxtarget ) && distancetonext == 0
+            idxtarget = RemainingTargetFrames(2);
+        end
+        
         % shrink corpus
         RemainingCorpusFrames = RemainingCorpusFrames(~idxcorpuskeep);
         
         % shrink target frames index
         RemainingTargetFrames = RemainingTargetFrames(~idxtarget);
+        
+        fprintf( '%d remaining frames...\n', size( RemainingTargetFrames ) );
     end
     
 KeepCorpusFrames = sort( KeepCorpusFrames );
