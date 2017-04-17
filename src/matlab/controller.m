@@ -20,14 +20,18 @@ switch action
                     handles.Sound_corpus = tmp_snd;                
                 end
             end
+            
+            cat_files = strjoin(string(filenames),'\n');
+            set(handles.txt_corpusfile, 'String', cat_files);
+            set(handles.txt_corpusfile,'TooltipString', char(cat_files));
         else
             sourcepathname = strcat(pathname, filenames);
             handles.Sound_corpus = Sound(sourcepathname);    
+            set(handles.txt_corpusfile, 'String', filenames);
+            set(handles.txt_corpusfile,'TooltipString', filenames);
         end
                     
-        cat_files = strjoin(string(filenames),'\n');
-        set(handles.txt_corpusfile, 'String', cat_files);
-        set(handles.txt_corpusfile,'TooltipString', char(cat_files));
+
     case 'playTarget'
         handles.Sound_target.control_audio('play');
     case 'stopTarget'
