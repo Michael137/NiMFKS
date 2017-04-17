@@ -21,7 +21,7 @@ switch action
                 end
             end
             
-            cat_files = strjoin(string(filenames),'\n');
+            cat_files = strjoin(filenames,'\n');
             set(handles.txt_corpusfile, 'String', cat_files);
             set(handles.txt_corpusfile,'TooltipString', char(cat_files));
         else
