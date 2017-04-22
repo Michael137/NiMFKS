@@ -31,7 +31,20 @@ switch action
             set(handles.txt_corpusfile,'TooltipString', filenames);
         end
                     
-
+    case 'swapSourceAndTarget'
+        tmp = handles.Sound_target;
+        handles.Sound_target = handles.Sound_corpus;
+        handles.Sound_corpus = tmp;
+        
+        corpus_displayName = get( handles.txt_corpusfile, 'String' );
+        corpus_tooltip = get( handles.txt_corpusfile, 'TooltipString' );
+        target_displayName = get( handles.txt_targetfile, 'String' );
+        target_tooltip = get( handles.txt_targetfile, 'TooltipString' );
+                
+        set(handles.txt_targetfile, 'String', corpus_displayName);
+        set(handles.txt_targetfile,'TooltipString', corpus_tooltip); 
+        set(handles.txt_corpusfile, 'String', target_displayName);
+        set(handles.txt_corpusfile,'TooltipString', target_tooltip);
     case 'playTarget'
         handles.Sound_target.control_audio('play');
     case 'stopTarget'

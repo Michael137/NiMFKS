@@ -22,7 +22,7 @@ function varargout = nimfks(varargin)
 
 % Edit the above text to modify the response to help nimfks
 
-% Last Modified by GUIDE v2.5 19-Mar-2017 20:50:37
+% Last Modified by GUIDE v2.5 22-Apr-2017 18:29:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,6 +67,14 @@ g=a(1:x:end,1:y:end,:);
 g(g==255)=5.5*255;
 set(handles.btn_play_2,'CData',g);  
 set(handles.btn_play_3,'CData',g);
+
+[swapButtonImg,swapBtnMap]=imread(['..' filesep '..' filesep 'assets' filesep 'swapButton.jpg']);
+[r,c,d]=size(swapButtonImg); 
+x=ceil(r/20); 
+y=ceil(c/20); 
+g=swapButtonImg(1:x:end,1:y:end,:);
+g(g==255)=5.5*255;
+set(handles.btn_soundswap,'CData',g);  
 
 %Set resynthesis file explorer and restriction parameters to invisible
 set([handles.pnl_activation_sketching, handles.edt_mod_rep, handles.edt_mod_poly, handles.edt_mod_cont, ...
@@ -1817,3 +1825,12 @@ function edt_prune_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in btn_soundswap.
+function btn_soundswap_Callback(hObject, eventdata, handles)
+% hObject    handle to btn_soundswap (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+controller('swapSourceAndTarget', handles);
+set(handles.btn_play_2, 'Visible', 'on');
